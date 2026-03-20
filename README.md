@@ -1,6 +1,6 @@
 # nextdata-public-examples
 
-A collection of example [NextData](https://nextdata.com) data products demonstrating how to build data products across
+A collection of example [Nextdata](https://nextdata.com) data products demonstrating how to build data products across
 a variety of infrastructure targets and real-world use cases.
 
 These examples are intended to help you understand how to use the NextData platform — from simple batch transforms to
