@@ -35,7 +35,9 @@ def get_revenue(request: Request) -> Response:
 class RevenueAPI:
     @staticmethod
     def get_request_model() -> SemanticModelSpec:
-        return semantic_model("revenue_request").schema({"id": (string(), "Company ID"), "year": (string(), "Year")})
+        return semantic_model("revenue_request").schema(
+            {"id": (string(), "Company ID"), "year": (string(), "Year")}
+        )
 
     @staticmethod
     def get_response_model() -> SemanticModelSpec:

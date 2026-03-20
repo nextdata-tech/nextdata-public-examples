@@ -37,7 +37,9 @@ spec = (
     .input(
         "databricks-source",
         data_product_input()
-        .source("https://app.demo.trynxd.com/data-product/streaming-transactions#/output/port/output")
+        .source(
+            "https://app.demo.trynxd.com/data-product/streaming-transactions#/output/port/output"
+        )
         .environment("demo")
         # Declare the model contract first so InputSpec.models is always populated
         .expectation(input_transactions_model)
@@ -56,8 +58,12 @@ spec = (
         .promise(transactions_model)
         .port(
             "output",
-            storage(f"https://example.com/infra-profile/{INFRA_PROFILE_NAME}#/services/nxd-databricks-sp").config(
-                databricks_config().target_table("soda_verified_transactions", transactions_model)
+            storage(
+                f"https://example.com/infra-profile/{INFRA_PROFILE_NAME}#/services/nxd-databricks-sp"
+            ).config(
+                databricks_config().target_table(
+                    "soda_verified_transactions", transactions_model
+                )
             ),
         ),
     )

@@ -14,21 +14,29 @@ spec = (
     .with_global_trigger(ScheduleTrigger("0 */8 * * *"))
     .transform(
         code(transform)
-        .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
+        .compute(
+            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute"
+        )
         .config(k8s_executor_config)
     )
     .input(
         "competitor-data-api",
         source_aligned_input()
-        .source("https://nextopia.dev/infra-profile/ecommerce-demo#/services/sec-comp-summary-api")
+        .source(
+            "https://nextopia.dev/infra-profile/ecommerce-demo#/services/sec-comp-summary-api"
+        )
         .model(source_documents)
-        .expectation(custom("check_document_format").verify(code(check_document_format))),
+        .expectation(
+            custom("check_document_format").verify(code(check_document_format))
+        ),
     )
     .output(
         data_product_output()
         .port(
             "adls",
-            storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls")
+            storage(
+                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls"
+            )
             .config(
                 adls_config(
                     file_type=SupportedFormat.PARQUET,
@@ -60,7 +68,9 @@ spec = (
         )
         .port(
             "mcp-api",
-            rpc_server("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s")
+            rpc_server(
+                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s"
+            )
             .enable_endpoints()
             .mcp_path("/mcp"),
         )

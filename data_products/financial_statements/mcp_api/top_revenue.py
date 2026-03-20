@@ -33,15 +33,32 @@ def _field(name: str | None, data_type: DataType) -> Field:
 
 
 @function(name="get_top_revenue")
-@mcp.tool(name="get_top_revenue", description="Get top revenue companies for a given year")
+@mcp.tool(
+    name="get_top_revenue", description="Get top revenue companies for a given year"
+)
 def get_top_revenue(request: Request) -> Response:
     """Fetches top revenue companies from the financial statements data."""
     year = request.get("year")
 
     result = [
-        {"id": "ANZ.AX", "company": "ANZ Group Holdings Limited", "year": year, "revenue": 22307000000.00},
-        {"id": "WBC.AX", "company": "Westpac Banking Corporation", "year": year, "revenue": 21587000000.00},
-        {"id": "MQG.AX", "company": "Macquarie Group Limited", "year": year, "revenue": 6790000000.00},
+        {
+            "id": "ANZ.AX",
+            "company": "ANZ Group Holdings Limited",
+            "year": year,
+            "revenue": 22307000000.00,
+        },
+        {
+            "id": "WBC.AX",
+            "company": "Westpac Banking Corporation",
+            "year": year,
+            "revenue": 21587000000.00,
+        },
+        {
+            "id": "MQG.AX",
+            "company": "Macquarie Group Limited",
+            "year": year,
+            "revenue": 6790000000.00,
+        },
     ]
 
     return Response({"result": result})
@@ -50,7 +67,9 @@ def get_top_revenue(request: Request) -> Response:
 class TopRevenueAPI:
     @staticmethod
     def get_request_model() -> SemanticModelSpec:
-        return semantic_model("top_revenue_request").schema({"year": (string(), "Year")})
+        return semantic_model("top_revenue_request").schema(
+            {"year": (string(), "Year")}
+        )
 
     @staticmethod
     def get_response_model() -> SemanticModelSpec:

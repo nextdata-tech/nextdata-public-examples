@@ -13,13 +13,17 @@ spec = (
     .environment("demo")
     .transform(
         code(transform)
-        .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
+        .compute(
+            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute"
+        )
         .config(k8s_executor_config)
     )
     .input(
         "credit_card_tx",
         data_product_input()
-        .source("https://app.demo.trynxd.com/data-product/credit-card-tx#/output/port/adls")
+        .source(
+            "https://app.demo.trynxd.com/data-product/credit-card-tx#/output/port/adls"
+        )
         .expectation(transactions),
     )
     .output(
@@ -27,7 +31,9 @@ spec = (
         .promise(anomalies)
         .port(
             "adls",
-            storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls")
+            storage(
+                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls"
+            )
             .config(
                 adls_config(
                     file_type=SupportedFormat.PARQUET,

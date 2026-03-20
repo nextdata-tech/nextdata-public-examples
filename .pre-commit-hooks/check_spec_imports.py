@@ -45,9 +45,13 @@ def main() -> int:
                 f"should have at most 1 import line."
             )
             if file_type == "spec.py":
-                print("   Consider consolidating imports using a local dsl.py or nxd_spec.py file.")
+                print(
+                    "   Consider consolidating imports using a local dsl.py or nxd_spec.py file."
+                )
             elif file_type == "models.py":
-                print("   Consider consolidating imports using a local nxd_models.py file.")
+                print(
+                    "   Consider consolidating imports using a local nxd_models.py file."
+                )
             exit_code = 1
         elif import_count == 1:
             print(f"✅ {file_path}: Valid (1 import line)")

@@ -42,7 +42,9 @@ def fetch_from_kaggle() -> pd.DataFrame:
         # Search recursively in case kagglehub places it in a sub-directory
         matches = list(Path(dataset_path).rglob(KAGGLE_FILENAME))
         if not matches:
-            raise FileNotFoundError(f"'{KAGGLE_FILENAME}' not found under kagglehub download path: {dataset_path}")
+            raise FileNotFoundError(
+                f"'{KAGGLE_FILENAME}' not found under kagglehub download path: {dataset_path}"
+            )
         csv_path = matches[0]
 
     df = pd.read_csv(csv_path)
@@ -70,7 +72,15 @@ def read_source_data() -> pd.DataFrame:
 def clean_transactions(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
-    str_cols = ["customer", "age", "gender", "zipcodeOri", "merchant", "zipMerchant", "category"]
+    str_cols = [
+        "customer",
+        "age",
+        "gender",
+        "zipcodeOri",
+        "merchant",
+        "zipMerchant",
+        "category",
+    ]
     for col in str_cols:
         if col in df.columns:
             df[col] = df[col].astype(str).str.strip("'").str.strip()
@@ -82,7 +92,12 @@ def clean_transactions(df: pd.DataFrame) -> pd.DataFrame:
     if "amount" in df.columns:
         df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
     if "fraud" in df.columns:
-        df["fraud"] = pd.to_numeric(df["fraud"], errors="coerce").fillna(0).astype(int).astype(bool)
+        df["fraud"] = (
+            pd.to_numeric(df["fraud"], errors="coerce")
+            .fillna(0)
+            .astype(int)
+            .astype(bool)
+        )
 
     schema_cols = [
         "step",
@@ -123,7 +138,12 @@ def aggregate_fraud_density(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
     df["market_type"] = (
-        df["category"].str.strip().str.strip("'\"").str.replace(r"^es_", "", regex=True).str.strip().str.lower()
+        df["category"]
+        .str.strip()
+        .str.strip("'\"")
+        .str.replace(r"^es_", "", regex=True)
+        .str.strip()
+        .str.lower()
     )
 
     df["fraud"] = pd.to_numeric(df["fraud"], errors="coerce").fillna(0).astype(int)
@@ -135,7 +155,9 @@ def aggregate_fraud_density(df: pd.DataFrame) -> pd.DataFrame:
 
     grouped = grouped[grouped["transaction_count"] > 0].copy()
 
-    grouped["fraud_rate_pct"] = (grouped["fraud_event_count"] * 100.0 / grouped["transaction_count"]).round(2)
+    grouped["fraud_rate_pct"] = (
+        grouped["fraud_event_count"] * 100.0 / grouped["transaction_count"]
+    ).round(2)
 
     return grouped.sort_values("fraud_rate_pct", ascending=False).reset_index(drop=True)
 
@@ -151,11 +173,15 @@ def _write_model(client, bucket: str, key: str, df: pd.DataFrame, label: str) ->
         _logger.info("Wrote %d rows → s3://%s/%s  [%s]", len(df), bucket, key, label)
     except Exception as e:
         _logger.exception("Failed to write %s to object storage.", label)
-        raise RuntimeError(f"Error saving '{label}' to bucket '{bucket}' key '{key}'") from e
+        raise RuntimeError(
+            f"Error saving '{label}' to bucket '{bucket}' key '{key}'"
+        ) from e
 
 
 def transform(object_storage: S3Output) -> None:
-    _logger.info("Starting market-fraud-density transform (simulated streaming batch)...")
+    _logger.info(
+        "Starting market-fraud-density transform (simulated streaming batch)..."
+    )
 
     df_raw = read_source_data()
     client = get_s3_client(object_storage)

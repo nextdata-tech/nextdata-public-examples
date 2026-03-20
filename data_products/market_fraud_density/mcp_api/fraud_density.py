@@ -108,7 +108,10 @@ class FraudDensityAPI:
     def get_all_response_model() -> SemanticModelSpec:
         return semantic_model("fraud_density_all_response").schema(
             {
-                "total_categories": (int64(), "Number of distinct market categories returned"),
+                "total_categories": (
+                    int64(),
+                    "Number of distinct market categories returned",
+                ),
             }
         )
 
@@ -116,7 +119,10 @@ class FraudDensityAPI:
     def get_stats_request_model() -> SemanticModelSpec:
         return semantic_model("fraud_density_stats_request").schema(
             {
-                "market_type": (string(), "Normalized merchant category name (e.g. 'transportation')"),
+                "market_type": (
+                    string(),
+                    "Normalized merchant category name (e.g. 'transportation')",
+                ),
             }
         )
 
@@ -124,7 +130,10 @@ class FraudDensityAPI:
     def get_stats_response_model() -> SemanticModelSpec:
         return semantic_model("fraud_density_stats_response").schema(
             {
-                "market_type": (string(), "Merchant category (empty string if not found)"),
+                "market_type": (
+                    string(),
+                    "Merchant category (empty string if not found)",
+                ),
                 "transaction_count": (int64(), "Total transactions (0 if not found)"),
                 "fraud_event_count": (int64(), "Total fraud events (0 if not found)"),
                 "fraud_rate_pct": (float64(), "Fraud rate % (-1.0 means not found)"),

@@ -32,7 +32,9 @@ def _get_access_token(output: DatabricksWrite) -> str:
 
     if output.tenant_id and output.principal_id and output.principal_secret:
         logger.info("Generating OAuth token from service principal credentials")
-        return _get_sp_token(output.tenant_id, output.principal_id, output.principal_secret)
+        return _get_sp_token(
+            output.tenant_id, output.principal_id, output.principal_secret
+        )
 
     raise ValueError(
         "DatabricksWrite context has no usable auth credentials "

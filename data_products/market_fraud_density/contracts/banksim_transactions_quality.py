@@ -31,13 +31,17 @@ def read_csv(s3: S3Input, model_name: str) -> list[dict]:
         raise RuntimeError("S3Input.model_urls is not available.")
     url = model_urls.get(model_name)
     if not url:
-        raise KeyError(f"No URL for model '{model_name}' in model_urls (available: {list(model_urls.keys())})")
+        raise KeyError(
+            f"No URL for model '{model_name}' in model_urls (available: {list(model_urls.keys())})"
+        )
     with urllib.request.urlopen(url, timeout=30) as resp:
         text = resp.read().decode("utf-8")
     return list(csv.DictReader(io.StringIO(text)))
 
 
-def check_banksim_transactions_quality(input: S3Input, models: dict[str, Model]) -> VerifyResult:
+def check_banksim_transactions_quality(
+    input: S3Input, models: dict[str, Model]
+) -> VerifyResult:
     """Zero-Null + non-negative amount check on the raw transaction model."""
     try:
         model_name = next(iter(models)) if models else "banksim_transactions_model"
@@ -56,7 +60,11 @@ def check_banksim_transactions_quality(input: S3Input, models: dict[str, Model])
             errors.append(f"category has {null_category} null/empty value(s).")
 
         # Zero-Null: fraud
-        null_fraud = sum(1 for r in rows if str(r.get("fraud", "")).strip().lower() not in VALID_FRAUD_VALUES)
+        null_fraud = sum(
+            1
+            for r in rows
+            if str(r.get("fraud", "")).strip().lower() not in VALID_FRAUD_VALUES
+        )
         if null_fraud:
             errors.append(
                 f"fraud has {null_fraud} row(s) with null or unrecognised values "

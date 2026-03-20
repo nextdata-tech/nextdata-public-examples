@@ -23,11 +23,19 @@ def transform(
 
     # find any existing files
     try:
-        transactions.append(adls_to_parquet(adls, adls.model_paths[transactions_model.name].path))
-        customers.append(adls_to_parquet(adls, adls.model_paths[customers_model.name].path))
-        _logger.info("Existing `transactions` and `customers` .parquet files found, appending data...")
+        transactions.append(
+            adls_to_parquet(adls, adls.model_paths[transactions_model.name].path)
+        )
+        customers.append(
+            adls_to_parquet(adls, adls.model_paths[customers_model.name].path)
+        )
+        _logger.info(
+            "Existing `transactions` and `customers` .parquet files found, appending data..."
+        )
     except FileNotFoundError:
-        _logger.info("No existing `transactions` and `customers` .parquet files found, creating new files...")
+        _logger.info(
+            "No existing `transactions` and `customers` .parquet files found, creating new files..."
+        )
         pass
 
     fake = Faker("en_AU")
@@ -37,7 +45,9 @@ def transform(
     for customer in [fake.uuid4() for _ in range(10)]:
 
         def generate_transaction(customer_id: str) -> dict:
-            transaction_type = fake.random_element(["deposit", "withdrawal", "transfer", "payment"])
+            transaction_type = fake.random_element(
+                ["deposit", "withdrawal", "transfer", "payment"]
+            )
             return {
                 "transaction_id": fake.uuid4(),
                 "customer_id": customer_id,
@@ -46,7 +56,11 @@ def transform(
                 ),
                 "type": transaction_type,
                 "amount": fake.random_int(100, 10000),
-                "merchant": (fake.company() if transaction_type in ["withdrawal", "payment"] else None),
+                "merchant": (
+                    fake.company()
+                    if transaction_type in ["withdrawal", "payment"]
+                    else None
+                ),
                 "country_code": "AU",  # fix to Australia
             }
 

@@ -19,7 +19,9 @@ spec = (
     # Transform with DAB job configuration - execution happens in the pre-deployed bundle job
     .transform(
         script("transform/transform.py")
-        .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks")
+        .compute(
+            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks"
+        )
         .when(any_of(scheduled("*/10 * * * *"), on_started()))
     )
     .output(
@@ -30,7 +32,9 @@ spec = (
         .promise(trip_metrics)
         .port(
             "databricks",
-            storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-storage").config(
+            storage(
+                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-storage"
+            ).config(
                 databricks_config().disable_provisioning()  # disable built-in provisioning since we're doing custom provisioning and runs after built-in provisioning. This will change.
             ),
         )

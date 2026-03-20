@@ -13,7 +13,9 @@ spec = (
     .environment("demo")
     .with_global_trigger(ScheduleTrigger("0 12 * * *"))
     .transform(
-        script("transform.py").compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
+        script("transform.py").compute(
+            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute"
+        )
     )
     .output(
         data_product_output()
@@ -23,7 +25,9 @@ spec = (
         .promise(announcements)
         .port(
             "adls",
-            storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls")
+            storage(
+                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls"
+            )
             .config(
                 adls_config(
                     file_type=SupportedFormat.PARQUET,

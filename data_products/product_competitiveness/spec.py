@@ -12,14 +12,18 @@ spec = (
     )
     .transform(
         code(transform)
-        .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
+        .compute(
+            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute"
+        )
         .config(k8s_executor_config)
     )
     .environment("demo")
     .input(
         "market-rates",
         data_product_input()
-        .source("https://app.demo.trynxd.com/data-product/market-rates#/output/port/adls")
+        .source(
+            "https://app.demo.trynxd.com/data-product/market-rates#/output/port/adls"
+        )
         .environment("demo")
         .with_file_type(SupportedFormat.JSON)
         .expectation(
@@ -40,7 +44,9 @@ spec = (
         )
         .port(
             "snowflake",
-            storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
+            storage(
+                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake"
+            ).config(
                 snowflake_config("PRODUCT_COMPETITIVENESS")
                 .target_table("TERM_DEPOSITS", term_deposits)
                 .target_table("HOME_LOAN_RATES", home_loan_rates)
@@ -49,7 +55,11 @@ spec = (
     )
     .output(
         data_product_rpc_output()
-        .function(rpc_function(code(get_banks), get_banks_request, get_banks_response).description("get_banks"))
+        .function(
+            rpc_function(
+                code(get_banks), get_banks_request, get_banks_response
+            ).description("get_banks")
+        )
         .function(
             rpc_function(
                 code(get_term_deposit_rates),
@@ -66,7 +76,9 @@ spec = (
         )
         .port(
             "mcp-api",
-            rpc_server("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s")
+            rpc_server(
+                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s"
+            )
             .enable_endpoints()
             .mcp_path("/mcp"),
         )

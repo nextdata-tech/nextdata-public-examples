@@ -10,7 +10,9 @@ from nxd.data_product.context import VerifyResultEnum
 EXPECTED_PORTOFOLIOS = {"HLLVR3", "HL", "HLLVR3"}
 
 
-def verify(market_rates: AzureDataLakeStorage, models: dict[str, Model]) -> VerifyResult:
+def verify(
+    market_rates: AzureDataLakeStorage, models: dict[str, Model]
+) -> VerifyResult:
     adls = DataLakeServiceClient(
         f"https://{market_rates.account_name}.dfs.core.windows.net",
         ClientSecretCredential(
@@ -23,7 +25,9 @@ def verify(market_rates: AzureDataLakeStorage, models: dict[str, Model]) -> Veri
     model = models[model_name]
     file_client = adls.get_file_client(market_rates.container, model.path)
     file_contents = file_client.download_file().readall().decode()
-    portfolio_ids = set([json.loads(line)["PortfolioId"] for line in file_contents.splitlines()])
+    portfolio_ids = set(
+        [json.loads(line)["PortfolioId"] for line in file_contents.splitlines()]
+    )
 
     if portfolio_ids.difference(EXPECTED_PORTOFOLIOS):
         return VerifyResult(

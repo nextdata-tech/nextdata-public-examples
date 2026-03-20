@@ -61,7 +61,9 @@ def sync_term_deposit_data(file_client: DataLakeFileClient):
 
 
 def _get_lvr3_home_loans():
-    response = requests.get("https://www.westpac.com.au/bin/getJsonRates.wbc.hllvr3.json")
+    response = requests.get(
+        "https://www.westpac.com.au/bin/getJsonRates.wbc.hllvr3.json"
+    )
     json_body = response.json()
     home_loans = json_body["data"]["Brands"]["WBC"]["Portfolios"][
         "Home Loan LVR3"
@@ -79,7 +81,9 @@ def _get_lvr_home_loans():
 
 
 def _get_lvr5_home_loans():
-    response = requests.get("https://www.westpac.com.au/bin/getJsonRates.wbc.hllvr5.json")
+    response = requests.get(
+        "https://www.westpac.com.au/bin/getJsonRates.wbc.hllvr5.json"
+    )
     json_body = response.json()
     home_loans = json_body["data"]["Brands"]["WBC"]["Portfolios"][
         "Home Loan LVR5"

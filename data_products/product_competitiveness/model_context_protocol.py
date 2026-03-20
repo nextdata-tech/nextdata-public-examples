@@ -92,7 +92,9 @@ get_term_deposit_rates_response = (
 
 
 @function(name="get_term_deposit_rates")
-@mcp.tool(name="get_term_deposit_rates", description="Get term deposit rates for a bank")
+@mcp.tool(
+    name="get_term_deposit_rates", description="Get term deposit rates for a bank"
+)
 def get_term_deposit_rates(
     snowflake: Snowflake,
     request: Request,

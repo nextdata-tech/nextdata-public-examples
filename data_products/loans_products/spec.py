@@ -14,18 +14,24 @@ spec = (
     .with_global_trigger(ScheduleTrigger("0 */8 * * *"))
     .transform(
         code(transform)
-        .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
+        .compute(
+            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute"
+        )
         .config(k8s_executor_config)
     )
     .input(
         "product-competitiveness",
         data_product_input()
-        .source("https://app.demo.trynxd.com/data-product/product-competitiveness#/output/port/snowflake")
+        .source(
+            "https://app.demo.trynxd.com/data-product/product-competitiveness#/output/port/snowflake"
+        )
         .environment("demo")
         .expectation(
             custom("expect-data-from-all-banks")
             .verify(code(expect_data_from_all_banks.verify))
-            .description("Check each model to ensure data is available for Bank of America, Citigroup")
+            .description(
+                "Check each model to ensure data is available for Bank of America, Citigroup"
+            )
         ),
     )
     .output(
@@ -41,7 +47,9 @@ spec = (
         )
         .port(
             "snowflake",
-            storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
+            storage(
+                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake"
+            ).config(
                 snowflake_config("CUSTOMER_RATES")
                 .target_table("TERM_DEPOSITS", term_deposits)
                 .target_table("HOME_LOAN_RATES", home_loan_rates)

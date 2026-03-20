@@ -14,7 +14,11 @@ spec = (
         source_aligned_input()
         .source("https://example.com/infra-profile/ecommerce-demo#/services/s3-output")
         .expectation(rate_model)
-        .config(s3_config(SupportedFormat.PARQUET).target_file("streaming/input/rate_data.parquet", rate_model)),
+        .config(
+            s3_config(SupportedFormat.PARQUET).target_file(
+                "streaming/input/rate_data.parquet", rate_model
+            )
+        ),
     )
     .output(
         data_product_output()
@@ -22,8 +26,14 @@ spec = (
         .promise(output_model)
         .port(
             "output",
-            storage("https://example.com/infra-profile/ecommerce-demo#/services/nxd-databricks-sp")
-            .config(databricks_config().target_table("STREAMING_TRANSACTIONS", output_model).disable_promotion())
+            storage(
+                "https://example.com/infra-profile/ecommerce-demo#/services/nxd-databricks-sp"
+            )
+            .config(
+                databricks_config()
+                .target_table("STREAMING_TRANSACTIONS", output_model)
+                .disable_promotion()
+            )
             .promise(
                 custom("streaming_batch_quality")
                 .description("Per-batch data quality checks on streaming output")
@@ -34,7 +44,9 @@ spec = (
     )
     .transform(
         script("transform.py")
-        .compute("https://example.com/infra-profile/ecommerce-demo#/services/nxd-databricks-streaming")
+        .compute(
+            "https://example.com/infra-profile/ecommerce-demo#/services/nxd-databricks-streaming"
+        )
         .config(
             {
                 "num_workers": 1,

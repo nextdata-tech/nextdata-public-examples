@@ -43,7 +43,9 @@ def _get_access_token(output: DatabricksWrite) -> str:
 
     if output.tenant_id and output.principal_id and output.principal_secret:
         logger.info("Generating OAuth token from service principal credentials")
-        return _get_sp_token(output.tenant_id, output.principal_id, output.principal_secret)
+        return _get_sp_token(
+            output.tenant_id, output.principal_id, output.principal_secret
+        )
 
     raise ValueError(
         "DatabricksWrite context has no usable auth credentials "
@@ -70,7 +72,9 @@ def transform(
         access_token=access_token,
     ) as conn:
         with conn.cursor() as cursor:
-            cursor.execute(f"CREATE OR REPLACE TABLE {output_table} AS SELECT * FROM {source_table}")
+            cursor.execute(
+                f"CREATE OR REPLACE TABLE {output_table} AS SELECT * FROM {source_table}"
+            )
 
     logger.info(f"Written {output_table} successfully")
 

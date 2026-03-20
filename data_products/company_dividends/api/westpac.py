@@ -32,5 +32,7 @@ def get_dividends() -> list[dict]:
         "https://www.westpac.com.au/about-westpac/investor-centre/dividend-information/dividend-payment-history/"
     )
     raw_dividends_history = extract_dividends_history(response.text)
-    dividends_history = [transform_dividends(dividends) for dividends in raw_dividends_history]
+    dividends_history = [
+        transform_dividends(dividends) for dividends in raw_dividends_history
+    ]
     return dividends_history

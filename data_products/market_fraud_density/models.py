@@ -34,10 +34,22 @@ fraud_density_model = (
     )
     .schema(
         {
-            "market_type": (string(), "Normalized merchant category (e.g. 'transportation', 'food')"),
-            "transaction_count": (int64(), "Total number of transactions recorded for this market"),
-            "fraud_event_count": (int64(), "Total number of confirmed fraudulent transactions"),
-            "fraud_rate_pct": (float64(), "Percentage of transactions that were fraudulent (0.0 – 100.0)"),
+            "market_type": (
+                string(),
+                "Normalized merchant category (e.g. 'transportation', 'food')",
+            ),
+            "transaction_count": (
+                int64(),
+                "Total number of transactions recorded for this market",
+            ),
+            "fraud_event_count": (
+                int64(),
+                "Total number of confirmed fraudulent transactions",
+            ),
+            "fraud_rate_pct": (
+                float64(),
+                "Percentage of transactions that were fraudulent (0.0 – 100.0)",
+            ),
         }
     )
     .link(

@@ -24,7 +24,9 @@ SOURCE_DOCUMENTS_SCHEMA = pa.schema(
 
 def get_logger():
     _logger = logging.getLogger("utils")
-    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    )
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     _logger.addHandler(console_handler)
@@ -41,7 +43,9 @@ def _get_adls_client(context: AzureDataLakeStorage) -> DataLakeServiceClient:
         context.client_id,
         context.client_secret,
     )
-    return DataLakeServiceClient(f"https://{context.account_name}.dfs.core.windows.net", credential=credentials)
+    return DataLakeServiceClient(
+        f"https://{context.account_name}.dfs.core.windows.net", credential=credentials
+    )
 
 
 def parquet_to_adls(
@@ -69,7 +73,9 @@ def parquet_to_adls(
 def read_from_adls(adls_context: AzureDataLakeStorage, model_name: str) -> pd.DataFrame:
     """Read data from Azure Data Lake Storage."""
     service_client = _get_adls_client(adls_context)
-    file_system_client = service_client.get_file_system_client(file_system=adls_context.container)
+    file_system_client = service_client.get_file_system_client(
+        file_system=adls_context.container
+    )
 
     # Try to get model path, handle different attribute names
     if hasattr(adls_context, "model_paths") and model_name in adls_context.model_paths:

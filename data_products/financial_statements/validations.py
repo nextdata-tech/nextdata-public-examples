@@ -31,7 +31,9 @@ def check_pii(
     pii_stats = {}
     for field in pii_fields:
         total_count = len(dataset)
-        pii_count = random.randint(0, total_count)  # Simulate PII count for demonstration
+        pii_count = random.randint(
+            0, total_count
+        )  # Simulate PII count for demonstration
         pii_pct = round(100.0 * pii_count / total_count, 2)
         pii_msg = f"{pii_pct}% contain PII data"
         pii_stats[field] = pii_msg
@@ -43,7 +45,9 @@ def check_pii(
     return VerifyResult(
         result=result_enum,
         context={
-            "details": [{"model": model, "fields_checked": pii_fields, "pii_stats": pii_stats}],
+            "details": [
+                {"model": model, "fields_checked": pii_fields, "pii_stats": pii_stats}
+            ],
         },
     )
 
@@ -64,7 +68,9 @@ def check_document_format(
     stats = {}
     for field in file_name_fields:
         non_pdf_extension_count = sum(
-            1 for filename in dataset[field] if isinstance(filename, str) and not filename.lower().endswith(".pdf")
+            1
+            for filename in dataset[field]
+            if isinstance(filename, str) and not filename.lower().endswith(".pdf")
         )
         total_count = len(dataset)
         pct = round(100.0 * non_pdf_extension_count / total_count, 2)
@@ -78,7 +84,9 @@ def check_document_format(
     return VerifyResult(
         result=result_enum,
         context={
-            "details": [{"model": model, "fields_checked": file_name_fields, "pdf_stats": stats}],
+            "details": [
+                {"model": model, "fields_checked": file_name_fields, "pdf_stats": stats}
+            ],
         },
     )
 

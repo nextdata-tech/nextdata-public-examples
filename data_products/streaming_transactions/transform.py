@@ -47,10 +47,16 @@ def check_batch_quality(df, batch_id: int) -> VerifyResult:
         count(when(col("message").isNull(), 1)).alias("null_messages"),
     ).first()
 
-    null_total = null_counts["null_timestamps"] + null_counts["null_values"] + null_counts["null_messages"]
+    null_total = (
+        null_counts["null_timestamps"]
+        + null_counts["null_values"]
+        + null_counts["null_messages"]
+    )
 
     if null_total > 0:
-        _logger.warning(f"Batch {batch_id}: found {null_total} null values across {row_count} rows")
+        _logger.warning(
+            f"Batch {batch_id}: found {null_total} null values across {row_count} rows"
+        )
         return VerifyResult(
             result=VerifyResultEnum.WARNING,
             context={
@@ -69,7 +75,9 @@ def check_batch_quality(df, batch_id: int) -> VerifyResult:
     )
 
 
-def _run_spark_streaming(databricks: Databricks | DatabricksWrite, s3_input: S3Input) -> None:
+def _run_spark_streaming(
+    databricks: Databricks | DatabricksWrite, s3_input: S3Input
+) -> None:
     """Run Spark Structured Streaming with NXD model verification."""
     from nxd.drivers.databricks import NxdDatabricksSession
     from pyspark.sql.functions import concat
@@ -97,14 +105,20 @@ def _run_spark_streaming(databricks: Databricks | DatabricksWrite, s3_input: S3I
     active_session = SparkSession.getActiveSession()
     _logger.info(f"SparkSession.getActiveSession(): {active_session is not None}")
 
-    transformed_df = input_stream_df.withColumn("message", concat(lit("Seen: "), input_stream_df.value.cast("string")))
+    transformed_df = input_stream_df.withColumn(
+        "message", concat(lit("Seen: "), input_stream_df.value.cast("string"))
+    )
 
     from pyspark.sql import functions as F
     from pyspark.sql.types import IntegerType
     from pyspark.sql.types import TimestampNTZType
 
-    transformed_df = transformed_df.withColumn("timestamp", F.col("timestamp").cast(TimestampNTZType()))
-    transformed_df = transformed_df.withColumn("value", F.col("value").cast(IntegerType()))
+    transformed_df = transformed_df.withColumn(
+        "timestamp", F.col("timestamp").cast(TimestampNTZType())
+    )
+    transformed_df = transformed_df.withColumn(
+        "value", F.col("value").cast(IntegerType())
+    )
 
     _logger.info(f"Transformed stream schema (table-aligned): {transformed_df.schema}")
 
@@ -112,7 +126,9 @@ def _run_spark_streaming(databricks: Databricks | DatabricksWrite, s3_input: S3I
     output_table = databricks.full_table_name("output_model")
     output_model = databricks.models.get("output_model")
 
-    checkpoint_path = f"/Volumes/{databricks.catalog}/{databricks.schema}/checkpoints/{table_name}"
+    checkpoint_path = (
+        f"/Volumes/{databricks.catalog}/{databricks.schema}/checkpoints/{table_name}"
+    )
 
     _logger.info(f"Output table: {output_table}")
     _logger.info(f"Checkpoint path: {checkpoint_path}")
@@ -132,7 +148,9 @@ def _run_spark_streaming(databricks: Databricks | DatabricksWrite, s3_input: S3I
     )
 
     _logger.info("Starting Spark Structured Streaming query...")
-    _logger.info("Per-batch validation (check_batch_quality) will run for each micro-batch")
+    _logger.info(
+        "Per-batch validation (check_batch_quality) will run for each micro-batch"
+    )
     query = write_stream.toTable(output_table)
 
     _logger.info(f"Streaming query {query.id} started")
@@ -147,7 +165,9 @@ def transform(output: DatabricksWrite, s3_source: S3Input) -> None:
     _logger.info(f"Context type: {type(output).__name__}")
     _logger.info(f"Databricks cluster_id: {output.cluster_id}")
     _logger.info(f"Databricks workspace_url: {getattr(output, 'workspace_url', None)}")
-    _logger.info(f"Auth method: {'Service Principal' if getattr(output, 'tenant_id', None) else 'PAT'}")
+    _logger.info(
+        f"Auth method: {'Service Principal' if getattr(output, 'tenant_id', None) else 'PAT'}"
+    )
     _logger.info(
         f"Has credentials: {bool(getattr(output, 'tenant_id', None) or getattr(output, 'private_access_token', None))}"
     )
