@@ -8,12 +8,12 @@ streaming pipelines, MCP servers, and data quality contracts.
 
 ## Data Products
 
-Each data product lives in its own directory under [`data_products/`](./data_products/) and contains a
+Each data product lives in its own directory under [`data_products/`](./data_products) and contains a
 specification (`spec.py`), a transform (`transform.py`), data models (`models.py`), and any supporting contracts or expectations.
 
 ## Feature Matrix
 
-This [data_products/feature_matrx_table.md]([data_products/feature_matrx_table.md]) table shows which infrastructure targets and capabilities each data product uses.
+This [data_products/feature_matrix_table.md](data_products/feature_matrix_table.md) table shows which infrastructure targets and capabilities each data product uses.
 
 ## Getting Started
 
