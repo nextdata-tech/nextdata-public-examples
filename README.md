@@ -15,7 +15,7 @@ specification (`spec.py`), a transform (`transform.py`), data models (`models.py
 
 The table below shows which infrastructure targets and capabilities each data product uses.
 
-[feature_matrix_table.md](data_products/feature_matrix_table.md ':include :type=markdown')
+[feature_matrix_table.md](https://github.com/nextdata-tech/nextdata-public-examples/raw/refs/heads/billg/initial/data_products/feature_matrix_table.md ':include :type=markdown')
 
 ## Getting Started
 
