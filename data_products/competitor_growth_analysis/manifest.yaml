@@ -1,0 +1,135 @@
+# yaml-language-server: $schema=../../../../../representations/runtime/json-schema/v1/manifest.json
+description: Structured and unstructured competitor analysis
+domain: FINANCE/COMPETITORS/FINANCIAL-PERFORMANCE
+executor:
+  config:
+    script: transform/__transform__.py
+    pod_cleanup_delay_secs: 3600
+    startup_timeout_secs: 600
+    resources:
+      requests:
+        memory: 4Gi
+        cpu: 2000m
+      limits:
+        memory: 8Gi
+        cpu: 4000m
+  driver: nxd:kubernetes/compute:1.0.0
+  sensor:
+    expression:
+      when: or(updated('market-announcements'), updated('income-statements'), updated('stock-history'), updated('financial-statements'), updated('company-dividends'))
+inputs:
+  sources:
+    market_announcements:
+      dataProduct: market-announcements
+      output: adls
+    income_statements:
+      dataProduct: income-statements
+      output: adls
+      # FIXME: anabling this expectations breaks MCP
+      # expects:
+      #   model:
+      #     - mine: income_statements
+      #       upstream: income_statements
+    stock_history:
+      dataProduct: stock-history
+      output: adls
+      # FIXME: anabling this expectations breaks MCP
+      # expects:
+      #   model:
+      #     - mine: history
+      #       upstream: history
+    financial_statements:
+      dataProduct: financial-statements
+      output: adls
+    company_dividends:
+      dataProduct: company-dividends
+      output: adls
+    aps_330_public_disclosures:
+      dataProduct: public-disclosures
+      output: adls
+metadata:
+  repository: https://github.com/nextdata-tech/nextdata-examples
+name: competitor-growth-analysis
+output:
+  models:
+    - url: documents
+      visibility: public
+    - url: growth
+      visibility: public
+    - url: dividend_sustainability
+      visibility: public
+  ports:
+    # TODO: move to pg-vector
+    # pinecone:
+    #   config:
+    #     index: finance-documents-pilot
+    #     namespace: au-competitor-analysis-documents
+    #   service: nxd-pinecone
+    adls:
+      approval:
+        service: servicenow-sp-approval
+      config:
+        enable_temporal_credentials: false
+        request_on_behalf_of: analytics-service-principal
+        skip_governance_flow: false
+
+        target-files:
+          - model: documents
+            target: documents/**/*.json
+          - model: growth
+            target: growth.parquet
+          - model: dividend_sustainability
+            target: dividend_sustainability.parquet
+      promises:
+        model:
+          - growth
+          - dividend_sustainability
+      service: adls
+    snowflake:
+      promises:
+        model:
+          - growth
+          - dividend_sustainability
+      service: nxd-snowflake
+policies:
+  - name: owner
+    principals:
+      - user: hello@nextdata.com
+      # - user: restricted@nextdata.com
+    resources:
+      - kind: owner
+  - name: data-product-access
+    principals:
+      - user: hello@nextdata.com
+    resources:
+      - kind: dataProduct
+  - name: steward
+    principals:
+      - user: hello@nextdata.com
+    resources:
+      - kind: dataProduct
+rpc-output:
+  functions:
+    get_bank_symbols:
+      description: Retrieve available bank symbols with growth and shareholder returns data for analysis
+      request-model: get_bank_symbols_request
+      response-model: get_bank_symbols_response
+    get_growth:
+      description: Retrieve financial growth and shareholder returns for a given bank for given symbols. Check available symbols with get_bank_symbols tool
+      request-model: get_growth_request
+      response-model: get_growth_response
+    # currently having issues with multiple functions - 2025-09-02
+    get_dividend_sustainability:
+      description: Retrieve Year-over-year dividend sustainability analysis banks Bank of America, Citigroup
+      request-model: get_dividend_sustainability_request
+      response-model: get_dividend_sustainability_response
+  ports:
+    mcp-api:
+      config:
+        enable_endpoints: true
+        mcp:
+          path: /mcp
+        scripts:
+          - __mcp__.py
+      service: mcp-api-service-k8s
+version: 1.0.0-dev

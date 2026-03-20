@@ -1,0 +1,17 @@
+nxd.core
+nxd.drivers[rpc]
+nxd.data_product[spec]
+pyarrow==21.0.0
+azure-storage-file-datalake==12.21.0
+azure-identity==1.24.0
+snowflake-connector-python==3.14.0
+
+torch @ https://download.pytorch.org/whl/cpu/torch-2.9.0%2Bcpu-cp311-cp311-manylinux_2_28_x86_64.whl # skip gpu
+torchvision  @ https://download.pytorch.org/whl/cpu/torchvision-0.24.0%2Bcpu-cp311-cp311-manylinux_2_28_x86_64.whl # skip gpu
+# torch @ https://download.pytorch.org/whl/cpu/torch-2.9.0-cp310-none-macosx_11_0_arm64.whl # local dev
+# torchvision @ https://download.pytorch.org/whl/cpu/torchvision-0.24.0-cp310-cp310-macosx_11_0_arm64.whl # local dev
+docling==2.69.0
+langchain==0.3.27
+langchain-docling==1.0.0
+langchain-pinecone==0.2.11
+sentence-transformers==5.1.0

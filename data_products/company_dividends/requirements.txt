@@ -1,0 +1,10 @@
+nxd.core
+nxd.data_product[spec]
+requests==2.32.4
+azure-storage-file-datalake==12.21.0
+azure-identity==1.24.0
+beautifulsoup4==4.13.4
+pyarrow==21.0.0
+duckdb==1.3.2
+adlfs==2024.12.0
+fsspec==2025.7.0

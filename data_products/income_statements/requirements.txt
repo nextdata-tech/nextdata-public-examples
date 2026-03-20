@@ -1,0 +1,6 @@
+nxd.core
+nxd.data_product[spec]
+yfinance==1.1.0
+pyarrow==21.0.0
+azure-storage-file-datalake==12.21.0
+azure-identity==1.24.0

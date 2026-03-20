@@ -1,0 +1,22 @@
+default_language_version:
+  python: python3.11
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.12.1
+    hooks:
+      # Run the linter.
+      - id: ruff-check
+        types_or: [ python ]
+        args: [ --fix ]
+      # Run the formatter.
+      - id: ruff-format
+        types_or: [ python ]
+  - repo: local
+    hooks:
+      - id: check-spec-imports
+        name: Check spec.py import limit
+        entry: .pre-commit-hooks/check_spec_imports.py
+        language: script
+        files: spec\.py$
+        pass_filenames: true

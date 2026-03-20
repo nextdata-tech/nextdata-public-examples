@@ -1,0 +1,8 @@
+nxd_core
+nxd_drivers
+nxd_data_product
+yfinance==0.2.65
+pyarrow==21.0.0
+azure-storage-file-datalake==12.21.0
+azure-identity==1.24.0
+pandas==2.3.1

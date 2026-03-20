@@ -1,0 +1,5 @@
+nxd.core
+nxd.data_product[spec]
+pyarrow==21.0.0
+azure-storage-file-datalake==12.21.0
+azure-identity==1.24.0

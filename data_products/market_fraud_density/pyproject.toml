@@ -1,0 +1,28 @@
+[project]
+name = "my-data-product"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "boto3>=1.42.47",
+    "kagglehub>=1.0.0",
+    "nxd-core>=0.39.29",
+    "nxd-data-product[triggers]>=0.39.29",
+    "nxd-drivers[rpc]>=0.39.29",
+    "pandas>=3.0.1",
+]
+[tool.uv.sources]
+nxd-core = { index = "nxd" }
+nxd-drivers = { index = "nxd" }
+nxd-data-product = { index = "nxd" }
+
+[[tool.uv.index]]
+name = "nxd"
+url = "http://registry.pocs.nextopia.dev/index/"
+explicit = true  # only use this index when explicitly pinned
+
+[tool.uv.workspace]
+members = [
+    "data-products",
+]

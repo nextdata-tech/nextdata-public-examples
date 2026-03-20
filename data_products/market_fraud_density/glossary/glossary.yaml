@@ -1,0 +1,63 @@
+terms:
+
+  fraud_rate_pct:
+    name: Fraud Rate (%)
+    priority: 1
+    definition: >
+      The percentage of transactions within a given merchant market category
+      that were confirmed as fraudulent. Calculated as
+      (fraud_event_count / transaction_count) × 100, rounded to two decimal
+      places. A higher value indicates a higher relative risk for that market.
+      Used by risk analysts to identify high-risk merchant segments and
+      prioritise fraud investigations.
+    synonyms:
+      - Fraud Percentage
+      - Fraud Rate Percentage
+      - Relative Fraud Risk
+    examples:
+      - "12.34"
+      - "0.87"
+      - "45.00"
+    tags:
+      cde: "true"
+      domain: "FINANCE/FRAUD-DETECTION"
+      pii: "false"
+
+  market_type:
+    name: Market Type
+    priority: 1
+    definition: >
+      A normalised merchant category label derived from the BankSim1 simulation
+      dataset. The raw Kaggle source uses an 'es_' prefix (e.g. 'es_travel');
+      this field strips that prefix and lowercases the result
+      (e.g. 'travel', 'food', 'transportation'). Each row in the
+      fraud_density_model represents exactly one unique market type.
+      Serves as the primary dimension for fraud density analysis.
+    synonyms:
+      - Merchant Category
+      - Market Category
+      - Merchant Segment
+    term_values:
+      - barsandrestaurants
+      - contents
+      - fashion
+      - food
+      - health
+      - home
+      - hotelservices
+      - hyper
+      - leisure
+      - otherservices
+      - sportsandtoys
+      - tech
+      - transportation
+      - travel
+      - wellnessandbeauty
+    examples:
+      - "travel"
+      - "food"
+      - "transportation"
+    tags:
+      cde: "true"
+      domain: "FINANCE/FRAUD-DETECTION"
+      pii: "false"

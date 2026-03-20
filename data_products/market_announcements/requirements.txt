@@ -1,0 +1,7 @@
+nxd.core
+nxd.data_product[spec]
+requests==2.32.4
+pyarrow==21.0.0
+azure-storage-file-datalake==12.21.0
+azure-identity==1.24.0
+pydantic==2.11.7

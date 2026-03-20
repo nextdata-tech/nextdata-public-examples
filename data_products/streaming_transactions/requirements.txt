@@ -1,0 +1,18 @@
+# NXD packages - explicitly declared (required by simplified packager.sh)
+# Note: Do NOT use [gx] or [spark] extras - they conflict with databricks-connect
+nxd.core
+nxd.drivers[rpc]
+nxd.data_product[notebook,verify-montecarlo,soda,triggers]
+
+# Databricks Connect for real Spark Structured Streaming
+# Use 15.x for Python 3.11 compatibility (17+ requires Python 3.12)
+# Requires: DBR 15.x cluster, cluster_id in infra-profile
+databricks-connect>=15.4.0,<16.0.0
+
+# Databricks SDK for batch SQL fallback (works with any SQL warehouse)
+databricks-sdk>=0.30.0
+
+# Common dependencies
+pandas>=2.2.0
+pyarrow>=17.0.0
+requests>=2.32.3

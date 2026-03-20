@@ -1,0 +1,4 @@
+nxd_data_product
+nxd_drivers
+nxd_core
+databricks-sql-connector

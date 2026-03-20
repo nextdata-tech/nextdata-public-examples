@@ -1,0 +1,20 @@
+# python generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# venv
+.venv
+uv.lock
+
+# IDE
+.idea/
+
+# custom
+logs/
+.DS_Store
+
+*.bak

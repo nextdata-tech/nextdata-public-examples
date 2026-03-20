@@ -1,0 +1,6 @@
+nxd.core
+nxd.data_product[spec]
+nxd.drivers[rpc]
+azure-storage-file-datalake==12.21.0
+azure-identity==1.24.0
+snowflake-connector-python

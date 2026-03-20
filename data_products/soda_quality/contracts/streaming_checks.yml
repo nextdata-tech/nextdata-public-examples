@@ -1,0 +1,21 @@
+checks for streaming_transactions:
+  - row_count > 0:
+      name: "Table is not empty"
+      fail: when < 1
+
+  - missing_count(timestamp) = 0:
+      name: "No null timestamps"
+
+  - missing_count(value) = 0:
+      name: "No null values"
+
+  - missing_count(message) = 0:
+      name: "No null messages"
+
+  - min(value) >= 0:
+      name: "Value is non-negative"
+
+  - invalid_count(message):
+      valid regex: "Seen: \\d+"
+      warn: when > 0
+      name: "Messages match expected format"

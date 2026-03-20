@@ -1,0 +1,503 @@
+# yaml-language-server: $schema=../../../../../representations/runtime/json-schema/v1/models.json
+api-version: data-product.nextdata.com/v1
+models:
+  - attributes:
+      # annoucement_types:
+      #   data-type:
+      #     list:
+      #       value-type:
+      #         data-type: string
+      #         name: item
+      #   description: List of announcement type labels or categories assigned by NASDAQ
+      #     (e.g., 'Annual Report', 'Trading Update').
+      # companies:
+      #   data-type:
+      #     list:
+      #       value-type:
+      #         data-type:
+      #           struct:
+      #             fields:
+      #               - data-type: string
+      #                 name: symbol_display
+      #         name: item
+      #   description: List of companies related to the announcement, with their NASDAQ
+      #     ticker symbols in display format.
+      # company_info:
+      #   data-type:
+      #     list:
+      #       value-type:
+      #         data-type:
+      #           struct:
+      #             fields:
+      #               - data-type: int64
+      #                 name: asx_security_type
+      #               - data-type: string
+      #                 name: display_name
+      #               - data-type: string
+      #                 name: industry
+      #               - data-type: string
+      #                 name: industry_group
+      #               - data-type: string
+      #                 name: isin
+      #               - data-type: string
+      #                 name: issue_type
+      #               - data-type: int64
+      #                 name: issue_type_code
+      #               - data-type: string
+      #                 name: issue_type_name
+      #               - data-type: string
+      #                 name: sector
+      #               - data-type: string
+      #                 name: sub_industry
+      #               - data-type: string
+      #                 name: symbol
+      #               - data-type: string
+      #                 name: xid
+      #               - data-type: int64
+      #                 name: xid_entity
+      #         name: item
+      #   description: Detailed metadata for companies linked to the announcement, including
+      #     identifiers, industry classification, security type, and NASDAQ ticker symbol.
+      date:
+        data-type:
+          timestamp:
+            timezone: null
+            unit: ns
+        description: Date and time the announcement was released to the NASDAQ, in nanosecond
+          precision.
+      document_key:
+        data-type: string
+        description: Unique identifier for the announcement document within the NASDAQ
+          or storage system.
+      file_size:
+        data-type: string
+        description: Size of the announcement document file, typically expressed in
+          bytes or a human-readable format.
+      full_path:
+        data-type: string
+        description: Full file path where the announcement document is stored or can
+          be retrieved.
+      headline:
+        data-type: string
+        description: Headline or title of the announcement, summarising its content.
+      is_price_sensitive:
+        data-type: bool
+        description: Indicates whether the announcement is classified as price-sensitive
+          under NASDAQ rules.
+      path:
+        data-type: string
+        description: Relative file path where the announcement document is stored
+          or can be retrieved.
+      symbol:
+        data-type: string
+        description: Primary NASDAQ ticker symbol of the company issuing the announcement.
+      # symbols_secondary:
+      #   data-type:
+      #     list:
+      #       value-type:
+      #         data-type: string
+      #         name: item
+      #   description: List of secondary NASDAQ ticker symbols associated with the announcement
+      #     (e.g., related securities).
+      url:
+        data-type: string
+        description: Full web address where the announcement document can be accessed
+          or downloaded.
+    description: Dataset containing company announcements released to the National Association of
+      Securities Dealers Automated Quotations (NASDAQ), including metadata, associated companies, and document
+      details.
+    name: announcements
+    sampling:
+      method: random
+  - attributes:
+      type:
+        data-type: string
+        description: Type of record processed
+      page_content:
+        data-type: string
+        description: Contents of the record processed
+      metadata:
+        data-type: string
+        description: Additional metadata for each record
+    description: Processed records, also stored as vectors within Pinecone
+    name: documents
+    sampling:
+      method: head
+  - attributes:
+      symbol:
+        data-type: string
+        description: Ticker symbol of the security or instrument (e.g., 'AAPL' for Apple Inc.).
+        relates-to:
+          - data-product:
+              attribute:
+                - symbol
+              name: income-statements-demo
+              output: income_statements
+            relationship-type: Reference
+          - data-product:
+              attribute:
+                - symbol
+              name: stock-history-demo
+              output: history
+            relationship-type: Reference
+      date:
+        data-type:
+          timestamp:
+            timezone: null
+            unit: ns
+        description: End of the reporting period or trading year, expressed in nanoseconds precision.
+        relates-to:
+          - data-product:
+              attribute:
+                - date
+              name: income-statements-demo
+              output: income_statements
+            relationship-type: Derived
+          - data-product:
+              attribute:
+                - date
+              name: stock-history-demo
+              output: history
+            relationship-type: Derived
+      close:
+        data-type: float64
+        description: Closing price of the security at the end of the reporting period.
+        relates-to:
+          - data-product:
+              attribute:
+                - close
+              name: stock-history-demo
+              output: history
+            relationship-type: Reference
+      annual_return:
+        data-type: float64
+        description: Year-over-year percentage change in the closing price of the security, representing annual total return (excluding dividends unless adjusted).
+        relates-to:
+          - data-product:
+              attribute:
+                - symbol
+                - close
+              name: stock-history-demo
+              output: history
+            relationship-type: Derived
+      net_income:
+        data-type: float64
+        description: Net income reported by the company for the fiscal year, in the company's reporting currency.
+        relates-to:
+          - data-product:
+              attribute:
+                - metric
+              name: income-statements-demo
+              output: income_statements
+            relationship-type: Derived
+      total_revenue:
+        data-type: float64
+        description: Total revenue reported by the company for the fiscal year, in the company's reporting currency.
+        relates-to:
+          - data-product:
+              attribute:
+                - metric
+              name: income-statements-demo
+              output: income_statements
+            relationship-type: Derived
+      revenue_growth:
+        data-type: float64
+        description: Year-over-year growth rate of total revenue, computed as the percentage change compared to the prior fiscal year.
+        relates-to:
+          - data-product:
+              attribute:
+                - symbol
+                - metric
+              name: income-statements-demo
+              output: income_statements
+            relationship-type: Derived
+      net_income_growth:
+        data-type: float64
+        description: Year-over-year growth rate of net income, computed as the percentage change compared to the prior fiscal year.
+        relates-to:
+          - data-product:
+              attribute:
+                - symbol
+                - metric
+              name: income-statements-demo
+              output: income_statements
+            relationship-type: Derived
+    description: Integrated model combining annual stock market performance (returns) with company profitability metrics (revenue and net income), enabling analysis of the relationship between financial growth and shareholder returns.
+    name: growth
+    sampling:
+      method: head
+  - attributes:
+      bank:
+        data-type: string
+        description: Bank identifier or ticker symbol (e.g. CBA, ANZ, WBC, NAB)
+        relates-to:
+          - data-product:
+              attribute:
+                - bank
+              name: company-dividends-demo
+              output: dividends
+            relationship-type: Reference
+          - data-product:
+              attribute:
+                - symbol
+              name: financial-statements-demo
+              output: cash_flows
+            relationship-type: Derived
+      year:
+        data-type: int32
+        description: Fiscal year for the dividend and cash flow data
+        relates-to:
+          - data-product:
+              attribute:
+                - payment_date
+              name: company-dividends-demo
+              output: dividends
+            relationship-type: Derived
+          - data-product:
+              attribute:
+                - date
+              name: financial-statements-demo
+              output: cash_flows
+            relationship-type: Derived
+      dividend_per_share:
+        data-type:
+          decimal128:
+            precision: 4
+            scale: 2
+        description: Total annual dividend per share paid during the year (sum of interim and final dividends)
+        relates-to:
+          - data-product:
+              attribute:
+                - dividend_per_share
+              name: company-dividends-demo
+              output: dividends
+            relationship-type: Derived
+      operating_cash_flow_thousands:
+        data-type: float64
+        description: Annual operating cash flow in millions of the company's reporting currency
+        relates-to:
+          - data-product:
+              attribute:
+                - value
+              name: financial-statements-demo
+              output: cash_flows
+            relationship-type: Derived
+      dividend_yield_trend:
+        data-type: float64
+        description: Year-over-year percentage change in dividend per share compared to previous year. Null for first year of data
+        relates-to:
+          - data-product:
+              attribute:
+                - dividend_per_share
+              name: company-dividends-demo
+              output: dividends
+            relationship-type: Derived
+      ocf_trend:
+        data-type: float64
+        description: Year-over-year percentage change in operating cash flow compared to previous year. Null for first year of data
+        relates-to:
+          - data-product:
+              attribute:
+                - value
+              name: financial-statements-demo
+              output: cash_flows
+            relationship-type: Derived
+      dividend_growth_vs_ocf_growth:
+        data-type: float64
+        description: Differential between dividend growth rate and OCF growth rate. Positive values indicate dividend growth exceeds OCF growth. Null for first year of data
+        relates-to:
+          - data-product:
+              attribute:
+                - dividend_per_share
+              name: company-dividends-demo
+              output: dividends
+            relationship-type: Derived
+          - data-product:
+              attribute:
+                - value
+              name: financial-statements-demo
+              output: cash_flows
+            relationship-type: Derived
+      sustainability_flag:
+        data-type: string
+        description: Categorical assessment of dividend sustainability based on growth differential - GROWING FASTER THAN OCF, MODERATE GROWTH, or CONSERVATIVE GROWTH
+        relates-to:
+          - data-product:
+              attribute:
+                - dividend_per_share
+              name: company-dividends-demo
+              output: dividends
+            relationship-type: Derived
+          - data-product:
+              attribute:
+                - value
+              name: financial-statements-demo
+              output: cash_flows
+            relationship-type: Derived
+    description: Year-over-year dividend sustainability analysis comparing dividend per share growth against operating cash flow growth trends for financial institutions
+    name: dividend_sustainability
+    sampling:
+      method: head
+  - attributes:
+      date:
+        data-type:
+          timestamp:
+            timezone: null
+            unit: ns
+        description: End date of the reporting period for the metric, expressed in
+          nanosecond precision.
+      metric:
+        data-type: string
+        description: Name of the income statement line item (e.g., 'Total Revenue',
+          'Net Income').
+      symbol:
+        data-type: string
+        description: Ticker symbol of the company or security the income statement
+          belongs to.
+      value:
+        data-type: float64
+        description: Numeric value of the metric in the company's reporting currency.
+    description: Income statement metrics for publicly listed companies, as reported
+      in Yahoo Finance's financial data.
+    name: income_statements
+    sampling:
+      method: head
+  - attributes:
+      close:
+        data-type: float64
+        description: Closing price of the security for the given date.
+      date:
+        data-type:
+          timestamp:
+            timezone: null
+            unit: ns
+        description: Date and time of the trading session, expressed in nanosecond
+          precision.
+      dividends:
+        data-type: float64
+        description: Cash dividend amount per share paid on the given date, if applicable.
+      high:
+        data-type: float64
+        description: Highest traded price of the security during the trading session.
+      low:
+        data-type: float64
+        description: Lowest traded price of the security during the trading session.
+      open:
+        data-type: float64
+        description: Opening price of the security for the given date.
+      stock_splits:
+        data-type: float64
+        description: Split ratio for any stock split that occurred on the given date
+          (e.g., 2.0 for a 2-for-1 split).
+      symbol:
+        data-type: string
+        description: Ticker symbol of the security or instrument (e.g., 'AAPL' for
+          Apple Inc.).
+      volume:
+        data-type: int64
+        description: Total number of shares or contracts traded during the session.
+    description: Historical price and trading volume data for a financial instrument
+      retrieved from the Yahoo Finance API.
+    name: history
+    sampling:
+      method: head
+  - attributes:
+      banks:
+        data-type:
+          list:
+            value-type:
+              data-type:
+                struct:
+                  fields:
+                    - data-type: string
+                      name: symbol
+                    - data-type:
+                        timestamp:
+                          timezone: null
+                          unit: ns
+                      name: date
+              name: item
+        description: Available bank symbols with growth and shareholder returns data
+    description: Response model for the MCP Tool get_bank_symbols
+    name: get_bank_symbols_response
+  - attributes:
+      year:
+        data-type: string
+        description: Year for which the data is requested (e.g., '2023'). If null, defaults
+          to the most recent year available.
+    description:
+    name: get_bank_symbols_request
+  - attributes:
+      symbol:
+        data-type: string
+        description: Symbol for which the data is requested (e.g., 'JPM').
+    description: Request model for the MCP Tool get_growth request
+    name: get_growth_request
+  - attributes:
+      growth:
+        data-type:
+          list:
+            value-type:
+              data-type:
+                struct:
+                  fields:
+                    - data-type: string
+                      name: symbol
+                    - data-type:
+                        timestamp:
+                          timezone: null
+                          unit: ns
+                      name: date
+                    - data-type: float64
+                      name: close
+                    - data-type: float64
+                      name: annual_return
+                    - data-type: float64
+                      name: net_income
+                    - data-type: float64
+                      name: total_revenue
+                    - data-type: float64
+                      name: revenue_growth
+                    - data-type: float64
+                      name: net_income_growth
+              name: item
+        description: Integrated model combining annual stock market performance (returns) with company profitability metrics (revenue and net income), enabling analysis of the relationship between financial growth and shareholder returns.
+    description: Response model for the MCP Tool get_growth
+    name: get_growth_response
+  - attributes:
+      bank:
+        data-type: string
+        description: Bank identifier or ticker symbol (e.g. Bank of America, Citigroup)
+    description: Retrieve Year-over-year dividend sustainability analysis banks Bank of America, Citigroup and others
+    name: get_dividend_sustainability_request
+  - attributes:
+      dividend_sustainability:
+        data-type:
+          list:
+            value-type:
+              data-type:
+                struct:
+                  fields:
+                    - data-type: string
+                      name: bank
+                    - data-type: int32
+                      name: year
+                    - data-type:
+                        decimal128:
+                          precision: 4
+                          scale: 2
+                      name: dividend_per_share
+                    - data-type: float64
+                      name: operating_cash_flow_thousands
+                    - data-type: float64
+                      name: dividend_yield_trend
+                    - data-type: float64
+                      name: ocf_trend
+                    - data-type: float64
+                      name: dividend_growth_vs_ocf_growth
+                    - data-type: string
+                      name: sustainability_flag
+              name: item
+        description: Integrated model combining annual stock market performance (returns) with company profitability metrics (revenue and net income), enabling analysis of the relationship between financial growth and shareholder returns.
+    description: Response model for the MCP Tool get_dividend_sustainability
+    name: get_dividend_sustainability_response
