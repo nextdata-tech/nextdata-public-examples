@@ -14,7 +14,6 @@ the relative URLs below and the span is not displayed -->
 | [market-fraud-density](market_fraud_density/spec.py)       |             |  ✅  |   ✅ (CSV)   |            |       |           |               |
 | [market-rates](market_rates/spec.py)                       |  ✅ (json)   |  ✅  |             |            |       |           |               |
 | [product-competitiveness](product_competitiveness/spec.py) |  ✅ (json)   |     |             |            |   ✅   |     ✅     |               |
-| [soda-quality](soda_quality/spec.py)                       |             |  ✅  |             |     ✅      |       |           |               |
 | [stock-history](stock_history/spec.py)                     | ✅ (parquet) |     |             |     ✅      |       |           |               |
 | [streaming-transactions](streaming_transactions/spec.py)   |             |     | ✅ (parquet) |     ✅      |       |           | ✅ (streaming) |
 | [suspicious-tx](suspicious_tx/spec.py)                     | ✅ (parquet) |     |             |            |       |           |               |
