@@ -3,8 +3,8 @@ from nxd_spec import *
 
 spec = (
     data_product(
-        name="streaming-transactions",
-        domain="Streaming",
+        name="customer-purchases",
+        domain="Commerce",
         version="0.1.1-dev",
         infra_profile="ecommerce-demo",
     )
