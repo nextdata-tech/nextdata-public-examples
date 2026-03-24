@@ -13,7 +13,7 @@ specification (`spec.py`), a transform (`transform.py`), data models (`models.py
 
 ## Feature Matrix
 
-This [data_products/feature_matrix_table.md](data_products/feature_matrix_table.md) table shows which infrastructure targets and capabilities each data product uses.
+The [data_products/feature_matrix_table.md](data_products/feature_matrix_table.md) table shows which infrastructure targets and capabilities each data product uses.
 
 ## Getting Started
 
