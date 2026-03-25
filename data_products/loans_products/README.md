@@ -1,4 +1,4 @@
-# Term Deposit Rates
+# Term deposit rates
 
 An aggregate data product that is composed of term deposit rates from all major banks in Australia
 

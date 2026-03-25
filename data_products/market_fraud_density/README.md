@@ -1,19 +1,19 @@
 # Merchant-Fraud-Insights
-### 1. User Requirements
+### 1. User requirements
 
 - **1:** The product must provide a consolidated view of fraud density across different merchant categories (Market Types).
 - **2:** Risk analysts must be able to identify which markets have the highest volume of fraud versus the highest percentage of fraud (relative risk).
 - **3:** The data must be cleaned of "ES" (Enterprise/Simulation) artifacts and represent normalized merchant categories.
 - 4: The product must simulate a streaming data environment by fetching and processing data from the Kaggle API in scheduled periodic batches.
 - 5. The system must expose a dedicated API endpoint that allows the data to be consumed directly by a Power BI dashboard and an AI-driven agentic application.
-### 2. Acceptance Criteria 
+### 2. Acceptance criteria
 
 - **1:** The output must contain exactly one row per unique merchant category.
 - **2:** The `fraud_percentage` must be calculated as `(total_fraud_events / total_transactions) * 100`.
 - **3:** Any category with zero transactions must not appear in the final output.
 - **4:** Data must pass a "Zero Null" expectation check for the `category` and `fraud` fields before being published.
 
-### 3. Data Product Definition (NextData OS Pattern)
+### 3. Data product definition (NextData OS pattern)
 
 #### A. Input (The Source)
 The input is the raw BankSim1 transaction stream/table.
@@ -39,20 +39,20 @@ Following the "Data Mesh" approach, this product provides two ports:
 
 ---
 
-### 4. Expectations & Promises 
+### 4. Expectations & promises
 
-#### Data Expectations (Internal Quality)
+#### Data expectations (internal quality)
 - **Uniqueness:** `market_type` must be the Primary Key (no duplicates).
 - **Range Check:** `fraud_rate_pct` must be between `0.0` and `100.0`.
 - **Completeness:** `transaction_count` must always be greater than 0.
 
-#### Data Promises 
+#### Data promises
 - **Freshness:** The data is updated every 24 hours (Batch) or based on the latest streaming ETL window.
 - **Governance:** This data product is compliant with financial auditing standards (no PII included).
 
 ---
 
-### 5. Implementation Logic (The Transformation)
+### 5. Implementation logic (the transformation)
 
 To implement the "Model" defined above, the logic will follow this structure:
 
