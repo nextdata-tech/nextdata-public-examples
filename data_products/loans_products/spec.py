@@ -15,9 +15,9 @@ spec = (
     .transform(
         code(transform)
         .compute(
-            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute"
+            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks"
         )
-        .config(k8s_executor_config)
+        .config(cluster_config)
     )
     .input(
         "product-competitiveness",
@@ -39,18 +39,23 @@ spec = (
         .promise(term_deposits)
         .promise(home_loan_rates)
         .promise(
-            custom("snowflake_atleast_one_record_contract")
-            .verify(code(snowflake_atleast_one_record.verify))
-            .service(service_name="nxd-snowflake", driver="nxd:snowflake:1.0.0")
+            custom("databricks_atleast_one_record_contract")
+            .verify(
+                code(databricks_atleast_one_record.verify)
+                .compute(
+                    "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-contract"
+                )
+                .config(cluster_config)
+            )
             .model(term_deposits)
             .model(home_loan_rates)
         )
         .port(
-            "snowflake",
+            "nxd-databricks-storage",
             storage(
-                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake"
+                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-storage"
             ).config(
-                snowflake_config("CUSTOMER_RATES")
+                databricks_config()
                 .target_table("TERM_DEPOSITS", term_deposits)
                 .target_table("HOME_LOAN_RATES", home_loan_rates)
             ),
