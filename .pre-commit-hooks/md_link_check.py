@@ -472,7 +472,7 @@ def _validate_links(
 
 def _self_test() -> int:
     with tempfile.TemporaryDirectory() as tmpdir:
-        root = Path(tmpdir) / "components" / "docs"
+        root = Path(tmpdir) / "data_products"
         root.mkdir(parents=True, exist_ok=True)
         a = root / "a.md"
         b = root / "b.md"
