@@ -1,17 +1,17 @@
 
-# Market Rates
+# Market rates
 
 
-## Example Data Product
+## Example data product
 
-### Term Deposits
+### Term deposits
 - URL: https://www.westpac.com.au/personal-banking/bank-accounts/term-deposit/
 - Rate minimum: $5,000
 - Rate maximum: $2,000,000
 - Interest varies based on whether it’s paid out monthly or at maturity. Interest paid monthly is lower than at maturity
 - The online calculator is feed using a JSON API backend which can be used to fetch current rates:
-    - [Standard Rates](https://www.westpac.com.au/bin/getJsonRates.wbc.td.json): [rates-td.json](rates-td.json)
-    - [Hot Rates](https://www.westpac.com.au/bin/getJsonRates.wbc.tdhr.json): [rates-tdhr.json](rates-tdhr.json)
+    - [Standard Rates](https://www.westpac.com.au/bin/getJsonRates.wbc.td.json)
+    - [Hot Rates](https://www.westpac.com.au/bin/getJsonRates.wbc.tdhr.json)
 - Entries look like this:
 
 
@@ -41,7 +41,7 @@
 
 ```
 
-### Home Loans
+### Home loans
 - https://www.westpac.com.au/personal-banking/home-loans/calculator/mortgage-repayment/
 - Vary based on:
     - Buy/Refiance
@@ -126,7 +126,7 @@
 
 ## ANZ
 
-### Term Deposit
+### Term deposit
 
 - URL: https://www.anz.com.au/personal/bank-accounts/term-deposits
 - At first glance, seems to be the simplest. They have one type of term deposit "ANZ Advance Notice Term Deposit"
@@ -135,7 +135,7 @@
 - Offer interest at maturity, monthly, half-yearly or annual
 - $5000-$2,000,000
 
-### Home Loan
+### Home loan
 
 - URL: https://www.anz.com.au/personal/home-loans/interest-rates
 - Rates available at: https://www.anz.com/productdata/productdata.asp?country=AU&section=PRL&output=JSON&callback=asyncCallbackFunction&_=1755052624853
@@ -145,20 +145,20 @@
 
 ## Macquarie
 
-### Term Deposit
+### Term deposit
 - URL: https://www.macquarie.com.au/everyday-banking/term-deposits.html
 - Data is available in a *structured* shape at a URL: https://www.macquarie.com.au/everyday-banking/term-deposits.csvUpload.html
 - Interest can be out at maturity, monthly, quarterly and annually (where applicable)
 
-### Home Loan
+### Home loan
 
 - URL: https://www.macquarie.com.au/home-loans/home-loan-rates.html
 - Available as JSON: https://www.macquarie.com.au/home-loans/home-loan-rates.csvUpload.html
 
 
-## Semantic Models
+## Semantic models
 
-### Home Loans
+### Home loans
 
 - Westpac has 3 essential loan products:
     - Floating home loan. (Flexi First Option Home Loan)

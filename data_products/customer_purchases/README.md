@@ -4,7 +4,7 @@ A data product that demonstrates continuous data streaming to Unity Catalog Delt
 
 ## Modes
 
-### 1. Databricks Connect Mode (Real Streaming)
+### 1. Databricks connect mode (real streaming)
 
 Uses Databricks Connect for real Spark Structured Streaming:
 
@@ -15,7 +15,7 @@ Uses Databricks Connect for real Spark Structured Streaming:
   - `cluster_id` configured in infra profile
   - `databricks-connect>=15.4.0,<16.0.0`
 
-### 2. SDK Mode (Batch Simulation)
+### 2. SDK mode (batch simulation)
 
 Uses Databricks SDK with SQL Statement Execution API:
 
@@ -27,7 +27,7 @@ Uses Databricks SDK with SQL Statement Execution API:
 
 The transform automatically selects the mode based on available configuration.
 
-## Dependency Configuration
+## Dependency configuration
 
 This example uses the simplified packager model:
 
@@ -49,7 +49,7 @@ pandas>=2.2.0
 
 **Note**: Do NOT use `nxd.data_product[gx]` or `nxd.drivers[spark]` extras - they conflict with `databricks-connect` due to pandas version requirements.
 
-## How It Works
+## How it works
 
 1. NXD deploys the data product with kubernetes/compute driver
 2. Kernel pod builds venv with all dependencies from requirements.txt
@@ -61,12 +61,12 @@ pandas>=2.2.0
 
 ### Prerequisites
 
-#### 1. Databricks Workspace Setup
+#### 1. Databricks workspace setup
 
 - A Databricks workspace with Unity Catalog enabled
 - An infra profile with `nxd:databricks/storage:1.0.0` driver configured
 
-#### 2. For Databricks Connect Mode (Real Streaming)
+#### 2. For Databricks connect mode (real streaming)
 
 **Create an All-Purpose Cluster:**
 
@@ -128,7 +128,7 @@ nxd delete infra-profile governance-infra-profile
 nxd create infra-profile --filename path/to/governance-infra-profile.yaml
 ```
 
-#### 3. For SDK Mode (Batch Simulation)
+#### 3. For SDK mode (batch simulation)
 
 - A SQL warehouse available (no cluster needed)
 - SQL warehouse ID configured in infra profile
@@ -164,9 +164,9 @@ The data product reads configuration from the NXD Databricks context:
 | `schema` | Unity Catalog schema name |
 | `cluster_id` | Cluster ID for Databricks Connect mode (optional) |
 
-## Sample Output
+## Sample output
 
-### Databricks Connect Mode
+### Databricks connect mode
 ```
 [Streaming] Using Databricks Connect mode (real Spark streaming)
 [Streaming] Connecting to cluster: 0810-212729-ltku0bm6
@@ -174,7 +174,7 @@ The data product reads configuration from the NXD Databricks context:
 [Streaming] Starting rate stream to table: nxd_test.streaming_demo.STREAMING_OUTPUT
 ```
 
-### SDK Mode
+### SDK mode
 ```
 [Streaming] Using Databricks SDK mode (batch SQL simulation)
 [Streaming] Using SQL warehouse: Starter Warehouse (abc123)

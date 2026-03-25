@@ -20,3 +20,20 @@ repos:
         language: script
         files: spec\.py$
         pass_filenames: true
+      - id: docs-sentence-case
+        name: docs sentence case headings
+        files: ^data_products/.*\.md$
+        language: python
+        entry: python .pre-commit-hooks/md_sentence_case.py
+      - id: docs-link-check-internal
+        name: docs link check internal md links only
+        files: ^data_products/.*\.md$
+        language: python
+        entry: python .pre-commit-hooks/md_link_check.py
+        pass_filenames: false
+      - id: docs-link-check-external
+        name: docs link check external links
+        files: ^data_products/.*\.md$
+        language: python
+        entry: python .pre-commit-hooks/md_link_check.py
+        args: [--check-external-links]

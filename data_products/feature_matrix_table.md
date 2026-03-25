@@ -6,6 +6,7 @@ the relative URLs below and the span is not displayed -->
 |------------------------------------------------------------|:-----------:|:---:|:-----------:|:----------:|:-----:|:---------:|:-------------:|
 | [company-dividends](company_dividends/spec.py)             |  ✅ (json)   |  ✅  |             |            |       |           |               |
 | [credit-card-tx](credit_card_tx/spec.py)                   | ✅ (parquet) |     |             |            |       |           |               |
+| [customer-purchases](customer_purchases/spec.py)           |             |     | ✅ (parquet) |     ✅      |       |           | ✅ (streaming) |
 | [example-mcp-server](example_mcp/spec.py)                  |             |     |             |            |   ✅   |     ✅     |               |
 | [financial_statements](financial_statements/spec.py)       | ✅ (parquet) |  ✅  |             |            |   ✅   |           |               |
 | [income-statements](income_statements/spec.py)             | ✅ (parquet) |  ✅  |             |            |       |           |               |
@@ -15,6 +16,5 @@ the relative URLs below and the span is not displayed -->
 | [market-rates](market_rates/spec.py)                       |  ✅ (json)   |  ✅  |             |            |       |           |               |
 | [product-competitiveness](product_competitiveness/spec.py) |  ✅ (json)   |     |             |            |   ✅   |     ✅     |               |
 | [stock-history](stock_history/spec.py)                     | ✅ (parquet) |     |             |     ✅      |       |           |               |
-| [streaming-transactions](streaming_transactions/spec.py)   |             |     | ✅ (parquet) |     ✅      |       |           | ✅ (streaming) |
 | [suspicious-tx](suspicious_tx/spec.py)                     | ✅ (parquet) |     |             |            |       |           |               |
 | [taxi-trip-metrics](taxi-trip-metrics/spec.py)             |             |     |             |     ✅      |       |           |   ✅ (batch)   |
