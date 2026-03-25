@@ -1,4 +1,3 @@
---extra-index-url https://registry.demo.trynxd.com/index/
 nxd.core
 nxd.data_product[spec]
 snowflake-connector-python
