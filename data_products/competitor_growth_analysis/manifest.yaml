@@ -10,7 +10,8 @@ executor:
     spark_version: 17.3.x-scala2.13
     store_path: /Workspace/nxd
     share_cluster: true
-  driver: nxd:databricks:1.0.0
+  service: nxd-databricks
+  driver: nxd:databricks/compute:1.0.0
   sensor:
     expression:
       when: or(updated('market-announcements'), updated('income-statements'), updated('stock-history'), updated('financial-statements'), updated('company-dividends'))
