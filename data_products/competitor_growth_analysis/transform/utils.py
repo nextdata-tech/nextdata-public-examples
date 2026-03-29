@@ -109,9 +109,21 @@ def pandas_to_databricks(
     context: DatabricksWrite,
     dataframe: pd.DataFrame,
     model_name: str,
+    schema: dict[str, str] | None = None,
 ) -> None:
 
     spark_df = spark.createDataFrame(dataframe)
+    existing = dict(spark_df.dtypes)
+
+    if schema:
+        for col, spark_type in schema.items():
+            if col in existing:
+                spark_df = spark_df.withColumn(col, spark_df[col].cast(spark_type))
+    else:
+        for col, dtype in spark_df.dtypes:
+            if dtype.startswith("timestamp"):
+                spark_df = spark_df.withColumn(col, spark_df[col].cast("timestamp_ntz"))
+
     spark_df.write.format("delta").mode("overwrite").saveAsTable(
         context.full_table_name(model_name)
     )

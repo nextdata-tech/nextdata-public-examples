@@ -243,7 +243,16 @@ def _adls_databricks_growth_transformation(
     growth_pandas = growth.copy(deep=True)
     # force datetime
     growth_pandas["date"] = pd.to_datetime(growth_pandas["date"], utc=True)
-    pandas_to_databricks(spark, nxd_databricks_storage, growth_pandas, "growth")
+    pandas_to_databricks(spark, nxd_databricks_storage, growth_pandas, "growth", {
+        "symbol": "string",
+        "date": "timestamp_ntz",
+        "close": "double",
+        "annual_return": "double",
+        "net_income": "double",
+        "total_revenue": "double",
+        "revenue_growth": "double",
+        "net_income_growth": "double",
+    })
 
     # write to adls
     growth = pa.Table.from_pandas(growth, preserve_index=False)
@@ -338,12 +347,16 @@ def _adls_databricks_dividend_sustainability_transformation(
 
     # write to databricks
     sustainability_pandas = sustainability.copy(deep=True)
-    pandas_to_databricks(
-        spark,
-        nxd_databricks_storage,
-        sustainability_pandas,
-        "dividend_sustainability",
-    )
+    pandas_to_databricks(spark, nxd_databricks_storage, sustainability_pandas, "dividend_sustainability", {
+        "bank": "string",
+        "year": "int",
+        "dividend_per_share": "decimal(4,2)",
+        "operating_cash_flow_thousands": "double",
+        "dividend_yield_trend": "double",
+        "ocf_trend": "double",
+        "dividend_growth_vs_ocf_growth": "double",
+        "sustainability_flag": "string",
+    })
 
     # write to adls
     sustainability = pa.Table.from_pandas(sustainability, preserve_index=False)
