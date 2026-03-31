@@ -16,13 +16,14 @@ def verify(nxd_databricks_storage: DatabricksRead) -> VerifyResult:
     ) as conn:
         with conn.cursor() as cursor:
             for model_name, table_name in nxd_databricks_storage.model_tables.items():
-                cursor.execute(f"SELECT COUNT(*) as cnt FROM {table_name}")
+                fqdn_table_name = nxd_databricks_storage.full_table_name(model_name)
+                cursor.execute(f"SELECT COUNT(*) as cnt FROM {fqdn_table_name}")
                 data = cursor.fetchone()
                 if data:
                     results.append(
                         {
                             "model_name": model_name,
-                            "table_name": table_name,
+                            "table_name": fqdn_table_name,
                             "results": json.dumps(data),
                         }
                     )
@@ -33,8 +34,6 @@ def verify(nxd_databricks_storage: DatabricksRead) -> VerifyResult:
         return VerifyResult(
             VerifyResultEnum.FAILED,
             {
-                "model_name": model_name,
-                "table_name": table_name,
                 "results": json.dumps(results),
             },
         )
@@ -42,8 +41,6 @@ def verify(nxd_databricks_storage: DatabricksRead) -> VerifyResult:
     return VerifyResult(
         VerifyResultEnum.PASS,
         {
-            "model_name": model_name,
-            "table_name": table_name,
             "results": json.dumps(results),
         },
     )
