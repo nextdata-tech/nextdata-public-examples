@@ -11,7 +11,7 @@ the relative URLs below and the span is not displayed -->
 | [example-mcp-server](example_mcp/spec.py)                  |             |     |             |            |   ✅   |     ✅     |               |
 | [financial_statements](financial_statements/spec.py)       | ✅ (parquet) |  ✅  |             |            |   ✅   |           |               |
 | [income-statements](income_statements/spec.py)             | ✅ (parquet) |  ✅  |             |            |       |           |               |
-| [loans-products](loans_products/spec.py)                   |             |     |             |            |       |     ✅     |               |
+| [loans-products](loans_products/spec.py)                   |             |     |             |     ✅      |       |     ✅     |   ✅ (batch)   |
 | [market-announcements](market_announcements/spec.py)       |  ✅ (json)   |  ✅  |             |            |       |           |               |
 | [market-fraud-density](market_fraud_density/spec.py)       |             |  ✅  |   ✅ (CSV)   |            |       |           |               |
 | [market-rates](market_rates/spec.py)                       |  ✅ (json)   |  ✅  |             |            |       |           |               |
@@ -55,8 +55,9 @@ These examples cover different data formats such as JSON and Parquet, and show h
 
 ## Databricks
 
-s [competitor_growth_analysis](competitor_growth_analysis/manifest.yaml): A batch data product executed on Databricks that writes growth and dividend sustainability outputs to Databricks tables.
+* [competitor_growth_analysis](competitor_growth_analysis/manifest.yaml): A batch data product executed on Databricks that writes growth and dividend sustainability outputs to Databricks tables.
 * [customer_purchases](customer_purchases/spec.py): A data product that reads S3 Parquet data using Spark Streaming on Databricks and writes output to a Databricks table.
+* [loans-products](loans_products/spec.py): A data product that reads product competitiveness data from Snowflake and writes standardized loan datasets to Databricks Unity Catalog tables.
 * [stock-history](stock_history/spec.py): A data product that reads stock history data via the Yahoo Finance API and writes it to ADLS in Parquet format. The transform runs as python logic on Databricks.
 * [taxi-trip-metrics](taxi-trip-metrics/spec.py): A data product that generates mock taxi trip data using PySpark on Databricks and writes it to a Databricks table.
 
@@ -70,11 +71,12 @@ s [competitor_growth_analysis](competitor_growth_analysis/manifest.yaml): A batc
 ## Snowflake
 
 * [example-mcp-server](example_mcp/spec.py): A data product that demonstrates how to use the MCP server to expose data product output data. It generates mock data in Snowflake and exposes it via an MCP server.
-* [loans-products](loans_products/spec.py): A data product that reads the output of the [product-competitiveness](product_competitiveness/spec.py) data product from Snowflake and writes it to Snowflake.
+* [loans-products](loans_products/spec.py): A data product that reads the output of the [product-competitiveness](product_competitiveness/spec.py) data product from Snowflake and loads curated datasets into Databricks Unity Catalog.
 * [product-competitiveness](product_competitiveness/spec.py): A data product that reads product competitiveness data as JSON from ADLS, transforms if via SAL and writes it to Snowflake. The output data is exposed via an MCP server.
 
 ## Spark
 
 * [competitor_growth_analysis](competitor_growth_analysis/manifest.yaml): A data product that uses Spark batch transformations on Databricks to compute growth and dividend sustainability models.
 * [customer_purchases](customer_purchases/spec.py): A data product that reads S3 Parquet data using Spark Streaming on Databricks and writes output to a Databricks table.
+* [loans-products](loans_products/spec.py): A data product that uses Spark batch transformations to cast and write loan product models to Delta/Unity Catalog tables.
 * [taxi-trip-metrics](taxi-trip-metrics/spec.py): A data product that generates mock taxi trip data using PySpark on Databricks and writes it to a Databricks table.
