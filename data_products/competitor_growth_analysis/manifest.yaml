@@ -4,16 +4,14 @@ domain: FINANCE/COMPETITORS/FINANCIAL-PERFORMANCE
 executor:
   config:
     script: transform/__transform__.py
-    pod_cleanup_delay_secs: 3600
-    startup_timeout_secs: 600
-    resources:
-      requests:
-        memory: 4Gi
-        cpu: 2000m
-      limits:
-        memory: 8Gi
-        cpu: 4000m
-  driver: nxd:kubernetes/compute:1.0.0
+    autoscale:
+      min_workers: 1
+      max_workers: 1
+    spark_version: 17.3.x-scala2.13
+    store_path: /Workspace/nxd
+    share_cluster: true
+  service: nxd-databricks
+  driver: nxd:databricks/compute:1.0.0
   sensor:
     expression:
       when: or(updated('market-announcements'), updated('income-statements'), updated('stock-history'), updated('financial-statements'), updated('company-dividends'))
@@ -85,12 +83,12 @@ output:
           - growth
           - dividend_sustainability
       service: adls
-    snowflake:
+    nxd-databricks-storage:
       promises:
         model:
           - growth
           - dividend_sustainability
-      service: nxd-snowflake
+      service: nxd-databricks-storage
 policies:
   - name: owner
     principals:

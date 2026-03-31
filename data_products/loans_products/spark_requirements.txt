@@ -1,4 +1,5 @@
 nxd.core
 nxd.drivers[rpc]
 nxd.data_product[spec]
-databricks-sql-connector
+pyarrow==21.0.0
+snowflake-connector-python

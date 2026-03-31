@@ -17,16 +17,17 @@ from langchain_docling.loader import DoclingLoader
 from langchain_pinecone import PineconeEmbeddings
 from langchain_pinecone import PineconeVectorStore
 from nxd.data_product.context import AzureDataLakeStorage
+from nxd.data_product.context import DatabricksWrite
 from nxd.data_product.context import PineconeOutput
-from nxd.data_product.context import Snowflake
 from pinecone.core.openapi.inference.model.embeddings_list import EmbeddingsList
+from pyspark.sql import SparkSession
 from tenacity import retry
 from tenacity import stop_after_attempt
 from tenacity import wait_fixed
 from utils import adls_to_bytesio
 from utils import adls_to_parquet
 from utils import documents_to_json_to_adls
-from utils import pandas_to_snowflake
+from utils import pandas_to_databricks
 from utils import parquet_to_adls
 
 _logger = logging.getLogger("transform.main")
@@ -191,11 +192,12 @@ def _pinecone_documents_transformation(
         _logger.info(f"Documents from: {path} written to Pinecone")
 
 
-def _adls_snowflake_growth_transformation(
+def _adls_databricks_growth_transformation(
+    spark: SparkSession,
     income_statements: AzureDataLakeStorage,
     stock_history: AzureDataLakeStorage,
     adls: AzureDataLakeStorage,
-    snowflake: Snowflake,
+    nxd_databricks_storage: DatabricksWrite,
 ) -> None:
     statements = adls_to_parquet(
         context=income_statements,
@@ -237,22 +239,32 @@ def _adls_snowflake_growth_transformation(
     # replace inf and -inf with nan
     growth.replace([np.inf, -np.inf], np.nan, inplace=True)
 
-    # write to snowflake
+    # write to databricks
     growth_pandas = growth.copy(deep=True)
     # force datetime
     growth_pandas["date"] = pd.to_datetime(growth_pandas["date"], utc=True)
-    pandas_to_snowflake(snowflake, growth_pandas, snowflake.model_tables["growth"])
+    pandas_to_databricks(spark, nxd_databricks_storage, growth_pandas, "growth", {
+        "symbol": "string",
+        "date": "timestamp_ntz",
+        "close": "double",
+        "annual_return": "double",
+        "net_income": "double",
+        "total_revenue": "double",
+        "revenue_growth": "double",
+        "net_income_growth": "double",
+    })
 
     # write to adls
     growth = pa.Table.from_pandas(growth, preserve_index=False)
     parquet_to_adls(adls, growth, adls.model_paths["growth"].path)
 
 
-def _adls_snowflake_dividend_sustainability_transformation(
+def _adls_databricks_dividend_sustainability_transformation(
+    spark: SparkSession,
     financial_statements: AzureDataLakeStorage,
     company_dividends: AzureDataLakeStorage,
     adls: AzureDataLakeStorage,
-    snowflake: Snowflake,
+    nxd_databricks_storage: DatabricksWrite,
 ) -> None:
     cash_flows = adls_to_parquet(
         context=financial_statements,
@@ -333,13 +345,18 @@ def _adls_snowflake_dividend_sustainability_transformation(
     # replace inf and -inf with nan
     sustainability.replace([np.inf, -np.inf], np.nan, inplace=True)
 
-    # write to snowflake
+    # write to databricks
     sustainability_pandas = sustainability.copy(deep=True)
-    pandas_to_snowflake(
-        snowflake,
-        sustainability_pandas,
-        snowflake.model_tables["dividend_sustainability"],
-    )
+    pandas_to_databricks(spark, nxd_databricks_storage, sustainability_pandas, "dividend_sustainability", {
+        "bank": "string",
+        "year": "int",
+        "dividend_per_share": "decimal(4,2)",
+        "operating_cash_flow_thousands": "double",
+        "dividend_yield_trend": "double",
+        "ocf_trend": "double",
+        "dividend_growth_vs_ocf_growth": "double",
+        "sustainability_flag": "string",
+    })
 
     # write to adls
     sustainability = pa.Table.from_pandas(sustainability, preserve_index=False)
@@ -349,6 +366,7 @@ def _adls_snowflake_dividend_sustainability_transformation(
 
 
 def transform(
+    spark: SparkSession,
     market_announcements: AzureDataLakeStorage,
     income_statements: AzureDataLakeStorage,
     stock_history: AzureDataLakeStorage,
@@ -357,25 +375,26 @@ def transform(
     aps_330_public_disclosures: AzureDataLakeStorage,
     # pinecone: PineconeOutput,
     adls: AzureDataLakeStorage,
-    snowflake: Snowflake,
+    nxd_databricks_storage: DatabricksWrite,
 ) -> None:
     _logger.info("Starting au-competitor-analysis transformation...")
-    _logger.info(f"Snowflake context details: {snowflake}")
 
     # transform
 
-    _adls_snowflake_growth_transformation(
+    _adls_databricks_growth_transformation(
+        spark,
         income_statements,
         stock_history,
         adls,
-        snowflake,
+        nxd_databricks_storage,
     )
 
-    _adls_snowflake_dividend_sustainability_transformation(
+    _adls_databricks_dividend_sustainability_transformation(
+        spark,
         financial_statements,
         company_dividends,
         adls,
-        snowflake,
+        nxd_databricks_storage,
     )
 
     # _pinecone_documents_transformation(

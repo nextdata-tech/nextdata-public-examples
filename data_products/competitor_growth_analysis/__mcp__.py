@@ -1,9 +1,9 @@
-from nxd.data_product.context import Snowflake
+from databricks import sql
+from nxd.data_product.context import DatabricksRead
 from nxd.drivers.rpc import Request
 from nxd.drivers.rpc import Response
 from nxd.drivers.rpc import function
 from nxd.drivers.rpc import mcp
-from snowflake.connector import connect
 
 
 def configure_logger():
@@ -29,30 +29,25 @@ logger = configure_logger()
     description="Retrieve available bank symbols for growth analysis",
 )
 def get_bank_symbols(
-    snowflake: Snowflake,
+    nxd_databricks_storage: DatabricksRead,
     request: Request,
 ) -> Response:
     logger.info(f"Received request: {request}")
-    logger.info(f"Using Snowflake context: {snowflake}")
     year = request.get("year", None)
 
-    conn = connect(
-        user=snowflake.user,
-        password=snowflake.password,
-        account=snowflake.account,
-        warehouse=snowflake.warehouse,
-        database=snowflake.database,
-        schema=snowflake.schema,
-    )
-    cursor = conn.cursor()
-
-    query = f"SELECT DISTINCT SYMBOL, DATE FROM {snowflake.model_tables['growth']}"
+    query = f"SELECT DISTINCT SYMBOL, DATE FROM {nxd_databricks_storage.full_table_name('growth')}"
     if year is not None:
         query += f" WHERE DATE BETWEEN '{year}-01-01' AND '{year}-12-31'"
-    cursor.execute(query)
 
-    columns = [col[0].lower() for col in cursor.description]
-    results = [dict(zip(columns, row)) for row in cursor.fetchall()]
+    with sql.connect(
+        server_hostname=nxd_databricks_storage.host,
+        http_path=nxd_databricks_storage.http_path,
+        access_token=nxd_databricks_storage.token,
+    ) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            columns = [col[0].lower() for col in cursor.description]
+            results = [dict(zip(columns, row)) for row in cursor.fetchall()]
     return Response({"banks": results})
 
 
@@ -62,30 +57,25 @@ def get_bank_symbols(
     description="Retrieve financial growth and shareholder returns for a given bank for given symbols. Check available symbols with get_bank_symbols tool",
 )
 def get_growth(
-    snowflake: Snowflake,
+    nxd_databricks_storage: DatabricksRead,
     request: Request,
 ) -> Response:
     logger.info(f"Received request: {request}")
-    logger.info(f"Using Snowflake context: {snowflake}")
     symbol = request.get("symbol", None)
     if symbol is None:
         return Response({"growth": []})
 
-    conn = connect(
-        user=snowflake.user,
-        password=snowflake.password,
-        account=snowflake.account,
-        warehouse=snowflake.warehouse,
-        database=snowflake.database,
-        schema=snowflake.schema,
-    )
-    cursor = conn.cursor()
+    query = f"SELECT SYMBOL, DATE, CLOSE, ANNUAL_RETURN, NET_INCOME, TOTAL_REVENUE, REVENUE_GROWTH, NET_INCOME_GROWTH FROM {nxd_databricks_storage.full_table_name('growth')} WHERE SYMBOL ILIKE '%{symbol}%' ORDER BY DATE DESC LIMIT 1000"
 
-    query = f"SELECT SYMBOL, DATE, CLOSE, ANNUAL_RETURN, NET_INCOME, TOTAL_REVENUE, REVENUE_GROWTH, NET_INCOME_GROWTH FROM {snowflake.model_tables['growth']} WHERE SYMBOL ILIKE '%{symbol}%' ORDER BY DATE DESC LIMIT 1000"
-    cursor.execute(query)
-
-    columns = [col[0].lower() for col in cursor.description]
-    results = [dict(zip(columns, row)) for row in cursor.fetchall()]
+    with sql.connect(
+        server_hostname=nxd_databricks_storage.host,
+        http_path=nxd_databricks_storage.http_path,
+        access_token=nxd_databricks_storage.token,
+    ) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            columns = [col[0].lower() for col in cursor.description]
+            results = [dict(zip(columns, row)) for row in cursor.fetchall()]
     # results = [
     #     # JPM (JPMorgan Chase) 2020-2025
     #     {
@@ -284,30 +274,25 @@ def get_growth(
     description="Retrieve Year-over-year dividend sustainability analysis banks: Bank of America, Citigroup, Westpac",
 )
 def get_dividend_sustainability(
-    snowflake: Snowflake,
+    nxd_databricks_storage: DatabricksRead,
     request: Request,
 ) -> Response:
     logger.info(f"Received request: {request}")
-    logger.info(f"Using Snowflake context: {snowflake}")
     bank = request.get("bank", None)
     if bank is None:
         return Response({"bank": []})
 
-    conn = connect(
-        user=snowflake.user,
-        password=snowflake.password,
-        account=snowflake.account,
-        warehouse=snowflake.warehouse,
-        database=snowflake.database,
-        schema=snowflake.schema,
-    )
-    cursor = conn.cursor()
+    query = f"SELECT BANK, YEAR, DIVIDEND_PER_SHARE, OPERATING_CASH_FLOW_THOUSANDS, DIVIDEND_YIELD_TREND, OCF_TREND, DIVIDEND_GROWTH_VS_OCF_GROWTH, SUSTAINABILITY_FLAG FROM {nxd_databricks_storage.full_table_name('dividend_sustainability')} WHERE BANK ILIKE '%{bank}%' ORDER BY YEAR DESC LIMIT 1000"
 
-    query = f"SELECT BANK, YEAR, DIVIDEND_PER_SHARE, OPERATING_CASH_FLOW_THOUSANDS, DIVIDEND_YIELD_TREND, OCF_TREND, DIVIDEND_GROWTH_VS_OCF_GROWTH, SUSTAINABILITY_FLAG FROM {snowflake.model_tables['dividend_sustainability']} WHERE BANK ILIKE '%{bank}%' ORDER BY YEAR DESC LIMIT 1000"
-    cursor.execute(query)
-
-    columns = [col[0].lower() for col in cursor.description]
-    results = [dict(zip(columns, row)) for row in cursor.fetchall()]
+    with sql.connect(
+        server_hostname=nxd_databricks_storage.host,
+        http_path=nxd_databricks_storage.http_path,
+        access_token=nxd_databricks_storage.token,
+    ) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query)
+            columns = [col[0].lower() for col in cursor.description]
+            results = [dict(zip(columns, row)) for row in cursor.fetchall()]
 
     # results = [
     #     # Westpac 2020-2024

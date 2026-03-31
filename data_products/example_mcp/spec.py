@@ -13,19 +13,19 @@ spec = (
     .transform(
         code(transform)
         .compute(
-            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute"
+            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks"
         )
-        .config(k8s_executor_config)
+        .config(cluster_config)
     )
     .environment("demo")
     .output(
         data_product_output()
         .promise(banks)
         .port(
-            "snowflake",
+            "nxd-databricks-storage",
             storage(
-                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake"
-            ).config(snowflake_config("EXAMPLE_MCP").target_table("BANK", banks)),
+                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-storage"
+            ).config(databricks_config().target_table("BANK", banks)),
         )
     )
     .output(

@@ -9,9 +9,8 @@ from azure.identity import ClientSecretCredential
 from azure.storage.filedatalake import DataLakeServiceClient
 from langchain.docstore.document import Document
 from nxd.data_product.context import AzureDataLakeStorage
-from nxd.data_product.context import Snowflake
-from snowflake import connector
-from snowflake.connector.pandas_tools import write_pandas
+from nxd.data_product.context import DatabricksWrite
+from pyspark.sql import SparkSession
 
 
 def get_logger():
@@ -105,33 +104,29 @@ def parquet_to_adls(
     file_client.upload_data(buffer, overwrite=True)
 
 
-def pandas_to_snowflake(
-    context: Snowflake,
+def pandas_to_databricks(
+    spark: SparkSession,
+    context: DatabricksWrite,
     dataframe: pd.DataFrame,
-    table_name: str,
+    model_name: str,
+    schema: dict[str, str] | None = None,
 ) -> None:
-    # force uppercase columns
-    dataframe.columns = dataframe.columns.str.upper()
 
-    with connector.connect(
-        user=context.user,
-        password=context.password,
-        account=context.account,
-        warehouse=context.warehouse,
-        role=context.role,
-        database=context.database,
-        schema=context.schema,
-        ocsp_fail_open=True,
-    ) as conn:
-        write_pandas(
-            conn,
-            dataframe,
-            table_name,
-            context.database,
-            context.schema,
-            auto_create_table=False,
-            use_logical_type=True,
-        )
+    spark_df = spark.createDataFrame(dataframe)
+    existing = dict(spark_df.dtypes)
+
+    if schema:
+        for col, spark_type in schema.items():
+            if col in existing:
+                spark_df = spark_df.withColumn(col, spark_df[col].cast(spark_type))
+    else:
+        for col, dtype in spark_df.dtypes:
+            if dtype.startswith("timestamp"):
+                spark_df = spark_df.withColumn(col, spark_df[col].cast("timestamp_ntz"))
+
+    spark_df.write.format("delta").mode("overwrite").saveAsTable(
+        context.full_table_name(model_name)
+    )
 
 
 def documents_to_json_to_adls(

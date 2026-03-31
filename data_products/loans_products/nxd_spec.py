@@ -8,20 +8,18 @@ from nxd.spec import data_product
 from nxd.spec import data_product_access
 from nxd.spec import data_product_input
 from nxd.spec import data_product_output
+from nxd.spec import databricks_config
 from nxd.spec import owner
-from nxd.spec import snowflake_config
 from nxd.spec import storage
 from transform import transform
 
-from contracts import snowflake_atleast_one_record
+from contracts import databricks_atleast_one_record
 
-k8s_executor_config = {
-    "pod_cleanup_delay_secs": 3600,
-    "startup_timeout_secs": 600,
-    "resources": {
-        "requests": {"memory": "768Mi", "cpu": "100m"},
-        "limits": {"memory": "1024Mi", "cpu": "500m"},
-    },
+cluster_config = {
+    "autoscale": {"min_workers": 1, "max_workers": 1},
+    "spark_version": "17.3.x-scala2.13",
+    "store_path": "/Workspace/nxd",
+    "share_cluster": True,
 }
 
 __all__ = [
@@ -35,10 +33,10 @@ __all__ = [
     "data_product_input",
     "data_product_output",
     "owner",
-    "snowflake_config",
+    "databricks_config",
     "storage",
     "transform",
     "expect_data_from_all_banks",
-    "snowflake_atleast_one_record",
-    "k8s_executor_config",
+    "databricks_atleast_one_record",
+    "cluster_config",
 ]

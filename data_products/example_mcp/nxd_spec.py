@@ -8,17 +8,15 @@ from nxd.spec import data_product_output
 from nxd.spec import data_product_rpc_output
 from nxd.spec import rpc_function
 from nxd.spec import rpc_server
-from nxd.spec import snowflake_config
+from nxd.spec import databricks_config
 from nxd.spec import storage
 from transform import transform
 
-k8s_executor_config = {
-    "pod_cleanup_delay_secs": 3600,
-    "startup_timeout_secs": 600,
-    "resources": {
-        "requests": {"memory": "768Mi", "cpu": "100m"},
-        "limits": {"memory": "768Mi", "cpu": "500m"},
-    },
+cluster_config = {
+    "autoscale": {"min_workers": 1, "max_workers": 1},
+    "spark_version": "17.3.x-scala2.13",
+    "store_path": "/Workspace/nxd",
+    "share_cluster": True,
 }
 
 __all__ = [
@@ -32,8 +30,8 @@ __all__ = [
     "data_product_rpc_output",
     "rpc_function",
     "rpc_server",
-    "snowflake_config",
+    "databricks_config",
     "storage",
     "code",
-    "k8s_executor_config",
+    "cluster_config",
 ]
