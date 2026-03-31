@@ -1,0 +1,5 @@
+nxd.core
+nxd.drivers[rpc]
+nxd.data_product[spec]
+pyarrow==21.0.0
+snowflake-connector-python

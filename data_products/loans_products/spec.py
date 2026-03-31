@@ -36,6 +36,8 @@ spec = (
     )
     .output(
         data_product_output()
+        .model(term_deposits)
+        .model(home_loan_rates)
         .promise(term_deposits)
         .promise(home_loan_rates)
         .promise(
@@ -56,8 +58,8 @@ spec = (
                 "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-storage"
             ).config(
                 databricks_config()
-                .target_table("TERM_DEPOSITS", term_deposits)
-                .target_table("HOME_LOAN_RATES", home_loan_rates)
+                .target_table("LOAN_TERM_DEPOSITS", term_deposits)
+                .target_table("LOAN_HOME_LOAN_RATES", home_loan_rates)
             ),
         )
     )
