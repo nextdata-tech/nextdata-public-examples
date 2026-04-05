@@ -25,7 +25,6 @@ nxd policies activate \
   --env demo \
   --consequence STOP
 ```
-
 ## Clean up
 
 ```bash
