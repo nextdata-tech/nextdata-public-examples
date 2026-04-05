@@ -28,13 +28,11 @@ def configure_logger():
     return logger
 
 
-logger = configure_logger()
-
-
 @function(name="get_revenue")
 @mcp.tool(name="get_revenue", description="Get revenue data for a given company")
 def get_revenue(request: Request, databricks: DatabricksRead) -> Response:
     """Fetches revenue data for a given company."""
+    logger = configure_logger()
     logger.warning("Received request for revenue data: %s", request)
     logger.warning("Databricks context: %s", databricks)
     company_id = request.get("id")
@@ -54,7 +52,7 @@ def get_revenue(request: Request, databricks: DatabricksRead) -> Response:
                     value AS revenue
                 FROM {cash_flows}
                 WHERE metric = 'operating_cash_flow'
-                  AND symbol = '{company_id}'
+                  AND symbol ILIKE '%{company_id}%'
                   AND YEAR(date) = {year}
                 """
             )

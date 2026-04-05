@@ -32,9 +32,6 @@ def configure_logger():
     return logger
 
 
-logger = configure_logger()
-
-
 def _field(name: str | None, data_type: DataType) -> Field:
     # helper function for DataType.ComplexType which expects
     #   Field classes and not dicts or tuples
@@ -53,6 +50,7 @@ def _field(name: str | None, data_type: DataType) -> Field:
 @mcp.tool(name="get_top_revenue", description="Get top revenue companies for a given year")
 def get_top_revenue(request: Request, databricks: DatabricksRead) -> Response:
     """Fetches top revenue companies from the financial statements data."""
+    logger = configure_logger()
     logger.warning("Received request for get_top_revenue: %s", request)
     logger.warning("Databricks context: %s", databricks)
     year = request.get("year")
