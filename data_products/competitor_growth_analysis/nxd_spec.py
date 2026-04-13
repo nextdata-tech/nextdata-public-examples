@@ -26,7 +26,7 @@ from nxd.spec import rpc_server
 from nxd.spec import storage
 from nxd.spec.conditions import any_of
 from nxd.spec.conditions import updated
-from transform.transform import transform
+from transform import transform
 
 cluster_config = {
     "autoscale": {"min_workers": 1, "max_workers": 1},

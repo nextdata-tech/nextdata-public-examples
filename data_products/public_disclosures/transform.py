@@ -47,12 +47,8 @@ def transform(
     # transform
 
     @retry(stop=stop_after_attempt(5), wait=wait_fixed(60))
-    def _embed_texts(
-        self, texts: list[str], model: str, parameters: dict
-    ) -> EmbeddingsList:
-        return self._client.inference.embed(
-            model=model, inputs=texts, parameters=parameters
-        )
+    def _embed_texts(self, texts: list[str], model: str, parameters: dict) -> EmbeddingsList:
+        return self._client.inference.embed(model=model, inputs=texts, parameters=parameters)
 
     # monkey patch to enforce backoff
     PineconeEmbeddings._embed_texts = _embed_texts
@@ -78,9 +74,7 @@ def transform(
     pipeline_options = PdfPipelineOptions(artifacts_path=docling_artifacts_path)
     converter = DocumentConverter(
         allowed_formats=[InputFormat.PDF],
-        format_options={
-            InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
-        },
+        format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)},
     )
 
     uuid_namespace = UUID("00000000-0000-0000-0000-000000000000")
@@ -102,9 +96,7 @@ def transform(
             "pages": len(document.pages),
             "tables": len(document.tables),
             "doc_elements": len(document.texts),
-            "document_hash": (
-                str(document.origin.binary_hash) if document.origin else None
-            ),
+            "document_hash": (str(document.origin.binary_hash) if document.origin else None),
             "size": len(markdown),
             "source": filename,
         }
