@@ -30,18 +30,21 @@ spec = (
         data_product_input()
         .source("https://app.demo.trynxd.com/data-product/market-announcements#/output/port/adls")
         .environment("demo"),
+        # .expectation(announcements),
     )
     .input(
         "income-statements",
         data_product_input()
         .source("https://app.demo.trynxd.com/data-product/income-statements#/output/port/adls")
         .environment("demo"),
+        # .expectation(income_statements),
     )
     .input(
         "stock-history",
         data_product_input()
         .source("https://app.demo.trynxd.com/data-product/stock-history#/output/port/adls")
         .environment("demo"),
+        # .expectation(history),
     )
     .input(
         "financial-statements",
@@ -63,9 +66,9 @@ spec = (
     )
     .output(
         data_product_output()
-        .promise(documents)
-        .promise(growth)
-        .promise(dividend_sustainability)
+        .model(documents)
+        .model(growth)
+        .model(dividend_sustainability)
         .port(
             "adls",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls")
@@ -75,6 +78,8 @@ spec = (
                 .target_file("growth.parquet", growth)
                 .target_file("dividend_sustainability.parquet", dividend_sustainability)
             )
+            .promise(growth)
+            .promise(dividend_sustainability)
             .disable_temporal_credentials()
             .follow_approval_flow()
             .approval(
@@ -85,9 +90,10 @@ spec = (
         )
         .port(
             "nxd-databricks-storage",
-            storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-storage").config(
-                databricks_config()
-            ),
+            storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-storage")
+            .config(databricks_config())
+            .promise(growth)
+            .promise(dividend_sustainability),
         )
     )
     .output(

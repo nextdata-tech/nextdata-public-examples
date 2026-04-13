@@ -7,9 +7,12 @@ from __mcp__ import get_dividend_sustainability_response
 from __mcp__ import get_growth
 from __mcp__ import get_growth_request
 from __mcp__ import get_growth_response
+from models import announcements
 from models import dividend_sustainability
 from models import documents
 from models import growth
+from models import history
+from models import income_statements
 from nxd.spec import SupportedFormat
 from nxd.spec import access_approval_config
 from nxd.spec import adls_config
@@ -45,9 +48,12 @@ __all__ = [
     "get_growth",
     "get_growth_request",
     "get_growth_response",
+    "announcements",
     "dividend_sustainability",
     "documents",
     "growth",
+    "history",
+    "income_statements",
     "SupportedFormat",
     "access_approval_config",
     "adls_config",

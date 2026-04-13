@@ -1,6 +1,134 @@
 # ruff: noqa: F403, F405
 from nxd_models import *
 
+# Input models — define the expected schema of upstream data product outputs.
+
+announcements = (
+    semantic_model(
+        name="announcements",
+        description="Dataset containing company announcements released to the National Association of Securities Dealers Automated Quotations (NASDAQ), including metadata, associated companies, and document details.",
+    )
+    .sampling(method=SamplingMethod.Random)
+    .schema(
+        {
+            "date": (
+                timestamp(unit=DurationUnit.Nanoseconds),
+                "Date and time the announcement was released to the NASDAQ, in nanosecond precision.",
+            ),
+            "document_key": (
+                string(),
+                "Unique identifier for the announcement document within the NASDAQ or storage system.",
+            ),
+            "file_size": (
+                string(),
+                "Size of the announcement document file, typically expressed in bytes or a human-readable format.",
+            ),
+            "full_path": (
+                string(),
+                "Full file path where the announcement document is stored or can be retrieved.",
+            ),
+            "headline": (
+                string(),
+                "Headline or title of the announcement, summarising its content.",
+            ),
+            "is_price_sensitive": (
+                boolean(),
+                "Indicates whether the announcement is classified as price-sensitive under NASDAQ rules.",
+            ),
+            "path": (
+                string(),
+                "Relative file path where the announcement document is stored or can be retrieved.",
+            ),
+            "symbol": (
+                string(),
+                "Primary NASDAQ ticker symbol of the company issuing the announcement.",
+            ),
+            "url": (
+                string(),
+                "Full web address where the announcement document can be accessed or downloaded.",
+            ),
+        }
+    )
+)
+
+income_statements = (
+    semantic_model(
+        name="income_statements",
+        description="Income statement metrics for publicly listed companies, as reported in Yahoo Finance's financial data.",
+    )
+    .sampling(method=SamplingMethod.Head)
+    .schema(
+        {
+            "date": (
+                timestamp(unit=DurationUnit.Nanoseconds),
+                "End date of the reporting period for the metric, expressed in nanosecond precision.",
+            ),
+            "metric": (
+                string(),
+                "Name of the income statement line item (e.g., 'Total Revenue', 'Net Income').",
+            ),
+            "symbol": (
+                string(),
+                "Ticker symbol of the company or security the income statement belongs to.",
+            ),
+            "value": (
+                float64(),
+                "Numeric value of the metric in the company's reporting currency.",
+            ),
+        }
+    )
+)
+
+history = (
+    semantic_model(
+        name="history",
+        description="Historical price and trading volume data for a financial instrument retrieved from the Yahoo Finance API.",
+    )
+    .sampling(method=SamplingMethod.Head)
+    .schema(
+        {
+            "close": (
+                float64(),
+                "Closing price of the security for the given date.",
+            ),
+            "date": (
+                timestamp(unit=DurationUnit.Nanoseconds),
+                "Date and time of the trading session, expressed in nanosecond precision.",
+            ),
+            "dividends": (
+                float64(),
+                "Cash dividend amount per share paid on the given date, if applicable.",
+            ),
+            "high": (
+                float64(),
+                "Highest traded price of the security during the trading session.",
+            ),
+            "low": (
+                float64(),
+                "Lowest traded price of the security during the trading session.",
+            ),
+            "open": (
+                float64(),
+                "Opening price of the security for the given date.",
+            ),
+            "stock_splits": (
+                float64(),
+                "Split ratio for any stock split that occurred on the given date (e.g., 2.0 for a 2-for-1 split).",
+            ),
+            "symbol": (
+                string(),
+                "Ticker symbol of the security or instrument (e.g., 'AAPL' for Apple Inc.).",
+            ),
+            "volume": (
+                int64(),
+                "Total number of shares or contracts traded during the session.",
+            ),
+        }
+    )
+)
+
+# Output models
+
 documents = (
     semantic_model(
         name="documents",
