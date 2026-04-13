@@ -1,18 +1,293 @@
 from databricks import sql
+from nxd.core.yaml_schemas import DurationUnit
+from nxd.core.yaml_schemas import Field
 from nxd.data_product.context import DatabricksRead
 from nxd.drivers.rpc import Request
 from nxd.drivers.rpc import Response
 from nxd.drivers.rpc import function
 from nxd.drivers.rpc import mcp
+from nxd.spec import semantic_model
+from nxd.spec.data_types import decimal
+from nxd.spec.data_types import float64
+from nxd.spec.data_types import int32
+from nxd.spec.data_types import list
+from nxd.spec.data_types import string
+from nxd.spec.data_types import struct
+from nxd.spec.data_types import timestamp
+
+get_bank_symbols_request = semantic_model(
+    "get_bank_symbols_request",
+    attributes={
+        "year": (
+            string(),
+            "Year for which the data is requested (e.g., '2023'). If null, defaults to the most recent year available.",
+        ),
+    },
+    description="Request model for the MCP Tool get_bank_symbols",
+)
+
+get_bank_symbols_response = semantic_model(
+    "get_bank_symbols_response",
+    attributes={
+        "banks": (
+            list(
+                Field(
+                    data_type=struct(
+                        [
+                            Field(
+                                data_type=string(),
+                                name="symbol",
+                                description="Ticker symbol",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=timestamp(unit=DurationUnit.Nanoseconds),
+                                name="date",
+                                description="Date",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                        ]
+                    ),
+                    name="item",
+                    description="Bank symbol entry",
+                    metadata=None,
+                    constraints=None,
+                    relates_to=[],
+                    semantic_tags=None,
+                )
+            ),
+            "Available bank symbols with growth and shareholder returns data",
+        ),
+    },
+    description="Response model for the MCP Tool get_bank_symbols",
+)
+
+get_growth_request = semantic_model(
+    "get_growth_request",
+    attributes={
+        "symbol": (
+            string(),
+            "Symbol for which the data is requested (e.g., 'JPM').",
+        ),
+    },
+    description="Request model for the MCP Tool get_growth",
+)
+
+get_growth_response = semantic_model(
+    "get_growth_response",
+    attributes={
+        "growth": (
+            list(
+                Field(
+                    data_type=struct(
+                        [
+                            Field(
+                                data_type=string(),
+                                name="symbol",
+                                description="Ticker symbol",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=timestamp(unit=DurationUnit.Nanoseconds),
+                                name="date",
+                                description="Date",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=float64(),
+                                name="close",
+                                description="Closing price",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=float64(),
+                                name="annual_return",
+                                description="Annual return",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=float64(),
+                                name="net_income",
+                                description="Net income",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=float64(),
+                                name="total_revenue",
+                                description="Total revenue",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=float64(),
+                                name="revenue_growth",
+                                description="Revenue growth",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=float64(),
+                                name="net_income_growth",
+                                description="Net income growth",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                        ]
+                    ),
+                    name="item",
+                    description="Growth record",
+                    metadata=None,
+                    constraints=None,
+                    relates_to=[],
+                    semantic_tags=None,
+                )
+            ),
+            "Integrated model combining annual stock market performance with company profitability metrics.",
+        ),
+    },
+    description="Response model for the MCP Tool get_growth",
+)
+
+get_dividend_sustainability_request = semantic_model(
+    "get_dividend_sustainability_request",
+    attributes={
+        "bank": (
+            string(),
+            "Bank identifier or ticker symbol (e.g. Bank of America, Citigroup)",
+        ),
+    },
+    description="Request model for the MCP Tool get_dividend_sustainability",
+)
+
+get_dividend_sustainability_response = semantic_model(
+    "get_dividend_sustainability_response",
+    attributes={
+        "dividend_sustainability": (
+            list(
+                Field(
+                    data_type=struct(
+                        [
+                            Field(
+                                data_type=string(),
+                                name="bank",
+                                description="Bank identifier",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=int32(),
+                                name="year",
+                                description="Fiscal year",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=decimal(4, 2),
+                                name="dividend_per_share",
+                                description="Total annual dividend per share",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=float64(),
+                                name="operating_cash_flow_thousands",
+                                description="Annual operating cash flow",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=float64(),
+                                name="dividend_yield_trend",
+                                description="Year-over-year change in dividend per share",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=float64(),
+                                name="ocf_trend",
+                                description="Year-over-year change in operating cash flow",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=float64(),
+                                name="dividend_growth_vs_ocf_growth",
+                                description="Differential between dividend growth and OCF growth",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                            Field(
+                                data_type=string(),
+                                name="sustainability_flag",
+                                description="Categorical assessment of dividend sustainability",
+                                metadata=None,
+                                constraints=None,
+                                relates_to=[],
+                                semantic_tags=None,
+                            ),
+                        ]
+                    ),
+                    name="item",
+                    description="Dividend sustainability record",
+                    metadata=None,
+                    constraints=None,
+                    relates_to=[],
+                    semantic_tags=None,
+                )
+            ),
+            "Year-over-year dividend sustainability analysis comparing dividend growth against operating cash flow trends.",
+        ),
+    },
+    description="Response model for the MCP Tool get_dividend_sustainability",
+)
 
 
 def configure_logger():
     import logging
 
     logger = logging.getLogger(__name__)
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     ch = logging.StreamHandler()
     ch.setFormatter(formatter)
     logger.addHandler(ch)
