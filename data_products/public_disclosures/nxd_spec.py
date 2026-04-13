@@ -8,7 +8,7 @@ from nxd.spec import data_product_access
 from nxd.spec import data_product_output
 from nxd.spec import owner
 from nxd.spec import storage
-from transform import transform
+from transform.transform import transform
 
 k8s_executor_config = {
     "pod_cleanup_delay_secs": 120,

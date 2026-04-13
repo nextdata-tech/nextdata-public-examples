@@ -16,19 +16,22 @@ from nxd.spec.data_types import struct
 from nxd.spec.data_types import timestamp
 
 get_bank_symbols_request = semantic_model(
-    "get_bank_symbols_request",
-    attributes={
+    name="get_bank_symbols_request",
+    description="Request model for the MCP Tool get_bank_symbols",
+).schema(
+    {
         "year": (
             string(),
             "Year for which the data is requested (e.g., '2023'). If null, defaults to the most recent year available.",
         ),
-    },
-    description="Request model for the MCP Tool get_bank_symbols",
+    }
 )
 
 get_bank_symbols_response = semantic_model(
-    "get_bank_symbols_response",
-    attributes={
+    name="get_bank_symbols_response",
+    description="Response model for the MCP Tool get_bank_symbols",
+).schema(
+    {
         "banks": (
             list(
                 Field(
@@ -64,24 +67,26 @@ get_bank_symbols_response = semantic_model(
             ),
             "Available bank symbols with growth and shareholder returns data",
         ),
-    },
-    description="Response model for the MCP Tool get_bank_symbols",
+    }
 )
 
 get_growth_request = semantic_model(
-    "get_growth_request",
-    attributes={
+    name="get_growth_request",
+    description="Request model for the MCP Tool get_growth",
+).schema(
+    {
         "symbol": (
             string(),
             "Symbol for which the data is requested (e.g., 'JPM').",
         ),
-    },
-    description="Request model for the MCP Tool get_growth",
+    }
 )
 
 get_growth_response = semantic_model(
-    "get_growth_response",
-    attributes={
+    name="get_growth_response",
+    description="Response model for the MCP Tool get_growth",
+).schema(
+    {
         "growth": (
             list(
                 Field(
@@ -172,23 +177,25 @@ get_growth_response = semantic_model(
             "Integrated model combining annual stock market performance with company profitability metrics.",
         ),
     },
-    description="Response model for the MCP Tool get_growth",
 )
 
 get_dividend_sustainability_request = semantic_model(
-    "get_dividend_sustainability_request",
+    name="get_dividend_sustainability_request",
+    description="Request model for the MCP Tool get_dividend_sustainability",
+).schema(
     attributes={
         "bank": (
             string(),
             "Bank identifier or ticker symbol (e.g. Bank of America, Citigroup)",
         ),
     },
-    description="Request model for the MCP Tool get_dividend_sustainability",
 )
 
 get_dividend_sustainability_response = semantic_model(
-    "get_dividend_sustainability_response",
-    attributes={
+    name="get_dividend_sustainability_response",
+    description="Response model for the MCP Tool get_dividend_sustainability",
+).schema(
+    {
         "dividend_sustainability": (
             list(
                 Field(
@@ -279,7 +286,6 @@ get_dividend_sustainability_response = semantic_model(
             "Year-over-year dividend sustainability analysis comparing dividend growth against operating cash flow trends.",
         ),
     },
-    description="Response model for the MCP Tool get_dividend_sustainability",
 )
 
 
