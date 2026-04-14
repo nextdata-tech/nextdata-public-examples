@@ -8,7 +8,7 @@ spec = (
         domain="FINANCE/COMPETITORS/REGULATORY-COMPLIANCE",
         version="1.0.0-dev",
         infra_profile="ecommerce-demo",
-        source_repo_url="https://github.com/nextdata-tech/nextdata-examples",
+        source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/public_disclosures",
     )
     .environment("demo")
     .with_global_trigger(ScheduleTrigger("0 6 1 */3 *"))
@@ -24,10 +24,15 @@ spec = (
             "adls",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls")
             .config(adls_config(file_type=SupportedFormat.PARQUET))
-            .managed_access(),
+            .managed_access()
+            .promise(
+                custom("adls-non-empty-output")
+                .verify(code(adls_freshness.verify))
+                .description("Verifies each promised output model in ADLS contains at least one record")
+            ),
         )
     )
-    .control("owner", owner().user("hello@nextdata.com"))
     .control("data-product-access", data_product_access().user("hello@nextdata.com"))
     .control("steward", data_product_access().user("hello@nextdata.com"))
+    .control("owner", owner().user("hello@nextdata.com"))
 )

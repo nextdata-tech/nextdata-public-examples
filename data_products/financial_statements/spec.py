@@ -8,7 +8,7 @@ spec = (
         domain="FINANCE/COMPETITORS/FINANCIAL-PERFORMANCE",
         version="1.0.0-dev",
         infra_profile="ecommerce-demo",
-        source_repo_url="https://github.com/nextdata-tech/nextdata-examples",
+        source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/financial_statements",
     )
     .environment("demo")
     .transform(
@@ -21,6 +21,7 @@ spec = (
         source_aligned_input()
         .source("https://nextopia.dev/infra-profile/ecommerce-demo#/services/sec-comp-summary-api")
         .model(source_documents)
+        .expectation(source_documents)
         .expectation(custom("check_document_format").verify(code(check_document_format))),
     )
     .output(

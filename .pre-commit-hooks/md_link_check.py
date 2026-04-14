@@ -12,10 +12,12 @@ import sys
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
-from urllib.error import HTTPError, URLError
-from urllib.parse import urlsplit, urlunsplit
-from urllib.request import Request, urlopen
-
+from urllib.error import HTTPError
+from urllib.error import URLError
+from urllib.parse import urlsplit
+from urllib.parse import urlunsplit
+from urllib.request import Request
+from urllib.request import urlopen
 
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
 FENCE_RE = re.compile(r"^\s*(```|~~~)")
@@ -28,14 +30,11 @@ EXCLUDED_FILES = {
     # Paths are relative to data_products/
 }
 
-EXCLUDED_LINKS = {
-}
+EXCLUDED_LINKS = {}
 
-EXCLUDED_EXTERNAL_PREFIXES = {
-}
+EXCLUDED_EXTERNAL_PREFIXES = {}
 
-EXCLUDED_INTERNAL_PREFIXES = {
-}
+EXCLUDED_INTERNAL_PREFIXES = {}
 
 
 def _is_excluded_external_prefix(url: str) -> bool:
@@ -49,9 +48,7 @@ def _match_excluded_internal_prefix(link: str) -> str | None:
     if trimmed.startswith("../"):
         trimmed = trimmed.lstrip("./")
     for prefix in EXCLUDED_INTERNAL_PREFIXES:
-        if trimmed.startswith(prefix) or trimmed.lstrip("/").startswith(
-            prefix.lstrip("/")
-        ):
+        if trimmed.startswith(prefix) or trimmed.lstrip("/").startswith(prefix.lstrip("/")):
             return prefix
     return None
 
@@ -168,6 +165,7 @@ def _resolve_path(base: Path, raw_path: str) -> Path | None:
             return readme
     return None
 
+
 def _is_probable_link(link: str) -> bool:
     if link.startswith("#"):
         return True
@@ -224,9 +222,7 @@ def _extract_link_targets(
             if link in EXCLUDED_LINKS:
                 continue
             if link.startswith("#") and not link.startswith("#/"):
-                targets.append(
-                    LinkTarget(path, link[1:] or None, line_number, raw_link)
-                )
+                targets.append(LinkTarget(path, link[1:] or None, line_number, raw_link))
                 continue
             if _is_external_url(link):
                 if check_external:
@@ -246,9 +242,7 @@ def _extract_link_targets(
             if resolved:
                 targets.append(LinkTarget(resolved, anchor, line_number, raw_link))
             else:
-                targets.append(
-                    LinkTarget(Path(file_part), anchor, line_number, raw_link)
-                )
+                targets.append(LinkTarget(Path(file_part), anchor, line_number, raw_link))
         for match in HTML_HREF_RE.finditer(line):
             if _is_commented(comment_spans, match.start(), match.end()):
                 continue
@@ -257,9 +251,7 @@ def _extract_link_targets(
             if link in EXCLUDED_LINKS:
                 continue
             if link.startswith("#") and not link.startswith("#/"):
-                targets.append(
-                    LinkTarget(path, link[1:] or None, line_number, raw_link)
-                )
+                targets.append(LinkTarget(path, link[1:] or None, line_number, raw_link))
                 continue
             if _is_external_url(link):
                 if check_external:
@@ -279,9 +271,7 @@ def _extract_link_targets(
             if resolved:
                 targets.append(LinkTarget(resolved, anchor, line_number, raw_link))
             else:
-                targets.append(
-                    LinkTarget(Path(file_part), anchor, line_number, raw_link)
-                )
+                targets.append(LinkTarget(Path(file_part), anchor, line_number, raw_link))
         for match in MD_AUTOLINK_RE.finditer(line):
             if _is_commented(comment_spans, match.start(), match.end()):
                 continue
@@ -299,9 +289,7 @@ def _extract_link_targets(
             if not _is_probable_link(link):
                 continue
             if link.startswith("#") and not link.startswith("#/"):
-                targets.append(
-                    LinkTarget(path, link[1:] or None, line_number, raw_link)
-                )
+                targets.append(LinkTarget(path, link[1:] or None, line_number, raw_link))
                 continue
             if _is_external_url(link):
                 if check_external:
@@ -321,9 +309,7 @@ def _extract_link_targets(
             if resolved:
                 targets.append(LinkTarget(resolved, anchor, line_number, raw_link))
             else:
-                targets.append(
-                    LinkTarget(Path(file_part), anchor, line_number, raw_link)
-                )
+                targets.append(LinkTarget(Path(file_part), anchor, line_number, raw_link))
     return targets, externals, skipped_internal_prefixes
 
 
@@ -352,22 +338,12 @@ def _is_excluded(path: Path, root: Path) -> bool:
 
 def _collect_docs_files(root: Path, requested: list[Path] | None = None) -> list[Path]:
     if not requested:
-        return sorted(
-            path for path in root.rglob("*.md") if not _is_excluded(path, root)
-        )
+        return sorted(path for path in root.rglob("*.md") if not _is_excluded(path, root))
     files: list[Path] = []
     for item in requested:
         if item.is_dir():
-            files.extend(
-                sorted(
-                    path for path in item.rglob("*.md") if not _is_excluded(path, root)
-                )
-            )
-        elif (
-            item.is_file()
-            and item.suffix.lower() == ".md"
-            and not _is_excluded(item, root)
-        ):
+            files.extend(sorted(path for path in item.rglob("*.md") if not _is_excluded(path, root)))
+        elif item.is_file() and item.suffix.lower() == ".md" and not _is_excluded(item, root):
             files.append(item)
     return files
 
@@ -436,9 +412,7 @@ def _validate_links(
         anchors_map[doc_path.resolve()] = _collect_anchors(doc_path)
 
     for doc_path in _collect_docs_files(root, requested):
-        link_targets, external_targets, skipped_prefixes = _extract_link_targets(
-            doc_path, root, check_external
-        )
+        link_targets, external_targets, skipped_prefixes = _extract_link_targets(doc_path, root, check_external)
         skipped_internal_prefixes.update(skipped_prefixes)
         for target in link_targets:
             if not target.file_path.exists():
@@ -464,8 +438,7 @@ def _validate_links(
             error = external_cache[external.url]
             if error:
                 errors.append(
-                    f"{doc_path}:{external.line_number}: external link failed ({error}) "
-                    f"(link: {external.raw_link})"
+                    f"{doc_path}:{external.line_number}: external link failed ({error}) (link: {external.raw_link})"
                 )
     return errors, skipped_internal_prefixes
 
@@ -478,14 +451,12 @@ def _self_test() -> int:
         b = root / "b.md"
         c = root / "c.md"
         a.write_text(
-            "# Alpha Heading\n\nSee [Beta](b.md#beta-heading).\n"
-            '<a href="b.md#custom-anchor">Beta HTML</a>\n',
+            '# Alpha Heading\n\nSee [Beta](b.md#beta-heading).\n<a href="b.md#custom-anchor">Beta HTML</a>\n',
             encoding="utf-8",
         )
         b.write_text('# Beta Heading\n\n<a id="custom-anchor"></a>\n', encoding="utf-8")
         c.write_text(
-            "# Runtime data product API\n\n"
-            "[Docsify](#/c?id=runtime-data-product-api)\n",
+            "# Runtime data product API\n\n[Docsify](#/c?id=runtime-data-product-api)\n",
             encoding="utf-8",
         )
         errors, _skipped = _validate_links(root)

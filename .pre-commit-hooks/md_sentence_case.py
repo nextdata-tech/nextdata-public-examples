@@ -11,7 +11,6 @@ import re
 import sys
 from pathlib import Path
 
-
 HEADING_RE = re.compile(r"^(#{1,6})\s+(.+?)\s*$")
 FENCE_RE = re.compile(r"^(```|~~~)")
 ALLOWED_PROPER_NOUNS = {
@@ -170,11 +169,7 @@ def _process_file(path: Path) -> bool:
         if _is_title_case_heading(text):
             updated = _sentence_case(text)
             if updated != text:
-                line = (
-                    f"{hashes} {updated}\n"
-                    if line.endswith("\n")
-                    else f"{hashes} {updated}"
-                )
+                line = f"{hashes} {updated}\n" if line.endswith("\n") else f"{hashes} {updated}"
                 changed = True
         new_lines.append(line)
     if changed:

@@ -8,15 +8,13 @@ spec = (
         domain="FINANCE/COMPETITORS/FINANCIAL-PERFORMANCE",
         version="1.0.0-dev",
         infra_profile="ecommerce-demo",
-        source_repo_url="https://github.com/nextdata-tech/nextdata-examples",
+        source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/income_statements",
     )
     .environment("demo")
     .with_global_trigger(ScheduleTrigger("0 */8 * * *"))
     .transform(
         code(transform)
-        .compute(
-            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute"
-        )
+        .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
         .config(k8s_executor_config)
     )
     .output(
@@ -24,18 +22,21 @@ spec = (
         .promise(income_statements)
         .port(
             "adls",
-            storage(
-                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls"
-            )
+            storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls")
             .config(
                 adls_config(
                     file_type=SupportedFormat.PARQUET,
                 )
             )
-            .managed_access(),
+            .managed_access()
+            .promise(
+                custom("adls-non-empty-output")
+                .verify(code(adls_freshness.verify))
+                .description("Verifies each promised output model in ADLS contains at least one record")
+            ),
         )
     )
-    .control("owner", owner().user("hello@nextdata.com"))
     .control("data-product-access", data_product_access().user("hello@nextdata.com"))
     .control("steward", data_product_access().user("hello@nextdata.com"))
+    .control("owner", owner().user("hello@nextdata.com"))
 )
