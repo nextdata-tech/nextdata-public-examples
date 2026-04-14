@@ -71,7 +71,7 @@ def transform(
     _logger.info(f"Downloading Docling Models to: {docling_artifacts_path}")
     download_models(output_dir=docling_artifacts_path)
 
-    pipeline_options = PdfPipelineOptions(artifacts_path=docling_artifacts_path)
+    pipeline_options = PdfPipelineOptions(artifacts_path=docling_artifacts_path, do_ocr=False)
     converter = DocumentConverter(
         allowed_formats=[InputFormat.PDF],
         format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)},
