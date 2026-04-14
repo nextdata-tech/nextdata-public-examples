@@ -234,7 +234,7 @@ dividend_sustainability = (
             ),
             "operating_cash_flow_thousands": (
                 float64(),
-                "Annual operating cash flow in millions of the company's reporting currency",
+                "Annual operating cash flow in thousands of the company's reporting currency",
             ),
             "dividend_yield_trend": (
                 float64(),
