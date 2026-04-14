@@ -15,9 +15,7 @@ from pyspark.sql import SparkSession
 
 def get_logger():
     _logger = logging.getLogger("utils")
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     _logger.addHandler(console_handler)
@@ -34,9 +32,7 @@ def _get_adls_client(context: AzureDataLakeStorage) -> DataLakeServiceClient:
         context.client_id,
         context.client_secret,
     )
-    return DataLakeServiceClient(
-        f"https://{context.account_name}.dfs.core.windows.net", credential=credentials
-    )
+    return DataLakeServiceClient(f"https://{context.account_name}.dfs.core.windows.net", credential=credentials)
 
 
 def adls_to_parquet(
@@ -111,7 +107,6 @@ def pandas_to_databricks(
     model_name: str,
     schema: dict[str, str] | None = None,
 ) -> None:
-
     spark_df = spark.createDataFrame(dataframe)
     existing = dict(spark_df.dtypes)
 
@@ -124,9 +119,7 @@ def pandas_to_databricks(
             if dtype.startswith("timestamp"):
                 spark_df = spark_df.withColumn(col, spark_df[col].cast("timestamp_ntz"))
 
-    spark_df.write.format("delta").mode("overwrite").saveAsTable(
-        context.full_table_name(model_name)
-    )
+    spark_df.write.format("delta").mode("overwrite").saveAsTable(context.full_table_name(model_name))
 
 
 def documents_to_json_to_adls(
