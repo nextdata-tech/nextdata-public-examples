@@ -301,9 +301,6 @@ def configure_logger():
     return logger
 
 
-logger = configure_logger()
-
-
 @function(name="get_bank_symbols")
 @mcp.tool(
     name="get_bank_symbols",
@@ -313,6 +310,7 @@ def get_bank_symbols(
     nxd_databricks_storage: DatabricksRead,
     request: Request,
 ) -> Response:
+    logger = configure_logger()
     logger.info(f"Received request: {request}")
     year = request.get("year", None)
 
@@ -341,6 +339,7 @@ def get_growth(
     nxd_databricks_storage: DatabricksRead,
     request: Request,
 ) -> Response:
+    logger = configure_logger()
     logger.info(f"Received request: {request}")
     symbol = request.get("symbol", None)
     if symbol is None:
@@ -558,6 +557,7 @@ def get_dividend_sustainability(
     nxd_databricks_storage: DatabricksRead,
     request: Request,
 ) -> Response:
+    logger = configure_logger()
     logger.info(f"Received request: {request}")
     bank = request.get("bank", None)
     if bank is None:
