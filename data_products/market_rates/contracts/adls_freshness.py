@@ -1,6 +1,5 @@
 import logging
 
-import pyarrow.parquet as pq
 from azure.identity import ClientSecretCredential
 from azure.storage.filedatalake import DataLakeServiceClient
 from nxd.data_product.context import AzureDataLakeStorage
@@ -25,10 +24,7 @@ def verify(adls: AzureDataLakeStorage) -> VerifyResult:
             download = file_client.download_file()
             content = download.readall()
 
-            import io
-
-            table = pq.read_table(io.BytesIO(content))
-            row_count = table.num_rows
+            row_count = len([line for line in content.decode().splitlines() if line.strip()])
             results[model_name] = {"path": path, "row_count": row_count}
             if row_count == 0:
                 _logger.warning(f"Model '{model_name}' at {path} has 0 rows.")

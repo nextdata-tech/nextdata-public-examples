@@ -1,3 +1,4 @@
+import io
 import logging
 
 import pyarrow.parquet as pq
@@ -21,14 +22,19 @@ def verify(adls: AzureDataLakeStorage) -> VerifyResult:
     for model_name, model_path_info in adls.model_paths.items():
         path = model_path_info.path
         try:
-            file_client = service_client.get_file_client(file_system=adls.container, file_path=path)
-            download = file_client.download_file()
-            content = download.readall()
+            if path.endswith(".parquet"):
+                file_client = service_client.get_file_client(file_system=adls.container, file_path=path)
+                download = file_client.download_file()
+                content = download.readall()
+                table = pq.read_table(io.BytesIO(content))
+                row_count = table.num_rows
+            else:
+                # Non-Parquet path (e.g. JSON glob directory) — count files under the prefix
+                fs_client = service_client.get_file_system_client(adls.container)
+                prefix = path.rstrip("/").split("*")[0]
+                paths = list(fs_client.get_paths(path=prefix, recursive=True))
+                row_count = sum(1 for p in paths if not p.is_directory)
 
-            import io
-
-            table = pq.read_table(io.BytesIO(content))
-            row_count = table.num_rows
             results[model_name] = {"path": path, "row_count": row_count}
             if row_count == 0:
                 _logger.warning(f"Model '{model_name}' at {path} has 0 rows.")
