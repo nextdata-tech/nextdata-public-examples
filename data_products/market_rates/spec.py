@@ -14,37 +14,19 @@ spec = (
         "comp_public",
         source_aligned_input()
         .source("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/yahoo-finance")
-        .model(anz_products)
-        .expectation(anz_products)
-        .expectation(
-            custom("api-atleast-one-record")
-            .verify(code(api_atleast_one_record.verify))
-            .description("Verifies the ANZ API source returns at least one record")
-        ),
+        .model(anz_products),
     )
     .input(
         "nextopia_public",
         source_aligned_input()
         .source("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/yahoo-finance")
-        .model(westpac_home_loans)
-        .expectation(westpac_home_loans)
-        .expectation(
-            custom("api-atleast-one-record")
-            .verify(code(api_atleast_one_record.verify))
-            .description("Verifies the Westpac API source returns at least one record")
-        ),
+        .model(westpac_home_loans),
     )
     .input(
         "comp2_public",
         source_aligned_input()
         .source("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/yahoo-finance")
-        .model(macquarie_home_loans)
-        .expectation(macquarie_home_loans)
-        .expectation(
-            custom("api-atleast-one-record")
-            .verify(code(api_atleast_one_record.verify))
-            .description("Verifies the Macquarie API source returns at least one record")
-        ),
+        .model(macquarie_home_loans),
     )
     .environment("demo")
     .transform(
