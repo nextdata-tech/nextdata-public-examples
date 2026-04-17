@@ -2,3 +2,6 @@ nxd.core
 nxd.drivers[rpc]
 nxd.data_product[spec]
 databricks-sql-connector
+pyarrow==21.0.0
+azure-storage-file-datalake==12.21.0
+azure-identity==1.24.0

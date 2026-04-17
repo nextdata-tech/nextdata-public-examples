@@ -71,7 +71,6 @@ spec = (
     )
     .output(
         data_product_output()
-        .model(documents)
         .model(growth)
         .model(dividend_sustainability)
         .port(
@@ -79,7 +78,6 @@ spec = (
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls")
             .config(
                 adls_config()
-                .target_file("documents/**/*.json", documents)
                 .target_file("growth.parquet", growth)
                 .target_file("dividend_sustainability.parquet", dividend_sustainability)
             )
