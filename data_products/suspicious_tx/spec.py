@@ -42,7 +42,7 @@ spec = (
             .promise(
                 custom("adls-non-empty-output")
                 .verify(code(adls_freshness.verify))
-                .description("Verifies each promised output model in ADLS contains at least one record")
+                .description("Verifies each promised output model in ADLS was updated within the last 24 hours")
             ),
         )
     )
