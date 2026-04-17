@@ -22,7 +22,7 @@ spec = (
         .source("https://app.demo.trynxd.com/data-product/market-rates#/output/port/adls")
         .environment("demo")
         .with_file_type(SupportedFormat.JSON)
-        .expectation(home_loan_rates)
+        .expectation(westpac_home_loans)
         .expectation(
             custom("westpac-home-loan-portfolios")
             .verify(code(adls_atleast_one_record.verify))

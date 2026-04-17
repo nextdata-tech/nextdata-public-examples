@@ -112,3 +112,40 @@ home_loan_rates = (
     )
     # .verify_field("bank", match_regex(r"Westpac|ANZ|Macquarie"))
 )
+
+
+def _field(name: str | None, data_type: DataType) -> Field:
+    # helper function for DataType.ComplexType which expects
+    #   Field classes and not dicts or tuples
+    return Field(
+        data_type=data_type,
+        name=name,
+        description=None,
+        metadata=None,
+        constraints=None,
+        relates_to=[],
+        semantic_tags=None,
+    )
+
+
+westpac_home_loans = semantic_model(
+    name="westpac_home_loans",
+    description="Westpac Home Loan Rates. Captured from a web request that feeds Westpac's home loan calculator (https://www.westpac.com.au/personal-banking/home-loans/calculator/mortgage-repayment/)",
+    attributes=[
+        attribute(
+            name="PortfolioId",
+            data_type=string(),
+            description="Home Loan LVR product code",
+        ),
+        attribute(
+            name="Products",
+            data_type=list(
+                _field(
+                    "item",
+                    struct([_field("1 Year Fixed Rate Investment Property Loan", string())]),
+                )
+            ),
+            description="List of home loan products rates at different LVR levels",
+        ),
+    ],
+)
