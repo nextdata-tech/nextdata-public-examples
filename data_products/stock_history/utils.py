@@ -10,9 +10,7 @@ from nxd.data_product.context import AzureDataLakeStorage
 
 def get_logger():
     _logger = logging.getLogger("utils")
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    )
+    formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
     _logger.addHandler(console_handler)
@@ -29,9 +27,7 @@ def _get_adls_client(context: AzureDataLakeStorage) -> DataLakeServiceClient:
         context.client_id,
         context.client_secret,
     )
-    return DataLakeServiceClient(
-        f"https://{context.account_name}.dfs.core.windows.net", credential=credentials
-    )
+    return DataLakeServiceClient(f"https://{context.account_name}.dfs.core.windows.net", credential=credentials)
 
 
 def parquet_to_adls(

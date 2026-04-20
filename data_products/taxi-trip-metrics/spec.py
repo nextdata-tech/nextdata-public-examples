@@ -8,7 +8,7 @@ spec = (
         domain="ANALYTICS/TRANSPORTATION",
         version="1.0.0-dev",
         infra_profile="ecommerce-demo",
-        source_repo_url="https://github.com/nextdata-tech/nextdata-examples/data_products/taxi-trip-metrics",
+        source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/taxi-trip-metrics",
     )
     .environment("demo")
     .provision(
@@ -19,9 +19,7 @@ spec = (
     # Transform with DAB job configuration - execution happens in the pre-deployed bundle job
     .transform(
         script("transform/transform.py")
-        .compute(
-            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks"
-        )
+        .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks")
         .when(any_of(scheduled("*/10 * * * *"), on_started()))
     )
     .output(
@@ -30,16 +28,31 @@ spec = (
         .model(trip_metrics)
         .promise(pipeline_summary)
         .promise(trip_metrics)
+        .promise(
+            custom("databricks-atleast-one-record")
+            .verify(
+                code(databricks_atleast_one_record.verify)
+                .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-contract")
+                .config(
+                    {
+                        "autoscale": {"min_workers": 1, "max_workers": 1},
+                        "spark_version": "17.3.x-scala2.13",
+                        "store_path": "/Workspace/nxd",
+                    }
+                )
+            )
+            .model(pipeline_summary)
+            .model(trip_metrics)
+            .description("Verifies each promised Databricks table contains at least one record")
+        )
         .port(
             "databricks",
-            storage(
-                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-storage"
-            ).config(
+            storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-storage").config(
                 databricks_config().disable_provisioning()  # disable built-in provisioning since we're doing custom provisioning and runs after built-in provisioning. This will change.
             ),
         )
     )
-    .control("owner", owner().user("hello@nextdata.com"))
     .control("data-product-access", data_product_access().user("hello@nextdata.com"))
     .control("steward", data_product_access().user("hello@nextdata.com"))
+    .control("owner", owner().user("hello@nextdata.com"))
 )

@@ -8,14 +8,12 @@ spec = (
         domain="regulatory-compliance",
         version="1.0.0-dev",
         infra_profile="ecommerce-demo",
-        source_repo_url="https://github.com/nextdata-tech/nextdata-examples",
+        source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/market_announcements",
     )
     .environment("demo")
     .with_global_trigger(ScheduleTrigger("0 12 * * *"))
     .transform(
-        script("transform.py").compute(
-            "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute"
-        )
+        script("transform.py").compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
     )
     .output(
         data_product_output()
@@ -25,18 +23,21 @@ spec = (
         .promise(announcements)
         .port(
             "adls",
-            storage(
-                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls"
-            )
+            storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls")
             .config(
                 adls_config(
                     file_type=SupportedFormat.PARQUET,
                 )
             )
-            .managed_access(),
+            .managed_access()
+            .promise(
+                custom("adls-non-empty-output")
+                .verify(code(adls_freshness.verify))
+                .description("Verifies each promised output model in ADLS was updated within the last 24 hours")
+            ),
         )
     )
-    .control("owner", owner().user("hello@nextdata.com"))
     .control("data-product-access", data_product_access().user("hello@nextdata.com"))
     .control("steward", data_product_access().user("hello@nextdata.com"))
+    .control("owner", owner().user("hello@nextdata.com"))
 )

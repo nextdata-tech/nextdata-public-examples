@@ -17,6 +17,7 @@ from nxd.spec import SupportedFormat
 from nxd.spec import access_approval_config
 from nxd.spec import adls_config
 from nxd.spec import code
+from nxd.spec import custom
 from nxd.spec import data_product
 from nxd.spec import data_product_access
 from nxd.spec import data_product_input
@@ -31,6 +32,9 @@ from nxd.spec.conditions import any_of
 from nxd.spec.conditions import updated
 from transform import transform
 
+from contracts import adls_freshness
+from contracts import adls_input_check
+
 cluster_config = {
     "autoscale": {"min_workers": 1, "max_workers": 1},
     "spark_version": "17.3.x-scala2.13",
@@ -39,6 +43,9 @@ cluster_config = {
 }
 
 __all__ = [
+    "adls_freshness",
+    "adls_input_check",
+    "custom",
     "get_bank_symbols",
     "get_bank_symbols_request",
     "get_bank_symbols_response",

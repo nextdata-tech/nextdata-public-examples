@@ -25,9 +25,7 @@ def transform(
 
     asx = ASXMarkitDigital()
 
-    companies = pa.Table.from_pylist(
-        [c.model_dump() for c in asx.get_companies_directory_file()]
-    )
+    companies = pa.Table.from_pylist([c.model_dump() for c in asx.get_companies_directory_file()])
 
     announcements = pa.Table.from_pylist(
         # NOTE pagination is not used since you can just increase the items_per_page
@@ -66,9 +64,7 @@ def transform(
     )
 
     parquet_to_adls(adls, companies, adls.model_paths[companies_model.name].path)
-    parquet_to_adls(
-        adls, announcements, adls.model_paths[announcements_model.name].path
-    )
+    parquet_to_adls(adls, announcements, adls.model_paths[announcements_model.name].path)
 
     # download files to adls
     files = announcements.select(["path", "document_key"]).to_pylist()
@@ -80,9 +76,7 @@ def transform(
             continue
 
         if file_exists_adls(adls, path):
-            _logger.info(
-                f"skipping file: {document_key}, it has already been downloaded to path: {path}"
-            )
+            _logger.info(f"skipping file: {document_key}, it has already been downloaded to path: {path}")
             continue
 
         bytes_io = asx.get_file(document_key)

@@ -46,9 +46,7 @@ def _retrieve_income_statements(tickers: yf.Tickers) -> pa.Table:
     for symbol, ticker in tickers.tickers.items():
         income = ticker.get_income_stmt(pretty=False, freq="yearly")
         if isinstance(income, dict):
-            raise TypeError(
-                f"Income statement returned as dict by yfinance for symbol - {symbol}"
-            )
+            raise TypeError(f"Income statement returned as dict by yfinance for symbol - {symbol}")
 
         income = _format_financial_report_dataframe(
             income,
@@ -81,8 +79,6 @@ def transform(
 
     income_statements = _retrieve_income_statements(tickers)
 
-    parquet_to_adls(
-        adls, income_statements, adls.model_paths[income_statements_model.name].path
-    )
+    parquet_to_adls(adls, income_statements, adls.model_paths[income_statements_model.name].path)
 
     _logger.info("Transform completed successfully")

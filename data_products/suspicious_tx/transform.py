@@ -25,11 +25,7 @@ def _detect_suspicious_transactions(table: pa.Table, hours: int = 1) -> pa.Table
         window = []
         for transaction in transactions:
             # filter to transactions within the window
-            window = [
-                w
-                for w in window
-                if (transaction["date"] - w["date"]).total_seconds() <= hours * 3600
-            ]
+            window = [w for w in window if (transaction["date"] - w["date"]).total_seconds() <= hours * 3600]
 
             # compare transaction with transactions in the window
             for w in window:
@@ -60,12 +56,8 @@ def transform(
 ) -> None:
     _logger.info("Starting suspicious-tx transformation...")
 
-    transactions = adls_to_parquet(
-        credit_card_tx, credit_card_tx.model_paths[transactions_model.name].path
-    )
-    transactions = transactions.select(
-        ["transaction_id", "customer_id", "date", "country_code"]
-    )
+    transactions = adls_to_parquet(credit_card_tx, credit_card_tx.model_paths[transactions_model.name].path)
+    transactions = transactions.select(["transaction_id", "customer_id", "date", "country_code"])
 
     anomalies = _detect_suspicious_transactions(
         transactions,

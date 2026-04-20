@@ -88,9 +88,7 @@ class ASXMarkitDigital:
             },
         )
 
-        announcements = [
-            Announcement.model_validate(row) for row in r.json()["data"]["items"]
-        ]
+        announcements = [Announcement.model_validate(row) for row in r.json()["data"]["items"]]
 
         return announcements
 

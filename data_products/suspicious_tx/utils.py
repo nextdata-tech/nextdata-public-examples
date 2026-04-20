@@ -17,9 +17,7 @@ def _get_adls_client(context: AzureDataLakeStorage) -> DataLakeServiceClient:
         context.client_id,
         context.client_secret,
     )
-    return DataLakeServiceClient(
-        f"https://{context.account_name}.dfs.core.windows.net", credential=credentials
-    )
+    return DataLakeServiceClient(f"https://{context.account_name}.dfs.core.windows.net", credential=credentials)
 
 
 def parquet_to_adls(

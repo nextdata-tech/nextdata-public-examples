@@ -10,6 +10,7 @@ from model_context_protocol import get_term_deposit_rates_request
 from model_context_protocol import get_term_deposit_rates_response
 from models import home_loan_rates
 from models import term_deposits
+from models import westpac_home_loans
 from nxd.spec import SupportedFormat
 from nxd.spec import code
 from nxd.spec import custom
@@ -39,6 +40,7 @@ k8s_executor_config = {
 __all__ = [
     "term_deposits",
     "home_loan_rates",
+    "westpac_home_loans",
     "SupportedFormat",
     "code",
     "custom",

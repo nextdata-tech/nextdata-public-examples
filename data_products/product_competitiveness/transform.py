@@ -44,9 +44,7 @@ def transform(market_rates: AzureDataLakeStorage, snowflake: Snowflake):
         client_id=market_rates.client_id,
         client_secret=market_rates.client_secret,
     )
-    adls_client = DataLakeServiceClient(
-        f"https://{market_rates.account_name}.dfs.core.windows.net", credentials
-    )
+    adls_client = DataLakeServiceClient(f"https://{market_rates.account_name}.dfs.core.windows.net", credentials)
     conn = connect(
         user=snowflake.user,
         password=snowflake.password,

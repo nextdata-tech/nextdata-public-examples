@@ -3,12 +3,15 @@ from nxd.spec import ScheduleTrigger
 from nxd.spec import SupportedFormat
 from nxd.spec import adls_config
 from nxd.spec import code
+from nxd.spec import custom
 from nxd.spec import data_product
 from nxd.spec import data_product_access
 from nxd.spec import data_product_output
 from nxd.spec import owner
 from nxd.spec import storage
 from transform import transform
+
+from contracts import adls_freshness
 
 k8s_executor_config = {
     "pod_cleanup_delay_secs": 86400,
@@ -19,7 +22,9 @@ k8s_executor_config = {
 }
 
 __all__ = [
+    "adls_freshness",
     "disclosures",
+    "custom",
     "ScheduleTrigger",
     "SupportedFormat",
     "adls_config",

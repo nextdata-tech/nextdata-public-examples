@@ -8,7 +8,7 @@ spec = (
         domain="FINANCE/COMPETITORS/FINANCIAL-PERFORMANCE",
         version="1.0.0-dev",
         infra_profile="ecommerce-demo",
-        source_repo_url="https://github.com/nextdata-tech/nextdata-examples",
+        source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/competitor_growth_analysis",
     )
     .environment("demo")
     .transform(
@@ -29,22 +29,27 @@ spec = (
         "market-announcements",
         data_product_input()
         .source("https://app.demo.trynxd.com/data-product/market-announcements#/output/port/adls")
-        .environment("demo"),
-        # .expectation(announcements),
+        .environment("demo")
+        .expectation(announcements)
+        .expectation(
+            custom("adls-non-empty-input")
+            .verify(code(adls_input_check.verify))
+            .description("Verifies input data in ADLS contains at least one record")
+        ),
     )
     .input(
         "income-statements",
         data_product_input()
         .source("https://app.demo.trynxd.com/data-product/income-statements#/output/port/adls")
-        .environment("demo"),
-        # .expectation(income_statements),
+        .environment("demo")
+        .expectation(income_statements),
     )
     .input(
         "stock-history",
         data_product_input()
         .source("https://app.demo.trynxd.com/data-product/stock-history#/output/port/adls")
-        .environment("demo"),
-        # .expectation(history),
+        .environment("demo")
+        .expectation(history),
     )
     .input(
         "financial-statements",
@@ -66,7 +71,6 @@ spec = (
     )
     .output(
         data_product_output()
-        .model(documents)
         .model(growth)
         .model(dividend_sustainability)
         .port(
@@ -74,12 +78,16 @@ spec = (
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/adls")
             .config(
                 adls_config()
-                .target_file("documents/**/*.json", documents)
                 .target_file("growth.parquet", growth)
                 .target_file("dividend_sustainability.parquet", dividend_sustainability)
             )
             .promise(growth)
             .promise(dividend_sustainability)
+            .promise(
+                custom("adls-non-empty-output")
+                .verify(code(adls_freshness.verify))
+                .description("Verifies each promised output model in ADLS was updated within the last 24 hours")
+            )
             .disable_temporal_credentials()
             .follow_approval_flow()
             .approval(
@@ -128,7 +136,7 @@ spec = (
             .mcp_path("/mcp"),
         )
     )
-    .control("owner", owner().user("hello@nextdata.com"))
     .control("data-product-access", data_product_access().user("hello@nextdata.com"))
     .control("steward", data_product_access().user("hello@nextdata.com"))
+    .control("owner", owner().user("hello@nextdata.com"))
 )

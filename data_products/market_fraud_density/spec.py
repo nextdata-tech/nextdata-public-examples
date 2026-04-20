@@ -13,14 +13,13 @@ spec = (
         ),
         version="1.0.0-dev",
         infra_profile="ecommerce-demo",
+        source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/market_fraud_density",
     )
     .environment("demo")
     .with_global_trigger(ScheduleTrigger("0 */8 * * *"))
     .transform(
         code(transform)
-        .compute(
-            "https://app.partner.nextopia.dev/infra-profile/ecommerce-demo#/services/k8s-compute"
-        )
+        .compute("https://app.partner.nextopia.dev/infra-profile/ecommerce-demo#/services/k8s-compute")
         .config(k8s_executor_config)
     )
     .output(
@@ -29,9 +28,7 @@ spec = (
         .promise(fraud_density_model)
         .port(
             "object-storage",
-            storage(
-                "https://app.partner.nextopia.dev/infra-profile/ecommerce-demo#/services/s3-output"
-            )
+            storage("https://app.partner.nextopia.dev/infra-profile/ecommerce-demo#/services/s3-output")
             .config(s3_config(file_type=SupportedFormat.CSV))
             .promise(
                 custom("banksim-transactions-quality")
@@ -77,17 +74,12 @@ spec = (
         )
         .port(
             "mcp-api",
-            rpc_server(
-                "https://app.partner.nextopia.dev/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s"
-            )
+            rpc_server("https://app.partner.nextopia.dev/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s")
             .enable_endpoints()
             .mcp_path("/mcp"),
         )
     )
-    .control(
-        "data-product-access",
-        data_product_access().user("chaithanya.chowdhary@datacolor.ai"),
-    )
-    .control("steward", data_product_access().user("chaithanya.chowdhary@datacolor.ai"))
-    .control("owner", owner().user("chaithanya.chowdhary@datacolor.ai"))
+    .control("data-product-access", data_product_access().user("hello@nextdata.com"))
+    .control("steward", data_product_access().user("hello@nextdata.com"))
+    .control("owner", owner().user("hello@nextdata.com"))
 )
