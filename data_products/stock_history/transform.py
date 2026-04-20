@@ -18,9 +18,7 @@ def _retrieve_history(tickers: yf.Tickers) -> pa.Table:
         progress=False,
     )
     if history is None:
-        raise ValueError(
-            f"No history data returned by yfinance for symbols - {tickers.symbols}"
-        )
+        raise ValueError(f"No history data returned by yfinance for symbols - {tickers.symbols}")
 
     columns = {
         "Ticker": "symbol",

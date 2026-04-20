@@ -49,27 +49,18 @@ _logger.setLevel(logging.INFO)
 
 if not _logger.handlers:
     handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(
-        logging.Formatter("%(asctime)s %(levelname)s %(name)s - %(message)s")
-    )
+    handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s - %(message)s"))
     _logger.addHandler(handler)
 
 _logger.propagate = False
 
 
 def _cast_to_target_schema(df: DataFrame, target_schema: StructType) -> DataFrame:
-    return df.select(
-        [
-            F.col(field.name).cast(field.dataType).alias(field.name)
-            for field in target_schema.fields
-        ]
-    )
+    return df.select([F.col(field.name).cast(field.dataType).alias(field.name) for field in target_schema.fields])
 
 
 def _raw_string_schema(target_schema: StructType) -> StructType:
-    return StructType(
-        [StructField(field.name, StringType(), True) for field in target_schema.fields]
-    )
+    return StructType([StructField(field.name, StringType(), True) for field in target_schema.fields])
 
 
 def transform(
@@ -105,25 +96,17 @@ def transform(
             select_columns = ", ".join(field.name for field in target_schema.fields)
 
             snowflake_cursor.execute(
-                f"SELECT {select_columns} FROM {product_competitiveness.schema}.{table_name} "
-                "WHERE bank = 'Westpac'"
+                f"SELECT {select_columns} FROM {product_competitiveness.schema}.{table_name} WHERE bank = 'Westpac'"
             )
             rows = snowflake_cursor.fetchall()
 
-            _logger.info(
-                f"Fetched {len(rows)} records from Snowflake for table {table_name}"
-            )
+            _logger.info(f"Fetched {len(rows)} records from Snowflake for table {table_name}")
 
             if not rows:
-                _logger.info(
-                    f"No rows returned for {table_name}; skipping Spark write to {target_table}"
-                )
+                _logger.info(f"No rows returned for {table_name}; skipping Spark write to {target_table}")
                 continue
 
-            rows_as_strings = [
-                tuple(None if value is None else str(value) for value in row)
-                for row in rows
-            ]
+            rows_as_strings = [tuple(None if value is None else str(value) for value in row) for row in rows]
             raw_df = spark.createDataFrame(
                 rows_as_strings,
                 schema=_raw_string_schema(target_schema),

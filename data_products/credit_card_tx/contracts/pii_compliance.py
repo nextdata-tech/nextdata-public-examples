@@ -21,9 +21,7 @@ def _get_adls_client(context: AzureDataLakeStorage) -> DataLakeServiceClient:
         context.client_id,
         context.client_secret,
     )
-    return DataLakeServiceClient(
-        f"https://{context.account_name}.dfs.core.windows.net", credential=credentials
-    )
+    return DataLakeServiceClient(f"https://{context.account_name}.dfs.core.windows.net", credential=credentials)
 
 
 def adls_to_parquet(
@@ -60,16 +58,12 @@ def verify(
         if pc.any(mask).as_py():  # type: ignore
             return VerifyResult(
                 VerifyResultEnum.FAILED,
-                {
-                    "result": "Promise failed. Unredacted emails present within `customers`"
-                },
+                {"result": "Promise failed. Unredacted emails present within `customers`"},
             )
         else:
             return VerifyResult(
                 VerifyResultEnum.PASS,
-                {
-                    "result": "Promise fulfilled. No email local-parts present within `customers`"
-                },
+                {"result": "Promise fulfilled. No email local-parts present within `customers`"},
             )
 
     except Exception as e:

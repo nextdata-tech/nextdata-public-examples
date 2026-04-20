@@ -24,9 +24,7 @@ def get_fx_data_url() -> str:
     start_date = int(datetime(1983, 7, 14).timestamp()) * 1000
     end_date = int(datetime.now(UTC).timestamp()) * 1000
     base_url = f"https://api.ofx.com/PublicSite.ApiService/SpotRateHistory/AUD/NZD/-{start_date}/{end_date}"
-    params = urllib.parse.urlencode(
-        {"DecimalPlaces": "6", "ReportingInterval": "daily", "format": "json"}
-    )
+    params = urllib.parse.urlencode({"DecimalPlaces": "6", "ReportingInterval": "daily", "format": "json"})
 
     return f"{base_url}?{params}"
 

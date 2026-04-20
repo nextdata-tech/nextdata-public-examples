@@ -106,9 +106,7 @@ westpac_term_deposits = semantic_model(
             data_type=string(),
             description="Product status on website (PUBLISHED)",
         ),
-        attribute(
-            name="rate_code", data_type=string(), description="Rate code (10000~0.25)"
-        ),
+        attribute(name="rate_code", data_type=string(), description="Rate code (10000~0.25)"),
         attribute(
             name="product",
             data_type=string(),
@@ -129,9 +127,7 @@ westpac_term_deposits = semantic_model(
             data_type=string(),
             description="Maximum term required for this product",
         ),
-        attribute(
-            name="max_amount", data_type=string(), description="Maximum deposit amount"
-        ),
+        attribute(name="max_amount", data_type=string(), description="Maximum deposit amount"),
         attribute(
             name="maturity_rate",
             data_type=string(),
@@ -169,9 +165,7 @@ westpac_home_loans = semantic_model(
             data_type=list(
                 _field(
                     "item",
-                    struct(
-                        [_field("1 Year Fixed Rate Investment Property Loan", string())]
-                    ),
+                    struct([_field("1 Year Fixed Rate Investment Property Loan", string())]),
                 )
             ),
             description="List of home loan products rates at different LVR levels",

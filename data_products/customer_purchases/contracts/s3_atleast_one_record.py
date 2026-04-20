@@ -13,7 +13,7 @@ _logger = logging.getLogger("contracts.s3_atleast_one_record")
 
 def verify(s3_input: S3Input) -> VerifyResult:
     """Verify that the incoming S3 streaming input source is accessible and non-empty."""
-    uri = None
+    uri = s3_input.model_output_paths[""]
     for attr in ("uri", "url", "path"):
         val = getattr(s3_input, attr, None)
         if isinstance(val, str) and val.strip():
@@ -29,7 +29,7 @@ def verify(s3_input: S3Input) -> VerifyResult:
     if not uri:
         msg = "S3 input source is not configured with a usable URI/path"
         _logger.error(msg)
-        return VerifyResult(VerifyResultEnum.FAIL, {"message": msg})
+        return VerifyResult(VerifyResultEnum.FAILED, {"message": msg})
 
     try:
         parsed = urlparse(uri)
@@ -40,11 +40,11 @@ def verify(s3_input: S3Input) -> VerifyResult:
         if not response.get("Contents"):
             msg = f"S3 input source is accessible but empty: {uri}"
             _logger.error(msg)
-            return VerifyResult(VerifyResultEnum.FAIL, {"message": msg})
+            return VerifyResult(VerifyResultEnum.FAILED, {"message": msg})
     except (ValueError, BotoCoreError, ClientError) as exc:
         msg = f"Unable to access S3 input source '{uri}': {exc}"
         _logger.exception(msg)
-        return VerifyResult(VerifyResultEnum.FAIL, {"message": msg})
+        return VerifyResult(VerifyResultEnum.FAILED, {"message": msg})
 
     _logger.info("S3 source input check passed for %s", uri)
     return VerifyResult(VerifyResultEnum.PASS, {"message": f"S3 input source is accessible and non-empty: {uri}"})

@@ -51,9 +51,7 @@ KNOWN_CATEGORIES = {
 }
 
 
-def check_banksim_raw_expectations(
-    input: S3Input, models: dict[str, Model]
-) -> VerifyResult:
+def check_banksim_raw_expectations(input: S3Input, models: dict[str, Model]) -> VerifyResult:
     model = models.get("banksim_raw_model")
     if model is None:
         return VerifyResult.failure("banksim_raw_model not found in provided models")
@@ -63,47 +61,29 @@ def check_banksim_raw_expectations(
     # Checks Required columns present in the data
     missing_cols = REQUIRED_COLUMNS - set(df.columns)
     if missing_cols:
-        return VerifyResult.failure(
-            f"required_columns: source CSV is missing columns: {sorted(missing_cols)}"
-        )
+        return VerifyResult.failure(f"required_columns: source CSV is missing columns: {sorted(missing_cols)}")
 
     # Checks for Zero-null on category
-    null_category = (
-        df["category"].isna().sum()
-        + (df["category"].astype(str).str.strip() == "").sum()
-    )
+    null_category = df["category"].isna().sum() + (df["category"].astype(str).str.strip() == "").sum()
     if null_category > 0:
-        return VerifyResult.failure(
-            f"zero_null_category: {null_category} row(s) have null or empty category"
-        )
+        return VerifyResult.failure(f"zero_null_category: {null_category} row(s) have null or empty category")
 
     # Checks for Zero-null on fraud
     null_fraud = df["fraud"].isna().sum()
     if null_fraud > 0:
-        return VerifyResult.failure(
-            f"zero_null_fraud: {null_fraud} row(s) have null fraud flag"
-        )
+        return VerifyResult.failure(f"zero_null_fraud: {null_fraud} row(s) have null fraud flag")
 
     # Checks for Non-negative amount
     neg_amount = (pd.to_numeric(df["amount"], errors="coerce").fillna(0) < 0).sum()
     if neg_amount > 0:
-        return VerifyResult.failure(
-            f"non_negative_amount: {neg_amount} row(s) have negative transaction amount"
-        )
+        return VerifyResult.failure(f"non_negative_amount: {neg_amount} row(s) have negative transaction amount")
 
     # Checks for Known categories
     normalised = (
-        df["category"]
-        .astype(str)
-        .str.strip()
-        .str.strip("'\"")
-        .str.replace(r"^es_", "", regex=True)
-        .str.lower()
+        df["category"].astype(str).str.strip().str.strip("'\"").str.replace(r"^es_", "", regex=True).str.lower()
     )
     unknown = set(normalised.unique()) - KNOWN_CATEGORIES
     if unknown:
-        return VerifyResult.failure(
-            f"known_categories: unexpected category values found: {sorted(unknown)}"
-        )
+        return VerifyResult.failure(f"known_categories: unexpected category values found: {sorted(unknown)}")
 
     return VerifyResult.success()

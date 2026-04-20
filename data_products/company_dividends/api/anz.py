@@ -21,20 +21,14 @@ def transform_dividends(dividends: dict) -> dict:
         "record_date": dividends["Record date"],
         "dividend": dividends["Dividend (AUD)"],
         "franking_level": dividends["Australian Franking level"],
-        "imputation_credits": dividends[
-            "NZ Imputation\n Credits per\n Ordinary Share\n (NZD)[1]"
-        ],
+        "imputation_credits": dividends["NZ Imputation\n Credits per\n Ordinary Share\n (NZD)[1]"],
         "drp_price": dividends["DRP price\n (AUD)"],
         "asx_announcement": dividends["ASX announcement"],
     }
 
 
 def get_dividends() -> list[dict]:
-    response = requests.get(
-        "https://www.anz.com/shareholder/centre/your-shareholding/dividend-information/"
-    )
+    response = requests.get("https://www.anz.com/shareholder/centre/your-shareholding/dividend-information/")
     raw_dividends_history = extract_dividends_history(response.text)
-    dividends_history = [
-        transform_dividends(dividends) for dividends in raw_dividends_history
-    ]
+    dividends_history = [transform_dividends(dividends) for dividends in raw_dividends_history]
     return dividends_history

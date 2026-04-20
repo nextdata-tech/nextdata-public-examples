@@ -14,19 +14,11 @@ from langgraph.prebuilt import create_react_agent
 from nxd.data_product.client import create_client
 
 nxd_client = create_client(hostname="dp.demo.trynxd.com")
-au_competitor_analysis_data_product = nxd_client.data_product(
-    data_product="au-competitor-analysis-demo"
-)
-au_competitor_analysis_output = au_competitor_analysis_data_product.get_outputs(
-    "pinecone", ctx.PineconeOutput
-)
+au_competitor_analysis_data_product = nxd_client.data_product(data_product="au-competitor-analysis-demo")
+au_competitor_analysis_output = au_competitor_analysis_data_product.get_outputs("pinecone", ctx.PineconeOutput)
 
-public_disclosures_data_product = nxd_client.data_product(
-    data_product="public-disclosures-demo"
-)
-public_disclosures_output = public_disclosures_data_product.get_outputs(
-    "pinecone", ctx.PineconeOutput
-)
+public_disclosures_data_product = nxd_client.data_product(data_product="public-disclosures-demo")
+public_disclosures_output = public_disclosures_data_product.get_outputs("pinecone", ctx.PineconeOutput)
 
 embeddings = PineconeEmbeddings(
     model="llama-text-embed-v2",
@@ -97,9 +89,7 @@ public_disclosures_retriever_tool = create_retriever_tool(
     public_disclosures_retriever,
     name="disclosures",
     description="APS 330 Public Disclosures from NASDAQ listed companies",
-    document_prompt=PromptTemplate.from_template(
-        "page_content: {page_content} filename: {filename} url: {url} "
-    ),
+    document_prompt=PromptTemplate.from_template("page_content: {page_content} filename: {filename} url: {url} "),
 )
 
 
