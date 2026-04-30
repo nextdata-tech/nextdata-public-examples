@@ -2,7 +2,7 @@ terms:
 
   fraud_rate_pct:
     name: Fraud Rate (%)
-    priority: 1
+    priority: P1
     definition: >
       The percentage of transactions within a given merchant market category
       that were confirmed as fraudulent. Calculated as
@@ -25,7 +25,7 @@ terms:
 
   market_type:
     name: Market Type
-    priority: 1
+    priority: P1
     definition: >
       A normalised merchant category label derived from the BankSim1 simulation
       dataset. The raw Kaggle source uses an 'es_' prefix (e.g. 'es_travel');
