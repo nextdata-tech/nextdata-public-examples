@@ -1,0 +1,10 @@
+[tool.ruff]
+extend-exclude = ["*.pyi"]
+include = ["./**/*.py"]
+line-length = 120
+
+[tool.ruff.lint]
+extend-select = ["I"]
+
+[tool.ruff.lint.isort]
+force-single-line = true

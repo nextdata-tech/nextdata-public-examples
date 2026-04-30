@@ -1,3 +1,5 @@
+from contracts.banksim_transactions_quality import check_banksim_transactions_quality
+from contracts.fraud_density_quality import check_fraud_density_quality
 from mcp_api.fraud_density import FraudDensityAPI
 from mcp_api.fraud_density import get_all_fraud_stats
 from mcp_api.fraud_density import get_market_fraud_stats
@@ -17,9 +19,6 @@ from nxd.spec import rpc_server
 from nxd.spec import s3_config
 from nxd.spec import storage
 from transform import transform
-
-from contracts.banksim_transactions_quality import check_banksim_transactions_quality
-from contracts.fraud_density_quality import check_fraud_density_quality
 
 k8s_executor_config = {
     "pod_cleanup_delay_secs": 3600,

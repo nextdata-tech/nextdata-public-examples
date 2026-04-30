@@ -1,3 +1,4 @@
+from contracts import adls_freshness
 from models import announcements
 from models import companies
 from nxd.spec import ScheduleTrigger
@@ -12,8 +13,6 @@ from nxd.spec import owner
 from nxd.spec import script
 from nxd.spec import storage
 from transform import transform
-
-from contracts import adls_freshness
 
 __all__ = [
     "adls_freshness",

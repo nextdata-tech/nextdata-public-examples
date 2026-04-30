@@ -1,3 +1,4 @@
+from contracts import databricks_atleast_one_record
 from expectations import expect_data_from_all_banks
 from models import home_loan_rates
 from models import term_deposits
@@ -12,8 +13,6 @@ from nxd.spec import databricks_config
 from nxd.spec import owner
 from nxd.spec import storage
 from transform import transform
-
-from contracts import databricks_atleast_one_record
 
 cluster_config = {
     "autoscale": {"min_workers": 1, "max_workers": 1},

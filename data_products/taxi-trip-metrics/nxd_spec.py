@@ -1,3 +1,4 @@
+from contracts import databricks_atleast_one_record
 from models import pipeline_summary
 from models import trip_metrics
 from nxd.spec import ScheduleTrigger
@@ -13,8 +14,6 @@ from nxd.spec import storage
 from nxd.spec.conditions import any_of
 from nxd.spec.conditions import on_started
 from nxd.spec.conditions import scheduled
-
-from contracts import databricks_atleast_one_record
 
 __all__ = [
     "databricks_atleast_one_record",

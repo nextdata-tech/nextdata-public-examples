@@ -1,3 +1,4 @@
+from contracts import snowflake_atleast_one_record
 from expectations import adls_atleast_one_record
 from model_context_protocol import get_banks
 from model_context_protocol import get_banks_request
@@ -25,8 +26,6 @@ from nxd.spec import rpc_server
 from nxd.spec import snowflake_config
 from nxd.spec import storage
 from transform import transform
-
-from contracts import snowflake_atleast_one_record
 
 k8s_executor_config = {
     "pod_cleanup_delay_secs": 3600,

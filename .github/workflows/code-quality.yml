@@ -1,0 +1,55 @@
+name: Code Quality Checks
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    name: Lint and Style Checks
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Check for relevant file changes
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            python:
+              - '**.py'
+              - '.pre-commit-config.yaml'
+              - '.github/workflows/code-quality.yml'
+      
+      - name: Set up Python
+        if: steps.filter.outputs.python == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install ruff
+        if: steps.filter.outputs.python == 'true'
+        run: |
+          pip install ruff==0.12.1
+      
+      - name: Run ruff check
+        if: steps.filter.outputs.python == 'true'
+        run: |
+          ruff check --output-format=github --exclude='**.ipynb' .
+      
+      - name: Run ruff format check
+        if: steps.filter.outputs.python == 'true'
+        run: |
+          ruff format --check --exclude='**.ipynb' .
+      
+      - name: Check spec.py import limit
+        if: steps.filter.outputs.python == 'true'
+        run: |
+          chmod +x .pre-commit-hooks/check_spec_imports.py
+          python .pre-commit-hooks/check_spec_imports.py $(find data-products -name "spec.py" -type f)
+      
+      - name: No Python changes
+        if: steps.filter.outputs.python != 'true'
+        run: echo "No Python files changed, skipping checks"
