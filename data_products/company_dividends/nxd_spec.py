@@ -1,3 +1,4 @@
+from contracts import adls_freshness
 from models import dividends
 from nxd.spec import ScheduleTrigger
 from nxd.spec import SupportedFormat
@@ -10,8 +11,6 @@ from nxd.spec import data_product_output
 from nxd.spec import owner
 from nxd.spec import storage
 from transform import transform
-
-from contracts import adls_freshness
 
 k8s_executor_config = {
     "pod_cleanup_delay_secs": 3600,

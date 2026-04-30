@@ -1,3 +1,5 @@
+from contracts import adls_freshness
+from contracts import api_atleast_one_record
 from models import anz_products
 from models import macquarie_home_loans
 from models import macquarie_term_deposits
@@ -15,9 +17,6 @@ from nxd.spec import owner
 from nxd.spec import source_aligned_input
 from nxd.spec import storage
 from transform import transform
-
-from contracts import adls_freshness
-from contracts import api_atleast_one_record
 
 k8s_executor_config = {
     "pod_cleanup_delay_secs": 3600,

@@ -1,6 +1,7 @@
 from __mcp__ import get_banks
 from __mcp__ import get_banks_request
 from __mcp__ import get_banks_response
+from contracts import databricks_atleast_one_record
 from models import banks
 from nxd.spec import code
 from nxd.spec import custom
@@ -14,8 +15,6 @@ from nxd.spec import rpc_function
 from nxd.spec import rpc_server
 from nxd.spec import storage
 from transform import transform
-
-from contracts import databricks_atleast_one_record
 
 cluster_config = {
     "autoscale": {"min_workers": 1, "max_workers": 1},

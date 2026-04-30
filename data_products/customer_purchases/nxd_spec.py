@@ -1,3 +1,4 @@
+from contracts import s3_atleast_one_record
 from models import output_model
 from models import rate_model
 from nxd.spec import SupportedFormat
@@ -12,8 +13,6 @@ from nxd.spec import s3_config
 from nxd.spec import script
 from nxd.spec import source_aligned_input
 from nxd.spec import storage
-
-from contracts import s3_atleast_one_record
 
 __all__ = [
     "s3_atleast_one_record",

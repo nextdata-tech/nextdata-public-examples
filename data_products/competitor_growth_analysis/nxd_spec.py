@@ -7,6 +7,8 @@ from __mcp__ import get_dividend_sustainability_response
 from __mcp__ import get_growth
 from __mcp__ import get_growth_request
 from __mcp__ import get_growth_response
+from contracts import adls_freshness
+from contracts import adls_input_check
 from models import announcements
 from models import dividend_sustainability
 from models import documents
@@ -31,9 +33,6 @@ from nxd.spec import storage
 from nxd.spec.conditions import any_of
 from nxd.spec.conditions import updated
 from transform import transform
-
-from contracts import adls_freshness
-from contracts import adls_input_check
 
 cluster_config = {
     "autoscale": {"min_workers": 1, "max_workers": 1},
