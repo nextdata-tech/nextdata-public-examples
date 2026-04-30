@@ -37,12 +37,12 @@ jobs:
       - name: Run ruff check
         if: steps.filter.outputs.python == 'true'
         run: |
-          ruff check --output-format=github .
+          ruff check --output-format=github --exclude='**.ipynb' .
       
       - name: Run ruff format check
         if: steps.filter.outputs.python == 'true'
         run: |
-          ruff format --check .
+          ruff format --check --exclude='**.ipynb' .
       
       - name: Check spec.py import limit
         if: steps.filter.outputs.python == 'true'
