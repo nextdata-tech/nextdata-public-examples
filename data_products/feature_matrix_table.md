@@ -5,7 +5,7 @@ the relative URLs below and the span is not displayed -->
 | Data Product                                               |    ADLS     | API |   AWS S3    | Databricks |  MCP  | Snowflake |     Spark     |
 |------------------------------------------------------------|:-----------:|:---:|:-----------:|:----------:|:-----:|:---------:|:-------------:|
 | [company-dividends](company_dividends/spec.py)             |  ✅ (json)   |  ✅  |             |            |       |           |               |
-| [competitor_growth_analysis](competitor_growth_analysis/manifest.yaml) | ✅ (parquet/json) |     |             |     ✅      |   ✅   |           |   ✅ (batch)   |
+| [competitor_growth_analysis](competitor_growth_analysis/spec.py) | ✅ (parquet/json) |     |             |     ✅      |   ✅   |           |   ✅ (batch)   |
 | [credit-card-tx](credit_card_tx/spec.py)                   | ✅ (parquet) |     |             |            |       |           |               |
 | [customer-purchases](customer_purchases/spec.py)           |             |     | ✅ (parquet) |     ✅      |       |           | ✅ (streaming) |
 | [example-mcp-server](example_mcp/spec.py)                  |             |     |             |     ✅      |   ✅   |           |   ✅ (batch)   |
