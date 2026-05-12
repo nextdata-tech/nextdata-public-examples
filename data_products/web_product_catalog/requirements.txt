@@ -1,0 +1,6 @@
+nxd.core
+nxd.data_product[spec]
+requests
+beautifulsoup4
+pandas
+snowflake-connector-python
