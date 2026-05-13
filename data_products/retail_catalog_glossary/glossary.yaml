@@ -1,0 +1,100 @@
+terms:
+
+  category:
+    name: Product Category
+    priority: P1
+    definition: >
+      The top-level merchandising classification assigned to a product in the
+      competitor storefront. Derived from the catalog URL query parameter and
+      normalised to title case. Used to segment competitive pricing analysis
+      by product type.
+    synonyms:
+      - Merchandising Category
+      - Product Segment
+    term_values:
+      - Apparel
+      - Consumables
+      - Household
+    examples:
+      - "Apparel"
+      - "Consumables"
+      - "Household"
+    tags:
+      cde: "true"
+      domain: "RETAIL/CATALOG/PRICING"
+      pii: "false"
+
+  price:
+    name: Listed Price
+    priority: P1
+    definition: >
+      The current publicly listed price of a product in USD as displayed on the
+      catalog detail page at scrape time. Reflects any active promotional or
+      sale price. Used as the primary metric for competitive price benchmarking.
+    synonyms:
+      - Sale Price
+      - Current Price
+      - Catalog Price
+    examples:
+      - "24.99"
+      - "9.50"
+      - "149.00"
+    tags:
+      cde: "true"
+      domain: "RETAIL/CATALOG/PRICING"
+      pii: "false"
+
+  original_price:
+    name: Original Price
+    priority: P1
+    definition: >
+      The pre-discount listed price in USD, populated only when a markdown or
+      promotional price reduction is active. Absent when no discount applies.
+      Together with price, enables computation of the discount rate and
+      supports promotional strategy analysis.
+    synonyms:
+      - Pre-Discount Price
+      - Regular Price
+      - Full Price
+    examples:
+      - "39.99"
+      - "199.00"
+    tags:
+      cde: "true"
+      domain: "RETAIL/CATALOG/PRICING"
+      pii: "false"
+
+  brand:
+    name: Brand
+    priority: P2
+    definition: >
+      The manufacturer or label name associated with a product, extracted from
+      the Features table on the catalog detail page. Used to group products
+      by brand for competitive brand-level pricing analysis.
+    synonyms:
+      - Manufacturer
+      - Label
+    examples:
+      - "Acme"
+      - "GlobalGoods"
+    tags:
+      cde: "false"
+      domain: "RETAIL/CATALOG/PRICING"
+      pii: "false"
+
+  scraped_at:
+    name: Scrape Timestamp
+    priority: P2
+    definition: >
+      UTC timestamp recording when a product record was captured from the
+      source storefront. Set once per pipeline run for all records in that
+      batch. Used for data freshness validation and point-in-time price history.
+    synonyms:
+      - Capture Timestamp
+      - Ingestion Timestamp
+    examples:
+      - "2025-05-13T02:00:00Z"
+    tags:
+      cde: "false"
+      domain: "RETAIL/CATALOG/PRICING"
+      pii: "false"

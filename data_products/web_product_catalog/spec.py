@@ -29,6 +29,13 @@ spec = (
     .output(
         data_product_output()
         .promise(catalog_products)
+        # policy "web-product-catalog-freshness" enforces that this promise must be present
+        .promise(
+            custom("web-product-catalog-freshness")
+            .script("contracts/freshness_check.py")
+            .description("Freshness check: MAX(scraped_at) must be within last 10 hours")
+            .model(catalog_products)
+        )
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
