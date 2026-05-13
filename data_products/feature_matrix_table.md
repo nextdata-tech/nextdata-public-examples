@@ -2,25 +2,26 @@
 the relative URLs below and the span is not displayed -->
 <span class="embed-host" style="display:none">https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/</span>
 
-| Data Product                                                     |       ADLS        | API |    AWS S3    | Databricks | MCP | Snowflake |     Spark      |
-| ---------------------------------------------------------------- | :---------------: | :-: | :----------: | :--------: | :-: | :-------: | :------------: |
-| [company-dividends](company_dividends/spec.py)                   |     ✅ (json)     | ✅  |              |            |     |           |                |
-| [competitor_growth_analysis](competitor_growth_analysis/spec.py) | ✅ (parquet/json) |     |              |     ✅     | ✅  |           |   ✅ (batch)   |
-| [credit-card-tx](credit_card_tx/spec.py)                         |   ✅ (parquet)    |     |              |            |     |           |                |
-| [customer-purchases](customer_purchases/spec.py)                 |                   |     | ✅ (parquet) |     ✅     |     |           | ✅ (streaming) |
-| [example-mcp-server](example_mcp/spec.py)                        |                   |     |              |     ✅     | ✅  |           |   ✅ (batch)   |
-| [financial_statements](financial_statements/spec.py)             |   ✅ (parquet)    | ✅  |              |     ✅     | ✅  |           |   ✅ (batch)   |
-| [income-statements](income_statements/spec.py)                   |   ✅ (parquet)    | ✅  |              |            |     |           |                |
-| [loans-products](loans_products/spec.py)                         |                   |     |              |     ✅     |     |    ✅     |   ✅ (batch)   |
-| [market-announcements](market_announcements/spec.py)             |     ✅ (json)     | ✅  |              |            |     |           |                |
-| [market-fraud-density](market_fraud_density/spec.py)             |                   | ✅  |   ✅ (CSV)   |            |     |           |                |
-| [market-rates](market_rates/spec.py)                             |     ✅ (json)     | ✅  |              |            |     |           |                |
-| [product-competitiveness](product_competitiveness/spec.py)       |     ✅ (json)     |     |              |            | ✅  |    ✅     |                |
-| [public-disclosures](public_disclosures/spec.py)                 |   ✅ (parquet)    |     |              |            |     |           |                |
-| [stock-history](stock_history/spec.py)                           |   ✅ (parquet)    |     |              |     ✅     |     |           |                |
-| [suspicious-tx](suspicious_tx/spec.py)                           |   ✅ (parquet)    |     |              |            |     |           |                |
-| [taxi-trip-metrics](taxi-trip-metrics/spec.py)                   |                   |     |              |     ✅     |     |           |   ✅ (batch)   |
-| [web-product-catalog](web_product_catalog/spec.py)               |                   | ✅  |              |            |     |    ✅     |                |
+| Data Product                                                     |       ADLS        | API |    AWS S3    | Databricks | Glossary | MCP | Snowflake |     Spark      |
+| ---------------------------------------------------------------- | :---------------: | :-: | :----------: | :--------: | :------: | :-: | :-------: | :------------: |
+| [company-dividends](company_dividends/spec.py)                   |     ✅ (json)     | ✅  |              |            |          |     |           |                |
+| [competitor_growth_analysis](competitor_growth_analysis/spec.py) | ✅ (parquet/json) |     |              |     ✅     |          | ✅  |           |   ✅ (batch)   |
+| [credit-card-tx](credit_card_tx/spec.py)                         |   ✅ (parquet)    |     |              |            |          |     |           |                |
+| [customer-purchases](customer_purchases/spec.py)                 |                   |     | ✅ (parquet) |     ✅     |          |     |           | ✅ (streaming) |
+| [example-mcp-server](example_mcp/spec.py)                        |                   |     |              |     ✅     |          | ✅  |           |   ✅ (batch)   |
+| [financial_statements](financial_statements/spec.py)             |   ✅ (parquet)    | ✅  |              |     ✅     |          | ✅  |           |   ✅ (batch)   |
+| [income-statements](income_statements/spec.py)                   |   ✅ (parquet)    | ✅  |              |            |          |     |           |                |
+| [loans-products](loans_products/spec.py)                         |                   |     |              |     ✅     |          |     |    ✅     |   ✅ (batch)   |
+| [market-announcements](market_announcements/spec.py)             |     ✅ (json)     | ✅  |              |            |          |     |           |                |
+| [market-fraud-density](market_fraud_density/spec.py)             |                   | ✅  |   ✅ (CSV)   |            |          |     |           |                |
+| [market-rates](market_rates/spec.py)                             |     ✅ (json)     | ✅  |              |            |          |     |           |                |
+| [product-competitiveness](product_competitiveness/spec.py)       |     ✅ (json)     |     |              |            |          | ✅  |    ✅     |                |
+| [public-disclosures](public_disclosures/spec.py)                 |   ✅ (parquet)    |     |              |            |          |     |           |                |
+| [retail-catalog-glossary](retail_catalog_glossary/spec.py)       |                   |     |              |            |    ✅    |     |           |                |
+| [stock-history](stock_history/spec.py)                           |   ✅ (parquet)    |     |              |     ✅     |          |     |           |                |
+| [suspicious-tx](suspicious_tx/spec.py)                           |   ✅ (parquet)    |     |              |            |          |     |           |                |
+| [taxi-trip-metrics](taxi-trip-metrics/spec.py)                   |                   |     |              |     ✅     |          |     |           |   ✅ (batch)   |
+| [web-product-catalog](web_product_catalog/spec.py)               |                   | ✅  |              |            |          |     |    ✅     |                |
 
 
 ## ADLS
@@ -77,6 +78,10 @@ These examples cover different data formats such as JSON and Parquet, and show h
 * [loans-products](loans_products/spec.py): A data product that reads the output of the [product-competitiveness](product_competitiveness/spec.py) data product from Snowflake and loads curated datasets into Databricks Unity Catalog.
 * [product-competitiveness](product_competitiveness/spec.py): A data product that reads product competitiveness data as JSON from ADLS, transforms it via SQL and writes it to Snowflake. The output data is exposed via an MCP server.
 * [web-product-catalog](web_product_catalog/spec.py): A data product that scrapes a competitor retail storefront and writes enriched product catalog records (name, price, brand, description) to Snowflake for competitive pricing analysis.
+
+## Glossary
+
+* [retail-catalog-glossary](retail_catalog_glossary/spec.py): A business glossary data product that defines canonical terms for the Retail Catalog domain — including product category, pricing fields, brand, and scrape timestamp — linked from the [web-product-catalog](web_product_catalog/spec.py) semantic model.
 
 ## Spark
 
