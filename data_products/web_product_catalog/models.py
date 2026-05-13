@@ -28,4 +28,29 @@ catalog_products = (
             ),
         }
     )
+    .link(
+        "category",
+        Predicate.GlossaryTerm,
+        "https://app.demo.trynxd.com/data-product/demo/retail-catalog-glossary#/terms/category",
+    )
+    .link(
+        "price",
+        Predicate.GlossaryTerm,
+        "https://app.demo.trynxd.com/data-product/demo/retail-catalog-glossary#/terms/price",
+    )
+    .link(
+        "original_price",
+        Predicate.GlossaryTerm,
+        "https://app.demo.trynxd.com/data-product/demo/retail-catalog-glossary#/terms/original_price",
+    )
+    .link(
+        "brand",
+        Predicate.GlossaryTerm,
+        "https://app.demo.trynxd.com/data-product/demo/retail-catalog-glossary#/terms/brand",
+    )
+    .link(
+        "scraped_at",
+        Predicate.GlossaryTerm,
+        "https://app.demo.trynxd.com/data-product/demo/retail-catalog-glossary#/terms/scraped_at",
+    )
 )
