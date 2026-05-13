@@ -1,5 +1,6 @@
 from models import catalog_products
 from nxd.spec import code
+from nxd.spec import custom
 from nxd.spec import data_product
 from nxd.spec import data_product_access
 from nxd.spec import data_product_output
@@ -22,6 +23,7 @@ k8s_executor_config = {
 __all__ = [
     "catalog_products",
     "code",
+    "custom",
     "data_product",
     "data_product_access",
     "data_product_output",
