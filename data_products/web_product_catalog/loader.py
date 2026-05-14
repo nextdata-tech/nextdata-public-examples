@@ -3,15 +3,13 @@ import logging
 import pandas as pd
 from nxd.core.context import Snowflake
 from snowflake.connector import connect
+from snowflake.connector.connection import SnowflakeConnection
 
 _logger = logging.getLogger("loader")
 
 
-def load_to_snowflake(df: pd.DataFrame, snowflake: Snowflake, table: str = "CATALOG_PRODUCTS") -> None:
-    """Truncate and reload Snowflake target table from DataFrame."""
-    _logger.info("Loading %d records into Snowflake table %s", len(df), table)
-
-    conn = connect(
+def _connect(snowflake: Snowflake) -> SnowflakeConnection:
+    return connect(
         user=snowflake.user,
         password=snowflake.password,
         account=snowflake.account,
@@ -19,6 +17,12 @@ def load_to_snowflake(df: pd.DataFrame, snowflake: Snowflake, table: str = "CATA
         database=snowflake.database,
         schema=snowflake.schema,
     )
+
+
+def load_to_snowflake(df: pd.DataFrame, snowflake: Snowflake, table: str = "CATALOG_PRODUCTS") -> None:
+    _logger.info("Loading %d records into Snowflake table %s", len(df), table)
+
+    conn = _connect(snowflake)
     cursor = conn.cursor()
     cursor.execute(f"TRUNCATE TABLE {table}")
     cursor.executemany(

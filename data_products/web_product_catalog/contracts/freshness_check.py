@@ -6,13 +6,13 @@ from nxd.data_product.context import Snowflake
 from nxd.data_product.context import VerifyResult
 from nxd.data_product.context import VerifyResultEnum
 from snowflake.connector import connect
+from snowflake.connector.connection import SnowflakeConnection
 
 FRESHNESS_THRESHOLD_HOURS = 10
 
 
-@data_product.on_verify()
-def verify(snowflake: Snowflake) -> VerifyResult:
-    conn = connect(
+def _connect(snowflake: Snowflake) -> SnowflakeConnection:
+    return connect(
         user=snowflake.user,
         password=snowflake.password,
         account=snowflake.account,
@@ -20,6 +20,11 @@ def verify(snowflake: Snowflake) -> VerifyResult:
         database=snowflake.database,
         schema=snowflake.schema,
     )
+
+
+@data_product.on_verify()
+def verify(snowflake: Snowflake) -> VerifyResult:
+    conn = _connect(snowflake)
     cursor = conn.cursor()
     cursor.execute("SELECT MAX(scraped_at) FROM CATALOG_PRODUCTS")
     row = cursor.fetchone()
