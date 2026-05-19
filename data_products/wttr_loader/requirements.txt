@@ -1,0 +1,4 @@
+nxd_core>=0.0.1
+nxd_data_product>=0.0.1
+requests
+snowflake-connector-python
