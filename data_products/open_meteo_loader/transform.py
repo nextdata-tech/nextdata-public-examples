@@ -4,6 +4,7 @@ from datetime import timezone
 
 import requests
 from nxd.core.context import Snowflake
+from nxd.data_product.context import API
 from snowflake.connector import connect
 
 _logger = logging.getLogger("open_meteo_loader.transform")
@@ -23,9 +24,9 @@ def _normalize_timestamp(raw: str) -> str:
     return dt.astimezone(timezone.utc).isoformat()
 
 
-def _fetch(city: dict) -> dict:
+def _fetch(city: dict, base_url: str) -> dict:
     resp = requests.get(
-        "https://api.open-meteo.com/v1/forecast",
+        f"{base_url}/v1/forecast",
         params={
             "latitude": city["lat"],
             "longitude": city["lon"],
@@ -45,8 +46,9 @@ def _fetch(city: dict) -> dict:
     }
 
 
-def transform(snowflake: Snowflake) -> None:
-    rows = [_fetch(city) for city in CITIES]
+def transform(open_meteo_api: API, snowflake: Snowflake) -> None:
+    base_url = open_meteo_api.url.rstrip("/")
+    rows = [_fetch(city, base_url) for city in CITIES]
     _logger.info("Fetched %d records from Open-Meteo", len(rows))
 
     conn = connect(

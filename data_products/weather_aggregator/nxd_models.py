@@ -1,4 +1,5 @@
 from nxd.core.yaml_schemas import DurationUnit
+from nxd.spec import SamplingMethod
 from nxd.spec import semantic_model
 from nxd.spec.data_types import float64
 from nxd.spec.data_types import int64
@@ -9,6 +10,7 @@ __all__ = [
     "DurationUnit",
     "float64",
     "int64",
+    "SamplingMethod",
     "semantic_model",
     "string",
     "timestamp",

@@ -18,9 +18,14 @@ spec = (
         .config(k8s_executor_config)
         .when(scheduled("0 * * * *"), startup=True)
     )
+    .input(
+        "wttr-in-api",
+        source_aligned_input().source("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/wttr-in-api"),
+    )
     .output(
         data_product_output()
         .model(wttr_model)
+        .promise(wttr_model)
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
@@ -28,7 +33,7 @@ spec = (
             ),
         )
     )
-    .control("data-product-access", data_product_access().user("diego.valverde@nextdata.com"))
-    .control("steward", data_product_access().user("diego.valverde@nextdata.com"))
-    .control("owner", owner().user("diego.valverde@nextdata.com"))
+    .control("data-product-access", data_product_access().user("hello@nextdata.com"))
+    .control("steward", data_product_access().user("hello@nextdata.com"))
+    .control("owner", owner().user("hello@nextdata.com"))
 )

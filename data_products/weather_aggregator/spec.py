@@ -13,27 +13,32 @@ spec = (
         source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/weather_aggregator",
     )
     .environment("demo")
-    .transform(
-        code(transform)
-        .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
-        .config(k8s_executor_config)
-        .when(any_of(updated("open-meteo-data"), updated("wttr-data")))
-    )
     .input(
         "open-meteo-data",
         data_product_input()
         .source("https://app.demo.trynxd.com/data-product/open-meteo-loader#/output/port/snowflake")
+        .model(open_meteo_model)
+        .expectation(open_meteo_model)
         .environment("demo"),
     )
     .input(
         "wttr-data",
         data_product_input()
         .source("https://app.demo.trynxd.com/data-product/wttr-loader#/output/port/snowflake")
+        .model(wttr_model)
+        .expectation(wttr_model)
         .environment("demo"),
+    )
+    .transform(
+        code(transform)
+        .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
+        .config(k8s_executor_config)
+        .when(any_of(updated("open-meteo-data"), updated("wttr-data")))
     )
     .output(
         data_product_output()
         .model(unified_weather_model)
+        .promise(unified_weather_model)
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
@@ -41,7 +46,7 @@ spec = (
             ),
         )
     )
-    .control("data-product-access", data_product_access().user("diego.valverde@nextdata.com"))
-    .control("steward", data_product_access().user("diego.valverde@nextdata.com"))
-    .control("owner", owner().user("diego.valverde@nextdata.com"))
+    .control("data-product-access", data_product_access().user("hello@nextdata.com"))
+    .control("steward", data_product_access().user("hello@nextdata.com"))
+    .control("owner", owner().user("hello@nextdata.com"))
 )

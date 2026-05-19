@@ -5,6 +5,7 @@ from nxd.spec import data_product_access
 from nxd.spec import data_product_output
 from nxd.spec import owner
 from nxd.spec import snowflake_config
+from nxd.spec import source_aligned_input
 from nxd.spec import storage
 from nxd.spec.conditions import scheduled
 from transform import transform
@@ -28,6 +29,7 @@ __all__ = [
     "owner",
     "scheduled",
     "snowflake_config",
+    "source_aligned_input",
     "storage",
     "transform",
 ]

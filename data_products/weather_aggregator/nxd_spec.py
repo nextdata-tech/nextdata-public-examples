@@ -1,4 +1,6 @@
+from models import open_meteo_model
 from models import unified_weather_model
+from models import wttr_model
 from nxd.spec import code
 from nxd.spec import data_product
 from nxd.spec import data_product_access
@@ -28,10 +30,12 @@ __all__ = [
     "data_product_input",
     "data_product_output",
     "k8s_executor_config",
+    "open_meteo_model",
     "owner",
     "snowflake_config",
     "storage",
     "transform",
     "unified_weather_model",
     "updated",
+    "wttr_model",
 ]

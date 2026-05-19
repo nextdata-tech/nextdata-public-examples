@@ -5,6 +5,7 @@ from urllib.parse import quote
 
 import requests
 from nxd.core.context import Snowflake
+from nxd.data_product.context import API
 from snowflake.connector import connect
 
 _logger = logging.getLogger("wttr_loader.transform")
@@ -12,9 +13,9 @@ _logger = logging.getLogger("wttr_loader.transform")
 CITIES = ["Barcelona", "New York", "Tokyo", "London"]
 
 
-def _fetch(city: str) -> dict:
+def _fetch(city: str, base_url: str) -> dict:
     resp = requests.get(
-        f"https://wttr.in/{quote(city)}",
+        f"{base_url}/{quote(city)}",
         params={"format": "j1"},
         timeout=20,
     )
@@ -29,8 +30,9 @@ def _fetch(city: str) -> dict:
     }
 
 
-def transform(snowflake: Snowflake) -> None:
-    rows = [_fetch(city) for city in CITIES]
+def transform(wttr_in_api: API, snowflake: Snowflake) -> None:
+    base_url = wttr_in_api.url.rstrip("/")
+    rows = [_fetch(city, base_url) for city in CITIES]
     _logger.info("Fetched %d records from wttr.in", len(rows))
 
     conn = connect(
