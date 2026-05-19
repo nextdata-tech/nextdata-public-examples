@@ -1,7 +1,6 @@
 # ruff: noqa: F403, F405
 from nxd_models import *
 
-
 account = (
     semantic_model(
         name="account",
@@ -123,10 +122,7 @@ channel_effectiveness = (
 monthly_trends = (
     semantic_model(
         name="monthly_trends",
-        description=(
-            "Monthly activity and engagement trend, including the F2F-to-digital "
-            "channel shift over time."
-        ),
+        description=("Monthly activity and engagement trend, including the F2F-to-digital channel shift over time."),
     )
     .sampling(SamplingMethod.Random)
     .schema(
@@ -146,8 +142,7 @@ rep_territory_scorecard = (
     semantic_model(
         name="rep_territory_scorecard",
         description=(
-            "Rep / territory performance scorecard including a field-vs-HQ flag "
-            "(MKTG-01 / T-MKT campaign rows)."
+            "Rep / territory performance scorecard including a field-vs-HQ flag (MKTG-01 / T-MKT campaign rows)."
         ),
     )
     .sampling(SamplingMethod.Random)
