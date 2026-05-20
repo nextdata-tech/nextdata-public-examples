@@ -1,0 +1,3 @@
+nxd_core>=0.0.1
+nxd_data_product>=0.0.1
+snowflake-snowpark-python
