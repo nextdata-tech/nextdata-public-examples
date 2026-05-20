@@ -131,4 +131,3 @@ rep_territory_scorecard = (
         }
     )
 )
-

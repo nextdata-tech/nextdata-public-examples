@@ -275,9 +275,7 @@ def inactive_account_with_activity(
 
     bad_accounts = int(row[0]) if row and row[0] is not None else 0
     bad_activities = int(row[1]) if row and row[1] is not None else 0
-    msg = (
-        f"{bad_accounts} inactive accounts have {bad_activities} logged activities"
-    )
+    msg = f"{bad_accounts} inactive accounts have {bad_activities} logged activities"
 
     result_enum = VerifyResultEnum.PASS
     if bad_accounts > 0:

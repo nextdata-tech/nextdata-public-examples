@@ -20,8 +20,7 @@ spec = (
     )
     .environment("demo")
     .transform(
-        sql("transform.sql")
-        .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake")
+        sql("transform.sql").compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake")
     )
     .input(
         "crm_activity",
