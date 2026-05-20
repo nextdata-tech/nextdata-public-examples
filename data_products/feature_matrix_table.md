@@ -15,13 +15,16 @@ the relative URLs below and the span is not displayed -->
 | [market-announcements](market_announcements/spec.py)             |     ✅ (json)     | ✅  |              |            |          |     |           |                |
 | [market-fraud-density](market_fraud_density/spec.py)             |                   | ✅  |   ✅ (CSV)   |            |          |     |           |                |
 | [market-rates](market_rates/spec.py)                             |     ✅ (json)     | ✅  |              |            |          |     |           |                |
+| [open-meteo-loader](open_meteo_loader/spec.py)                   |                   | ✅  |              |            |          |     |    ✅     |                |
 | [product-competitiveness](product_competitiveness/spec.py)       |     ✅ (json)     |     |              |            |          | ✅  |    ✅     |                |
 | [public-disclosures](public_disclosures/spec.py)                 |   ✅ (parquet)    |     |              |            |          |     |           |                |
 | [retail-catalog-glossary](retail_catalog_glossary/spec.py)       |                   |     |              |            |    ✅    |     |           |                |
 | [stock-history](stock_history/spec.py)                           |   ✅ (parquet)    |     |              |     ✅     |          |     |           |                |
 | [suspicious-tx](suspicious_tx/spec.py)                           |   ✅ (parquet)    |     |              |            |          |     |           |                |
 | [taxi-trip-metrics](taxi-trip-metrics/spec.py)                   |                   |     |              |     ✅     |          |     |           |   ✅ (batch)   |
+| [weather-aggregator](weather_aggregator/spec.py)                 |                   |     |              |            |          |     |    ✅     |                |
 | [web-product-catalog](web_product_catalog/spec.py)               |                   | ✅  |              |            |          |     |    ✅     |                |
+| [wttr-loader](wttr_loader/spec.py)                               |                   | ✅  |              |            |          |     |    ✅     |                |
 
 
 ## ADLS
@@ -49,7 +52,9 @@ These examples cover different data formats such as JSON and Parquet, and show h
 * [market-announcements](market_announcements/spec.py): A data product that reads market announcement data via an API and writes it to ADLS in JSON format.
 * [market-fraud-density](market_fraud_density/spec.py): A data product that reads [Kaggle](https://www.kaggle.com) bank transaction data using the [Kagglehub](https://github.com/Kaggle/kagglehub) library, generates market fraud density data and writes it to S3 in CSV format. It exposes the output data via an MCP server.
 * [market-rates](market_rates/spec.py): A data product that reads market rates data from an [ASX](https://www.asx.com.au/) API and writes it to ADLS in JSON format.
+* [open-meteo-loader](open_meteo_loader/spec.py): A data product that ingests current weather conditions from the [Open-Meteo](https://open-meteo.com) public API and writes normalized records into Snowflake.
 * [web-product-catalog](web_product_catalog/spec.py): A data product that scrapes paginated HTML product listings from [web-scraping.dev](https://web-scraping.dev/products), enriches them with detail-page data, and writes the catalog to Snowflake.
+* [wttr-loader](wttr_loader/spec.py): A data product that ingests current weather conditions from the [wttr.in](https://wttr.in) public API and writes normalized records into Snowflake.
 
 ## AWS S3
 
@@ -76,8 +81,11 @@ These examples cover different data formats such as JSON and Parquet, and show h
 ## Snowflake
 
 * [loans-products](loans_products/spec.py): A data product that reads the output of the [product-competitiveness](product_competitiveness/spec.py) data product from Snowflake and loads curated datasets into Databricks Unity Catalog.
+* [open-meteo-loader](open_meteo_loader/spec.py): A data product that ingests current weather conditions from the [Open-Meteo](https://open-meteo.com) public API and writes normalized records into Snowflake.
 * [product-competitiveness](product_competitiveness/spec.py): A data product that reads product competitiveness data as JSON from ADLS, transforms it via SQL and writes it to Snowflake. The output data is exposed via an MCP server.
+* [weather-aggregator](weather_aggregator/spec.py): A data product that reads from both weather loader outputs and unions them into a unified Snowflake table enriched with provider and process timestamp fields, using Snowpark.
 * [web-product-catalog](web_product_catalog/spec.py): A data product that scrapes a competitor retail storefront and writes enriched product catalog records (name, price, brand, description) to Snowflake for competitive pricing analysis.
+* [wttr-loader](wttr_loader/spec.py): A data product that ingests current weather conditions from the [wttr.in](https://wttr.in) public API and writes normalized records into Snowflake.
 
 ## Glossary
 
