@@ -161,26 +161,3 @@ rep_territory_scorecard = (
     )
 )
 
-data_quality_findings = (
-    semantic_model(
-        name="data_quality_findings",
-        description=(
-            "Referential-integrity and data-quality findings on the upstream "
-            "crm-activity feed: orphan activities, invalid NPIs, inconsistent "
-            "casing, missing opt-in, and inactive accounts with activity."
-        ),
-    )
-    .sampling(SamplingMethod.Random)
-    .schema(
-        {
-            "finding_type": (
-                string(),
-                "Category: orphan_activity, invalid_npi, inconsistent_casing, "
-                "missing_email_opt_in, or inactive_account_with_activity.",
-            ),
-            "entity_type": (string(), "'account' or 'activity'."),
-            "entity_id": (string(), "account_id or activity_id the finding relates to."),
-            "detail": (string(), "Human-readable description of the issue."),
-        }
-    )
-)

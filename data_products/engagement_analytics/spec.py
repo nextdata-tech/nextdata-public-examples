@@ -7,10 +7,11 @@ spec = (
         description=(
             "Downstream commercial analytics over the crm-activity field-sales "
             "feed. Joins the upstream CRM account and activity tables in "
-            "Snowflake and fans out to five analytical models: per-account "
+            "Snowflake and fans out to four analytical models: per-account "
             "coverage and value-gap, channel effectiveness and cost-efficiency, "
-            "monthly engagement trends, rep/territory scorecards (field vs. HQ "
-            "campaign), and a data-quality findings report."
+            "monthly engagement trends, and rep/territory scorecards (field vs. "
+            "HQ campaign). Data-quality findings have been split out into the "
+            "crm-data-quality data product."
         ),
         domain="COMMERCIAL/ANALYTICS",
         version="1.0.0-dev",
@@ -34,7 +35,6 @@ spec = (
         .promise(channel_effectiveness)
         .promise(monthly_trends)
         .promise(rep_territory_scorecard)
-        .promise(data_quality_findings)
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
@@ -43,7 +43,6 @@ spec = (
                 .target_table("CHANNEL_EFFECTIVENESS", channel_effectiveness)
                 .target_table("MONTHLY_TRENDS", monthly_trends)
                 .target_table("REP_TERRITORY_SCORECARD", rep_territory_scorecard)
-                .target_table("DATA_QUALITY_FINDINGS", data_quality_findings)
             ),
         )
     )

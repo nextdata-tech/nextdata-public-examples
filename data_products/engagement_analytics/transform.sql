@@ -97,38 +97,3 @@ SELECT
     ROUND(AVG(estimated_cost_usd), 2) AS avg_cost_per_activity_usd
 FROM {{ inputs.data_products["crm-activity"].snowflake.activity }}
 GROUP BY rep_id, territory_id;
-
--- 5. DATA_QUALITY_FINDINGS — referential-integrity & dirt report
-TRUNCATE TABLE IF EXISTS {{ outputs["snowflake"].data_quality_findings }};
-
-INSERT INTO {{ outputs["snowflake"].data_quality_findings }}
-    (finding_type, entity_type, entity_id, detail)
-SELECT 'orphan_activity', 'activity', act.activity_id,
-       'activity references unknown account_id ' || act.account_id
-FROM {{ inputs.data_products["crm-activity"].snowflake.activity }} act
-LEFT JOIN {{ inputs.data_products["crm-activity"].snowflake.account }} a ON a.account_id = act.account_id
-WHERE a.account_id IS NULL
-UNION ALL
-SELECT 'invalid_npi', 'account', account_id,
-       'npi ' || COALESCE(TO_VARCHAR(npi), '<null>') || ' is not a 10-digit identifier'
-FROM {{ inputs.data_products["crm-activity"].snowflake.account }}
-WHERE npi IS NULL OR LENGTH(TO_VARCHAR(npi)) <> 10
-UNION ALL
-SELECT 'inconsistent_casing', 'account', account_id,
-       'non-canonical casing in first_name / last_name / status'
-FROM {{ inputs.data_products["crm-activity"].snowflake.account }}
-WHERE (first_name IS NOT NULL AND first_name <> INITCAP(first_name))
-   OR (last_name IS NOT NULL AND last_name <> INITCAP(last_name))
-   OR (status IS NOT NULL AND status <> INITCAP(status))
-UNION ALL
-SELECT 'missing_email_opt_in', 'account', account_id,
-       'email_opt_in is null'
-FROM {{ inputs.data_products["crm-activity"].snowflake.account }}
-WHERE email_opt_in IS NULL
-UNION ALL
-SELECT 'inactive_account_with_activity', 'account', a.account_id,
-       'account status is Inactive but has ' || COUNT(act.activity_id) || ' activities'
-FROM {{ inputs.data_products["crm-activity"].snowflake.account }} a
-JOIN {{ inputs.data_products["crm-activity"].snowflake.activity }} act ON act.account_id = a.account_id
-WHERE UPPER(a.status) = 'INACTIVE'
-GROUP BY a.account_id;
