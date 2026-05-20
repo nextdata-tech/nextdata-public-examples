@@ -4,10 +4,13 @@ the relative URLs below and the span is not displayed -->
 
 | Data Product                                                     |       ADLS        | API |    AWS S3    | Databricks | Glossary | MCP | Snowflake |     Spark      |
 | ---------------------------------------------------------------- | :---------------: | :-: | :----------: | :--------: | :------: | :-: | :-------: | :------------: |
+| [account-coverage](account_coverage/spec.py)                     |                   |     |              |            |          |     |    ✅     |                |
 | [company-dividends](company_dividends/spec.py)                   |     ✅ (json)     | ✅  |              |            |          |     |           |                |
 | [competitor_growth_analysis](competitor_growth_analysis/spec.py) | ✅ (parquet/json) |     |              |     ✅     |          | ✅  |           |   ✅ (batch)   |
 | [credit-card-tx](credit_card_tx/spec.py)                         |   ✅ (parquet)    |     |              |            |          |     |           |                |
+| [crm-activity](crm_activity/spec.py)                             |                   |     |              |            |          |     |    ✅     |                |
 | [customer-purchases](customer_purchases/spec.py)                 |                   |     | ✅ (parquet) |     ✅     |          |     |           | ✅ (streaming) |
+| [engagement-analytics](engagement_analytics/spec.py)             |                   |     |              |            |          |     |    ✅     |                |
 | [example-mcp-server](example_mcp/spec.py)                        |                   |     |              |     ✅     |          | ✅  |           |   ✅ (batch)   |
 | [financial_statements](financial_statements/spec.py)             |   ✅ (parquet)    | ✅  |              |     ✅     |          | ✅  |           |   ✅ (batch)   |
 | [income-statements](income_statements/spec.py)                   |   ✅ (parquet)    | ✅  |              |            |          |     |           |                |
@@ -75,6 +78,9 @@ These examples cover different data formats such as JSON and Parquet, and show h
 
 ## Snowflake
 
+* [account-coverage](account_coverage/spec.py): A data product that reads the [crm-activity](crm_activity/spec.py) feed from Snowflake and writes per-account coverage and value-gap analysis (realized vs. potential value, touch volume, cost, engagement, coverage classification) to Snowflake. The transform runs as SQL on Snowflake compute, with the coverage logic implemented as a Snowpark Python stored procedure declared and `CALL`ed from `transform.sql`.
+* [crm-activity](crm_activity/spec.py): A data product that produces pharmaceutical commercial CRM data — accounts (HCPs/organizations with specialty, value tiering, territory) joined with field activities (calls, details, sample drops, follow-ups, inquiries) — and writes it to Snowflake. The transform runs as SQL on Snowflake compute and exposes custom data-quality promises (orphan activity, invalid NPI, inconsistent casing, inactive accounts with activity, missing email opt-in).
+* [engagement-analytics](engagement_analytics/spec.py): A data product that reads the [crm-activity](crm_activity/spec.py) feed from Snowflake and fans out to three analytical models — channel effectiveness and cost-efficiency, monthly engagement trends, and rep/territory scorecards — written back to Snowflake. The transform runs as SQL on Snowflake compute.
 * [loans-products](loans_products/spec.py): A data product that reads the output of the [product-competitiveness](product_competitiveness/spec.py) data product from Snowflake and loads curated datasets into Databricks Unity Catalog.
 * [product-competitiveness](product_competitiveness/spec.py): A data product that reads product competitiveness data as JSON from ADLS, transforms it via SQL and writes it to Snowflake. The output data is exposed via an MCP server.
 * [web-product-catalog](web_product_catalog/spec.py): A data product that scrapes a competitor retail storefront and writes enriched product catalog records (name, price, brand, description) to Snowflake for competitive pricing analysis.
