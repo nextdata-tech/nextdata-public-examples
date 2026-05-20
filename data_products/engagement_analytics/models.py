@@ -27,40 +27,6 @@ activity = (
     )
 )
 
-account_coverage = (
-    semantic_model(
-        name="account_coverage",
-        description=(
-            "Per-account coverage and value-gap analysis: realized vs. potential "
-            "value, touch volume, cost, engagement, and a coverage classification "
-            "flagging under-served high-value and over-served low-value accounts."
-        ),
-    )
-    .sampling(SamplingMethod.Random)
-    .schema(
-        {
-            "account_id": (string(), "Account identifier (joins to crm-activity account.account_id)."),
-            "account_value_tier": (string(), "Value tier of the account (High, Medium, Low)."),
-            "segment": (string(), "Current field-force segment (A/B/C/D)."),
-            "specialty": (string(), "Primary medical specialty."),
-            "territory_id": (string(), "Territory the account belongs to."),
-            "potential_value_usd": (int64(), "Estimated addressable revenue opportunity, USD."),
-            "actual_value_usd": (int64(), "Realized revenue attributed to the account, USD."),
-            "value_gap_usd": (int64(), "potential_value_usd - actual_value_usd (addressable upside)."),
-            "realization_ratio": (decimal(6, 4), "actual_value_usd / potential_value_usd (0 when no potential)."),
-            "touch_count": (int64(), "Number of activities logged against the account."),
-            "total_cost_usd": (int64(), "Total estimated cost of all activities for the account, USD."),
-            "avg_engagement_score": (decimal(6, 2), "Mean engagement score across the account's activities."),
-            "positive_rate": (decimal(6, 4), "Share of the account's activities with a Positive response."),
-            "coverage_flag": (
-                string(),
-                "Classification: 'Under-served high-value', 'Over-served low-value', "
-                "'Well-served high-value', or 'Adequate'.",
-            ),
-        }
-    )
-)
-
 channel_effectiveness = (
     semantic_model(
         name="channel_effectiveness",
