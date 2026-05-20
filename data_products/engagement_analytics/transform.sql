@@ -1,48 +1,4 @@
--- 1. ACCOUNT_COVERAGE — value-gap & coverage classification
-TRUNCATE TABLE IF EXISTS {{ outputs["snowflake"].account_coverage }};
-
-INSERT INTO {{ outputs["snowflake"].account_coverage }}
-    (account_id, account_value_tier, segment, specialty, territory_id,
-     potential_value_usd, actual_value_usd, value_gap_usd, realization_ratio,
-     touch_count, total_cost_usd, avg_engagement_score, positive_rate, coverage_flag)
-SELECT
-    a.account_id,
-    a.account_value_tier,
-    a.segment,
-    a.specialty,
-    a.territory_id,
-    a.potential_value_usd,
-    a.actual_value_usd,
-    a.potential_value_usd - a.actual_value_usd AS value_gap_usd,
-    CASE WHEN a.potential_value_usd > 0
-         THEN ROUND(a.actual_value_usd / a.potential_value_usd, 4) ELSE 0 END AS realization_ratio,
-    COUNT(act.activity_id) AS touch_count,
-    COALESCE(SUM(act.estimated_cost_usd), 0) AS total_cost_usd,
-    COALESCE(ROUND(AVG(act.engagement_score), 2), 0) AS avg_engagement_score,
-    COALESCE(ROUND(SUM(CASE WHEN act.response = 'Positive' THEN 1 ELSE 0 END)
-             / NULLIF(COUNT(act.activity_id), 0), 4), 0) AS positive_rate,
-    CASE
-        WHEN UPPER(a.account_value_tier) = 'HIGH'
-             AND (a.actual_value_usd / NULLIF(a.potential_value_usd, 0)) < 0.25
-             AND COUNT(act.activity_id) <= 2
-            THEN 'Under-served high-value'
-        WHEN UPPER(a.account_value_tier) = 'HIGH'
-             AND COUNT(act.activity_id) >= 3
-             AND SUM(CASE WHEN act.response = 'Positive' THEN 1 ELSE 0 END) = COUNT(act.activity_id)
-            THEN 'Well-served high-value'
-        WHEN UPPER(a.account_value_tier) = 'LOW'
-             AND SUM(CASE WHEN act.channel = 'F2F' THEN 1 ELSE 0 END) >= 1
-             AND SUM(CASE WHEN act.response IN ('Negative', 'No Response') THEN 1 ELSE 0 END) >= 1
-            THEN 'Over-served low-value'
-        ELSE 'Adequate'
-    END AS coverage_flag
-FROM {{ inputs.data_products["crm-activity"].snowflake.account }} a
-LEFT JOIN {{ inputs.data_products["crm-activity"].snowflake.activity }} act
-    ON act.account_id = a.account_id
-GROUP BY a.account_id, a.account_value_tier, a.segment, a.specialty, a.territory_id,
-         a.potential_value_usd, a.actual_value_usd;
-
--- 2. CHANNEL_EFFECTIVENESS — engagement & cost-efficiency by channel
+-- 1. CHANNEL_EFFECTIVENESS — engagement & cost-efficiency by channel
 TRUNCATE TABLE IF EXISTS {{ outputs["snowflake"].channel_effectiveness }};
 
 INSERT INTO {{ outputs["snowflake"].channel_effectiveness }}
@@ -60,7 +16,7 @@ SELECT
 FROM {{ inputs.data_products["crm-activity"].snowflake.activity }}
 GROUP BY channel;
 
--- 3. MONTHLY_TRENDS — monthly engagement & F2F-to-digital shift
+-- 2. MONTHLY_TRENDS — monthly engagement & F2F-to-digital shift
 TRUNCATE TABLE IF EXISTS {{ outputs["snowflake"].monthly_trends }};
 
 INSERT INTO {{ outputs["snowflake"].monthly_trends }}
@@ -79,7 +35,7 @@ FROM {{ inputs.data_products["crm-activity"].snowflake.activity }}
 GROUP BY activity_month
 ORDER BY activity_month;
 
--- 4. REP_TERRITORY_SCORECARD — rep/territory perf incl. field vs HQ
+-- 3. REP_TERRITORY_SCORECARD — rep/territory perf incl. field vs HQ
 TRUNCATE TABLE IF EXISTS {{ outputs["snowflake"].rep_territory_scorecard }};
 
 INSERT INTO {{ outputs["snowflake"].rep_territory_scorecard }}
