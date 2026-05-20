@@ -6,12 +6,10 @@ spec = (
         name="engagement-analytics",
         description=(
             "Downstream commercial analytics over the crm-activity field-sales "
-            "feed. Joins the upstream CRM account and activity tables in "
-            "Snowflake and fans out to four analytical models: per-account "
-            "coverage and value-gap, channel effectiveness and cost-efficiency, "
-            "monthly engagement trends, and rep/territory scorecards (field vs. "
-            "HQ campaign). Data-quality findings have been split out into the "
-            "crm-data-quality data product."
+            "feed. Reads the upstream CRM activity table in Snowflake and fans "
+            "out to three analytical models: channel effectiveness and "
+            "cost-efficiency, monthly engagement trends, and rep/territory "
+            "scorecards (field vs. HQ campaign)."
         ),
         domain="COMMERCIAL/ANALYTICS",
         version="1.0.0-dev",
@@ -26,12 +24,10 @@ spec = (
         "crm_activity",
         data_product_input()
         .source("https://app.demo.trynxd.com/data-product/crm-activity#/output/port/snowflake")
-        .expectation(account)
         .expectation(activity),
     )
     .output(
         data_product_output()
-        .promise(account_coverage)
         .promise(channel_effectiveness)
         .promise(monthly_trends)
         .promise(rep_territory_scorecard)
@@ -39,7 +35,6 @@ spec = (
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
                 snowflake_config("ENGAGEMENT_ANALYTICS")
-                .target_table("ACCOUNT_COVERAGE", account_coverage)
                 .target_table("CHANNEL_EFFECTIVENESS", channel_effectiveness)
                 .target_table("MONTHLY_TRENDS", monthly_trends)
                 .target_table("REP_TERRITORY_SCORECARD", rep_territory_scorecard)

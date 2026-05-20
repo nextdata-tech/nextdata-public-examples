@@ -1,5 +1,3 @@
-from models import account
-from models import account_coverage
 from models import activity
 from models import channel_effectiveness
 from models import monthly_trends
@@ -14,11 +12,9 @@ from nxd.spec import sql
 from nxd.spec import storage
 
 __all__ = [
-    "account_coverage",
     "channel_effectiveness",
     "monthly_trends",
     "rep_territory_scorecard",
-    "account",
     "activity",
     "data_product",
     "data_product_access",

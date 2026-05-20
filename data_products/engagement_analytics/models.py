@@ -1,35 +1,6 @@
 # ruff: noqa: F403, F405
 from nxd_models import *
 
-account = (
-    semantic_model(
-        name="account",
-        description="Upstream crm-activity ACCOUNT table consumed by this product.",
-    )
-    .sampling(SamplingMethod.Random)
-    .schema(
-        {
-            "account_id": (string(), "Unique CRM identifier for the account."),
-            "account_type": (string(), "'Person' (HCP) or 'Organization' (HCO)."),
-            "first_name": (string(), "Given name of the person account."),
-            "last_name": (string(), "Family name of the person account."),
-            "npi": (int64(), "National Provider Identifier (10-digit)."),
-            "specialty": (string(), "Primary medical specialty of the account."),
-            "state": (string(), "Two-letter US state code."),
-            "prescribing_decile": (int64(), "Prescribing volume decile 1 (low) to 10 (high)."),
-            "segment": (string(), "Field-force value segment (A/B/C/D)."),
-            "account_value_tier": (string(), "Value tier (High, Medium, or Low)."),
-            "potential_value_usd": (int64(), "Estimated addressable revenue opportunity, USD."),
-            "actual_value_usd": (int64(), "Realized revenue attributed to the account, USD."),
-            "preferred_channel": (string(), "Account's preferred engagement channel."),
-            "email_opt_in": (boolean(), "Whether the account consented to email."),
-            "territory_id": (string(), "Sales territory the account belongs to."),
-            "primary_rep_id": (string(), "Rep primarily responsible for the account."),
-            "status": (string(), "Lifecycle status (Active / Inactive)."),
-        }
-    )
-)
-
 activity = (
     semantic_model(
         name="activity",

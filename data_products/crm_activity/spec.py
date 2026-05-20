@@ -27,6 +27,26 @@ spec = (
         data_product_output()
         .promise(account)
         .promise(activity)
+        .promise(
+            custom("email_opt_in_missing")
+            .verify(code(email_opt_in_missing))
+        )
+        .promise(
+            custom("orphan_activity")
+            .verify(code(orphan_activity))
+        )
+        .promise(
+            custom("invalid_npi")
+            .verify(code(invalid_npi))
+        )
+        .promise(
+            custom("inconsistent_casing")
+            .verify(code(inconsistent_casing))
+        )
+        .promise(
+            custom("inactive_account_with_activity")
+            .verify(code(inactive_account_with_activity))
+        )
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
