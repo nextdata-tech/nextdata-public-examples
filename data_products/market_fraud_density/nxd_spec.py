@@ -1,8 +1,8 @@
 from contracts.banksim_transactions_quality import check_banksim_transactions_quality
 from contracts.fraud_density_quality import check_fraud_density_quality
 from mcp_api.fraud_density import FraudDensityAPI
-from mcp_api.fraud_density import get_all_fraud_stats
-from mcp_api.fraud_density import get_market_fraud_stats
+from mcp_api.fraud_density import all_fraud_stats
+from mcp_api.fraud_density import mkt_fraud_stats
 from models import banksim_transactions_model
 from models import fraud_density_model
 from nxd.spec import ScheduleTrigger
@@ -47,8 +47,8 @@ __all__ = [
     "storage",
     "transform",
     "k8s_executor_config",
-    "get_market_fraud_stats",
-    "get_all_fraud_stats",
+    "mkt_fraud_stats",
+    "all_fraud_stats",
     "FraudDensityAPI",
     "check_banksim_transactions_quality",
     "check_fraud_density_quality",

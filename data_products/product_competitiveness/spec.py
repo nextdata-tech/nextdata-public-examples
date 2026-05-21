@@ -53,20 +53,20 @@ spec = (
         .function(rpc_function(code(get_banks), get_banks_request, get_banks_response).description("get_banks"))
         .function(
             rpc_function(
-                code(get_term_deposit_rates),
+                code(get_term_rates),
                 get_term_deposit_rates_request,
                 get_term_deposit_rates_response,
             ).description("get_term_deposit_rates")
         )
         .function(
             rpc_function(
-                code(get_home_loan_rates),
+                code(get_home_loans),
                 get_home_loan_rates_request,
                 get_home_loan_rates_response,
             ).description("get_term_deposit_rates")
         )
         .port(
-            "mcp-api",
+            "api",
             rpc_server("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s")
             .enable_endpoints()
             .mcp_path("/mcp"),

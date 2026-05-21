@@ -91,9 +91,9 @@ get_term_deposit_rates_response = (
 )
 
 
-@function(name="get_term_deposit_rates")
-@mcp.tool(name="get_term_deposit_rates", description="Get term deposit rates for a bank")
-def get_term_deposit_rates(
+@function(name="get_term_rates")
+@mcp.tool(name="get_term_rates", description="Get term deposit rates for a bank")
+def get_term_rates(
     snowflake: Snowflake,
     request: Request,
 ) -> Response:
@@ -148,9 +148,9 @@ get_home_loan_rates_response = (
 )
 
 
-@function(name="get_home_loan_rates")
-@mcp.tool(name="get_home_loan_rates", description="Get home loan rates for a bank")
-def get_home_loan_rates(
+@function(name="get_home_loans")
+@mcp.tool(name="get_home_loans", description="Get home loan rates for a bank")
+def get_home_loans(
     snowflake: Snowflake,
     request: Request,
 ) -> Response:

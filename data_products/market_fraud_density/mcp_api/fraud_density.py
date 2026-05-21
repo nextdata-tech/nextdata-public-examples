@@ -39,16 +39,16 @@ def _get_rows():
 # Endpoint 1: all market categories
 
 
-@function(name="get_all_fraud_stats")
+@function(name="all_fraud_stats")
 @mcp.tool(
-    name="get_all_fraud_stats",
+    name="all_fraud_stats",
     description=(
         "Returns a ranked list of ALL merchant market categories with their "
         "transaction volume and fraud rate. Use this to compare fraud density "
         "across the entire market landscape."
     ),
 )
-def get_all_fraud_stats(request: Request) -> Response:
+def all_fraud_stats(request: Request) -> Response:
     rows = _get_rows()
     return Response(
         {
@@ -61,16 +61,16 @@ def get_all_fraud_stats(request: Request) -> Response:
 # Endpoint 2: single market category
 
 
-@function(name="get_market_fraud_stats")
+@function(name="mkt_fraud_stats")
 @mcp.tool(
-    name="get_market_fraud_stats",
+    name="mkt_fraud_stats",
     description=(
         "Returns fraud density statistics for a specific merchant market category "
         "(e.g. 'transportation', 'food', 'hotel'). "
         "Use this to retrieve the relative risk for a single market."
     ),
 )
-def get_market_fraud_stats(request: Request) -> Response:
+def mkt_fraud_stats(request: Request) -> Response:
     import re
 
     raw_input = str(request.get("market_type", "")).strip().strip("'\"").lower()
