@@ -53,7 +53,7 @@ spec = (
         data_product_rpc_output()
         .function(
             rpc_function(
-                code(get_all_fraud_stats),
+                code(all_fraud_stats),
                 FraudDensityAPI.get_all_request_model(),
                 FraudDensityAPI.get_all_response_model(),
             ).description(
@@ -64,7 +64,7 @@ spec = (
         )
         .function(
             rpc_function(
-                code(get_market_fraud_stats),
+                code(mkt_fraud_stats),
                 FraudDensityAPI.get_stats_request_model(),
                 FraudDensityAPI.get_stats_response_model(),
             ).description(
@@ -73,7 +73,7 @@ spec = (
             )
         )
         .port(
-            "mcp-api",
+            "api",
             rpc_server("https://app.partner.nextopia.dev/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s")
             .enable_endpoints()
             .mcp_path("/mcp"),

@@ -3,12 +3,12 @@ from expectations import adls_atleast_one_record
 from model_context_protocol import get_banks
 from model_context_protocol import get_banks_request
 from model_context_protocol import get_banks_response
-from model_context_protocol import get_home_loan_rates
 from model_context_protocol import get_home_loan_rates_request
 from model_context_protocol import get_home_loan_rates_response
-from model_context_protocol import get_term_deposit_rates
+from model_context_protocol import get_home_loans
 from model_context_protocol import get_term_deposit_rates_request
 from model_context_protocol import get_term_deposit_rates_response
+from model_context_protocol import get_term_rates
 from models import home_loan_rates
 from models import term_deposits
 from models import westpac_home_loans
@@ -59,10 +59,10 @@ __all__ = [
     "get_banks",
     "get_banks_request",
     "get_banks_response",
-    "get_home_loan_rates",
+    "get_home_loans",
     "get_home_loan_rates_request",
     "get_home_loan_rates_response",
-    "get_term_deposit_rates",
+    "get_term_rates",
     "get_term_deposit_rates_request",
     "get_term_deposit_rates_response",
     "k8s_executor_config",
