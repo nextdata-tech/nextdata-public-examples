@@ -9,6 +9,10 @@ from nxd.spec import owner
 from nxd.spec import snowflake_config
 from nxd.spec import sql
 from nxd.spec import storage
+from nxd.spec import udf
+from udfs.coverage_flag import coverage_flag as _coverage_flag_fn
+from udfs.positive_rate import positive_rate as _positive_rate_fn
+from udfs.realization_ratio import realization_ratio as _realization_ratio_fn
 
 __all__ = [
     "account",
@@ -22,4 +26,8 @@ __all__ = [
     "snowflake_config",
     "sql",
     "storage",
+    "udf",
+    "_coverage_flag_fn",
+    "_positive_rate_fn",
+    "_realization_ratio_fn",
 ]

@@ -74,26 +74,3 @@ monthly_trends = (
         }
     )
 )
-
-rep_territory_scorecard = (
-    semantic_model(
-        name="rep_territory_scorecard",
-        description=(
-            "Rep / territory performance scorecard including a field-vs-HQ flag (MKTG-01 / T-MKT campaign rows)."
-        ),
-    )
-    .sampling(SamplingMethod.Random)
-    .schema(
-        {
-            "rep_id": (string(), "Rep identifier (MKTG-01 = HQ multichannel campaign)."),
-            "territory_id": (string(), "Territory identifier (T-MKT = HQ campaign)."),
-            "is_hq_campaign": (boolean(), "True when the row is an HQ campaign rather than field activity."),
-            "activity_count": (int64(), "Number of activities for the rep/territory."),
-            "distinct_accounts": (int64(), "Number of distinct accounts touched."),
-            "avg_engagement_score": (decimal(6, 2), "Mean engagement score."),
-            "positive_rate": (decimal(6, 4), "Share of activities with a Positive response."),
-            "total_cost_usd": (int64(), "Total estimated cost, USD."),
-            "avg_cost_per_activity_usd": (decimal(12, 2), "Mean estimated cost per activity, USD."),
-        }
-    )
-)
