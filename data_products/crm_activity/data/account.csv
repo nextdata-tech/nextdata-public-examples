@@ -1,0 +1,11 @@
+account_id,account_type,first_name,last_name,hco_name,npi,specialty,city,state,prescribing_decile,segment,account_value_tier,potential_value_usd,actual_value_usd,preferred_channel,email_opt_in,target_flag,territory_id,primary_rep_id,status
+0013x000001,Person,Maria,Gonzalez,,1457392048,Cardiology,Northfield,CA,10,A,High,392000,58000,F2F,TRUE,Y,T-01,R-001,Active
+0013x000003,Person,Aisha,Khan,,1773829104,Endocrinology,Westfield,TX,9,A,High,366000,302000,F2F,TRUE,Y,T-02,R-003,Active
+0013x000005,Organization,,,Bay Heart Clinic,1029384756,Cardiology,Northfield,CA,8,B,Medium,210000,160000,F2F,,Y,T-01,R-002,Active
+0013x000006,Person,Wei,Chen,,1564738291,Primary Care,Eastfield,FL,7,B,Medium,178000,22000,Email,TRUE,Y,T-04,R-007,Active
+0013x000019,Person,Maria,Khan,,1708998071,Pulmonology,Westfield,CA,3,D,Low,52000,4000,Email,TRUE,N,T-08,R-015,Active
+0013x000023,Person,Wei,Lee,,1122038475,Neurology,Westfield,WA,1,D,Low,21000,1000,Email,,N,T-06,R-011,Inactive
+0013x000025,Person,carlos,Muller,,1344058677,Oncology,Northfield,CA,9,A,High,372000,52000,Conference,TRUE,Y,T-08,R-016,Active
+0013x000041,Person,Priya,Singh,,19,Oncology,Northfield,FL,8,B,High,277000,44000,Conference,TRUE,Y,T-04,R-008,Active
+0013x000043,Person,Emily,Smith,,1122349475,Primary Care,Westfield,WA,2,D,Low,27000,1500,Email,TRUE,N,T-06,R-012,Active
+0013x000044,Person,David,Khan,,1233359576,Cardiology,Southfield,MA,9,A,High,347000,55000,F2F,TRUE,Y,T-07,R-014,Active

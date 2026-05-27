@@ -18,6 +18,7 @@ spec = (
         source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/crm_activity",
     )
     .environment("demo")
+    .provision(sql("provision.sql"))
     .transform(
         sql("transform.sql")
         .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake")

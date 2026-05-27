@@ -3,19 +3,20 @@ from nxd_spec import *
 
 spec = (
     data_product(
-        name="engagement-analytics",
+        name="rep-territory-performance",
         description=(
-            "Downstream commercial analytics over the crm-activity field-sales "
-            "feed. Reads the upstream CRM activity table in Snowflake and fans "
-            "out to two analytical models: channel effectiveness and "
-            "cost-efficiency, and monthly engagement trends."
+            "Rep and territory sales-performance analytics over the crm-activity "
+            "field-sales feed. Reads the upstream CRM activity table in Snowflake "
+            "and produces a rep/territory scorecard, including a field-vs-HQ "
+            "campaign flag (MKTG-01 / T-MKT)."
         ),
-        domain="COMMERCIAL/ANALYTICS",
+        domain="COMMERCIAL/SALES-PERFORMANCE",
         version="1.0.0-dev",
         infra_profile="ecommerce-demo",
-        source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/engagement_analytics",
+        source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/rep_territory_performance",
     )
     .environment("demo")
+    .provision(sql("provision.sql"))
     .transform(
         sql("transform.sql").compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake")
     )
@@ -27,14 +28,13 @@ spec = (
     )
     .output(
         data_product_output()
-        .promise(channel_effectiveness)
-        .promise(monthly_trends)
+        .promise(rep_territory_scorecard)
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
-                snowflake_config("ENGAGEMENT_ANALYTICS")
-                .target_table("CHANNEL_EFFECTIVENESS", channel_effectiveness)
-                .target_table("MONTHLY_TRENDS", monthly_trends)
+                snowflake_config("REP_TERRITORY_PERFORMANCE").target_table(
+                    "REP_TERRITORY_SCORECARD", rep_territory_scorecard
+                )
             ),
         )
     )
