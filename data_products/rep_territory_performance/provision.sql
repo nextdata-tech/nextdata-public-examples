@@ -3,4 +3,4 @@
 CREATE OR REPLACE STAGE rep_territory_performance;
 
 -- Upload the Snowpark handler
-PUT file://app/handlers/scorecard.py @rep_territory_performance/ OVERWRITE=TRUE;
+PUT file://app/handlers/scorecard.py @rep_territory_performance/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
