@@ -1,0 +1,40 @@
+api-version: data-product.nextdata.com/v1
+models:
+- name: adverse_event_summary
+  description: FAERS-shaped adverse-event summary per product, region, and reporting period (synthetic).
+  sampling:
+    method: head
+  attributes:
+    product_id:
+      data-type: string
+      description: Product identifier. Federated join key.
+    product_name:
+      data-type: string
+      description: Brand name of the product (fictional).
+    region:
+      data-type: string
+      description: Geographic region. Join key.
+    report_period:
+      data-type: string
+      description: Reporting quarter. Join key. e.g. 2025-Q1.
+    adverse_event_count:
+      data-type: int64
+      description: Total adverse-event reports — numerator for reporting rate.
+    serious_event_count:
+      data-type: int64
+      description: Subset of adverse events flagged serious.
+    hospitalization_count:
+      data-type: int64
+      description: Adverse events that led to hospitalisation.
+    death_count:
+      data-type: int64
+      description: Adverse events with a fatal outcome.
+    top_reaction_group:
+      data-type: string
+      description: Leading MedDRA System Organ Class.
+    primary_suspect_count:
+      data-type: int64
+      description: Cases where this product was the primary suspect drug.
+    avg_patient_age:
+      data-type: float64
+      description: Mean patient age across the reports.
