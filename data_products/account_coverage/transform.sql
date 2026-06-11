@@ -1,41 +1,133 @@
--- Reset the target so a partial run can't leave stale rows alongside fresh ones.
+CREATE OR REPLACE TEMPORARY PROCEDURE COMPUTE_ACCOUNT_COVERAGE(
+    account_table STRING,
+    activity_table STRING,
+    target_table STRING
+)
+RETURNS STRING
+LANGUAGE PYTHON
+RUNTIME_VERSION = '3.10'
+PACKAGES = ('snowflake-snowpark-python')
+HANDLER = 'main'
+AS
+$$
+from snowflake.snowpark.functions import (
+    avg, coalesce, col, concat, count, lit, round as round_,
+    sum as sum_, to_varchar, upper, when,
+)
+
+
+def main(session, account_table: str, activity_table: str, target_table: str) -> str:
+    account  = session.table(account_table)
+    activity = session.table(activity_table)
+
+    activity_agg = (
+        activity.group_by("account_id")
+        .agg(
+            count("activity_id").alias("touch_count_raw"),
+            sum_("estimated_cost_usd").alias("total_cost_raw"),
+            avg("engagement_score").alias("avg_engagement_raw"),
+            sum_(when(col("response") == lit("Positive"), lit(1)).otherwise(lit(0))).alias("positive_count"),
+            sum_(
+                when(col("response").isin(lit("Negative"), lit("No Response")), lit(1)).otherwise(lit(0))
+            ).alias("neg_no_resp_count"),
+            sum_(when(col("channel") == lit("F2F"), lit(1)).otherwise(lit(0))).alias("f2f_count"),
+        )
+        .with_column_renamed("account_id", "agg_account_id")
+    )
+
+    joined = account.join(
+        activity_agg,
+        account["account_id"] == activity_agg["agg_account_id"],
+        "left",
+    )
+
+    touch_count  = coalesce(col("touch_count_raw"), lit(0))
+    total_cost   = coalesce(col("total_cost_raw"),  lit(0))
+    pos_count    = coalesce(col("positive_count"),  lit(0))
+    neg_no_resp  = coalesce(col("neg_no_resp_count"), lit(0))
+    f2f_count    = coalesce(col("f2f_count"), lit(0))
+
+    realization_ratio = when(
+        col("potential_value_usd") > lit(0),
+        round_(col("actual_value_usd") / col("potential_value_usd"), lit(4)),
+    ).otherwise(lit(0))
+
+    avg_engagement = coalesce(round_(col("avg_engagement_raw"), lit(2)), lit(0))
+
+    positive_rate = when(
+        touch_count > lit(0),
+        round_(pos_count / touch_count, lit(4)),
+    ).otherwise(lit(0))
+
+    coverage_flag = (
+        when(
+            (upper(col("account_value_tier")) == lit("HIGH"))
+            & (col("potential_value_usd") > lit(0))
+            & ((col("actual_value_usd") / col("potential_value_usd")) < lit(0.25))
+            & (touch_count <= lit(2)),
+            lit("Under-served high-value"),
+        )
+        .when(
+            (upper(col("account_value_tier")) == lit("HIGH"))
+            & (touch_count >= lit(3))
+            & (pos_count == touch_count),
+            lit("Well-served high-value"),
+        )
+        .when(
+            (upper(col("account_value_tier")) == lit("LOW"))
+            & (f2f_count >= lit(1))
+            & (neg_no_resp >= lit(1)),
+            lit("Over-served low-value"),
+        )
+        .otherwise(lit("Adequate"))
+    )
+
+    value_gap = col("potential_value_usd") - col("actual_value_usd")
+
+    account_profile_text = concat(
+        lit("Account "), account["account_id"],
+        lit(". Value tier: "), col("account_value_tier"),
+        lit(". Field-force segment: "), col("segment"),
+        lit(". Medical specialty: "), coalesce(col("specialty"), lit("Not specified")),
+        lit(". Territory: "), coalesce(account["territory_id"], lit("Not specified")),
+        lit(". Coverage classification: "), coverage_flag,
+        lit(". Value gap USD: "), to_varchar(round_(value_gap, lit(0))),
+        lit(". Realization rate percent: "), to_varchar(round_(realization_ratio * lit(100), lit(1))),
+        lit(". Touch count: "), to_varchar(touch_count),
+        lit(". Average engagement score: "), to_varchar(avg_engagement),
+        lit(". Positive response rate percent: "), to_varchar(round_(positive_rate * lit(100), lit(1))),
+    )
+
+
+    result = joined.select(
+        account["account_id"].alias("account_id"),
+        col("account_value_tier"),
+        col("segment"),
+        col("specialty"),
+        account["territory_id"].alias("territory_id"),
+        col("potential_value_usd"),
+        col("actual_value_usd"),
+        value_gap.alias("value_gap_usd"),
+        realization_ratio.alias("realization_ratio"),
+        touch_count.alias("touch_count"),
+        total_cost.alias("total_cost_usd"),
+        avg_engagement.alias("avg_engagement_score"),
+        positive_rate.alias("positive_rate"),
+        coverage_flag.alias("coverage_flag"),
+        account_profile_text.alias("account_profile_text"),
+    )
+
+    result.write.mode("append").save_as_table(target_table)
+
+    written = session.table(target_table).count()
+    return f"{written} account_coverage rows written to {target_table}"
+$$;
+
+
 TRUNCATE TABLE IF EXISTS {{ outputs["snowflake"].account_coverage }};
 
-INSERT INTO {{ outputs["snowflake"].account_coverage }}
-WITH activity_agg AS (
-    SELECT
-        account_id,
-        COUNT(activity_id)                                                       AS touch_count,
-        SUM(estimated_cost_usd)                                                  AS total_cost_usd,
-        COALESCE(ROUND(AVG(engagement_score), 2), 0)                             AS avg_engagement_score,
-        SUM(CASE WHEN response = 'Positive' THEN 1 ELSE 0 END)                   AS pos_count,
-        SUM(CASE WHEN response IN ('Negative', 'No Response') THEN 1 ELSE 0 END) AS neg_no_resp,
-        SUM(CASE WHEN channel = 'F2F' THEN 1 ELSE 0 END)                        AS f2f_count
-    FROM {{ inputs.data_products["crm-activity"].snowflake.activity }}
-    GROUP BY account_id
-)
-SELECT
-    a.account_id,
-    a.account_value_tier,
-    a.segment,
-    a.specialty,
-    a.territory_id,
-    a.potential_value_usd,
-    a.actual_value_usd,
-    a.potential_value_usd - a.actual_value_usd                            AS value_gap_usd,
-    realization_ratio(a.actual_value_usd, a.potential_value_usd)          AS realization_ratio,
-    COALESCE(ag.touch_count, 0)                                            AS touch_count,
-    COALESCE(ag.total_cost_usd, 0)                                         AS total_cost_usd,
-    COALESCE(ag.avg_engagement_score, 0)                                   AS avg_engagement_score,
-    positive_rate(COALESCE(ag.pos_count, 0), COALESCE(ag.touch_count, 0)) AS positive_rate,
-    coverage_flag(
-        a.account_value_tier,
-        a.potential_value_usd,
-        a.actual_value_usd,
-        COALESCE(ag.touch_count, 0),
-        COALESCE(ag.pos_count, 0),
-        COALESCE(ag.neg_no_resp, 0),
-        COALESCE(ag.f2f_count, 0)
-    )                                                                      AS coverage_flag
-FROM {{ inputs.data_products["crm-activity"].snowflake.account }} a
-LEFT JOIN activity_agg ag ON a.account_id = ag.account_id;
+CALL COMPUTE_ACCOUNT_COVERAGE(
+    '{{ inputs.data_products["crm-activity"].snowflake.account }}',
+    '{{ inputs.data_products["crm-activity"].snowflake.activity }}',
+    '{{ outputs["snowflake"].account_coverage }}'
+);

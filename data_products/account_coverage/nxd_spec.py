@@ -9,15 +9,28 @@ from nxd.spec import owner
 from nxd.spec import snowflake_config
 from nxd.spec import sql
 from nxd.spec import storage
-from nxd.spec import udf
-from udfs.coverage_flag import coverage_flag as _coverage_flag_fn
-from udfs.positive_rate import positive_rate as _positive_rate_fn
-from udfs.realization_ratio import realization_ratio as _realization_ratio_fn
+
+# MCP API tools
+from __mcp__ import execute_query
+from __mcp__ import execute_query_request
+from __mcp__ import execute_query_response
+from __mcp__ import get_schema
+from __mcp__ import get_schema_request
+from __mcp__ import get_schema_response
+from __mcp__ import search_accounts
+from __mcp__ import search_accounts_request
+from __mcp__ import search_accounts_response
+from nxd.spec import code
+from nxd.spec import data_product_rpc_output
+from nxd.spec import rpc_function
+from nxd.spec import rpc_server
 
 __all__ = [
+    # data models
     "account",
     "account_coverage",
     "activity",
+    # nxd spec primitives
     "data_product",
     "data_product_access",
     "data_product_input",
@@ -26,8 +39,21 @@ __all__ = [
     "snowflake_config",
     "sql",
     "storage",
-    "udf",
-    "_coverage_flag_fn",
-    "_positive_rate_fn",
-    "_realization_ratio_fn",
+    # MCP tool: get_schema
+    "get_schema",
+    "get_schema_request",
+    "get_schema_response",
+    # MCP tool: execute_query
+    "execute_query",
+    "execute_query_request",
+    "execute_query_response",
+    # MCP tool: search_accounts (new)
+    "search_accounts",
+    "search_accounts_request",
+    "search_accounts_response",
+    # rpc output primitives
+    "code",
+    "data_product_rpc_output",
+    "rpc_function",
+    "rpc_server",
 ]

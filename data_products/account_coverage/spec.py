@@ -1,45 +1,6 @@
 # ruff: noqa: F403, F405
 from nxd_spec import *
 
-_coverage_flag_udf = udf.python(
-    name="coverage_flag",
-    args=[
-        ("account_value_tier", "VARCHAR"),
-        ("potential_value_usd", "FLOAT"),
-        ("actual_value_usd", "FLOAT"),
-        ("touch_count", "NUMBER"),
-        ("pos_count", "NUMBER"),
-        ("neg_no_resp", "NUMBER"),
-        ("f2f_count", "NUMBER"),
-    ],
-    returns="VARCHAR",
-    runtime_version="3.10",
-    source=udf.from_callable(_coverage_flag_fn),
-    handler="coverage_flag",
-    comment="Classifies account coverage tier from activity and value metrics",
-)
-
-_realization_ratio_udf = udf.python(
-    name="realization_ratio",
-    args=[("actual_value_usd", "FLOAT"), ("potential_value_usd", "FLOAT")],
-    returns="FLOAT",
-    runtime_version="3.10",
-    source=udf.from_callable(_realization_ratio_fn),
-    handler="realization_ratio",
-    comment="Actual / potential value, guarded against zero denominator, rounded to 4dp",
-)
-
-_positive_rate_udf = udf.python(
-    name="positive_rate",
-    args=[("pos_count", "NUMBER"), ("touch_count", "NUMBER")],
-    returns="FLOAT",
-    runtime_version="3.10",
-    source=udf.from_callable(_positive_rate_fn),
-    handler="positive_rate",
-    comment="Fraction of touches with Positive response, guarded against zero denominator",
-)
-
-
 spec = (
     data_product(
         name="account-coverage",
@@ -48,9 +9,11 @@ spec = (
             "feed: realized vs. potential value, touch volume, cost, engagement, "
             "and an opinionated coverage classification flagging under-served "
             "high-value and over-served low-value accounts. The transform runs "
-            "as plain SQL on Snowflake compute; the coverage logic lives in three "
-            "Python scalar UDFs (coverage_flag, realization_ratio, positive_rate) "
-            "registered via the output port."
+            "as SQL on Snowflake compute; the coverage logic itself lives in a "
+            "Snowpark Python stored procedure declared and CALLed from "
+            "transform.sql. Exposes three MCP tools: get_schema (table metadata), "
+            "execute_query (SQL execution via Snowflake MCP Server), and "
+            "search_accounts (Cortex Search semantic similarity over account profiles)."
         ),
         domain="COMMERCIAL/ANALYTICS",
         version="1.0.0-dev",
@@ -68,18 +31,61 @@ spec = (
         .expectation(account)
         .expectation(activity),
     )
+    # -- ETL output -- Snowflake table -----------------------------------------
     .output(
         data_product_output()
         .promise(account_coverage)
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
-                snowflake_config("ACCOUNT_COVERAGE")
-                .target_table("ACCOUNT_COVERAGE", account_coverage)
-                .with_udf(_coverage_flag_udf)
-                .with_udf(_realization_ratio_udf)
-                .with_udf(_positive_rate_udf)
+                snowflake_config("ACCOUNT_COVERAGE").target_table("ACCOUNT_COVERAGE", account_coverage)
             ),
+        )
+    )
+    # -- MCP output -- three tools exposed via the Nextdata proxy --------------
+    .output(
+        data_product_rpc_output()
+        # Tool 1: get_schema -- metadata, no DB access
+        .function(
+            rpc_function(
+                code(get_schema),
+                get_schema_request,
+                get_schema_response,
+            ).description(
+                "Returns the complete ACCOUNT_COVERAGE table schema including "
+                "column names, data types, allowed values, and example SQL. "
+                "Call before execute_query."
+            )
+        )
+        # Tool 2: execute_query -- precise SQL via Snowflake MCP Server
+        .function(
+            rpc_function(
+                code(execute_query),
+                execute_query_request,
+                execute_query_response,
+            ).description(
+                "Executes a SQL SELECT query against PARTNER_AZ_DB.ACCOUNT_COVERAGE.ACCOUNT_COVERAGE "
+                "via the Snowflake MCP Server sql_exec_tool. "
+                "Use for precise structured queries with known column values."
+            )
+        )
+        # Tool 3: search_accounts -- semantic search via Cortex Search
+        .function(
+            rpc_function(
+                code(search_accounts),
+                search_accounts_request,
+                search_accounts_response,
+            ).description(
+                "Searches accounts by natural language description using Snowflake Cortex Search. "
+                "Finds accounts by semantic similarity over account_profile_text. "
+                "Use for exploratory questions -- complement to execute_query, not a replacement."
+            )
+        )
+        .port(
+            "mcp-api",
+            rpc_server("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s")
+            .enable_endpoints()
+            .mcp_path("/mcp"),
         )
     )
     .control("data-product-access", data_product_access().user("hello@nextdata.com"))
