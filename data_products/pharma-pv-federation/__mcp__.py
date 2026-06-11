@@ -58,6 +58,7 @@ def get_metadata(snowflake: Snowflake, request: Request) -> Response:
     COMM_SCHEMA     = "commercial_prescriptions"
     COMM_TABLE      = "prescription_volume"
 
+
     account  = snowflake.account.replace("_", "-")
     user     = snowflake.user
     password = snowflake.password
