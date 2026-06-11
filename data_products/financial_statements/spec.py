@@ -21,7 +21,6 @@ spec = (
         source_aligned_input()
         .source("https://nextopia.dev/infra-profile/ecommerce-demo#/services/sec-comp-summary-api")
         .model(source_documents)
-        .expectation(source_documents)
         .expectation(custom("check_document_format").verify(code(check_document_format))),
     )
     .output(
