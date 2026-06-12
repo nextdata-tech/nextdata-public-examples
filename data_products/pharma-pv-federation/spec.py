@@ -1,62 +1,52 @@
 # ruff: noqa: F403, F405
 from nxd_spec import *
 
+# Single shared infra profile (matches account-coverage and the MCP examples).
+# The Snowflake service backs both the transform and the output storage port;
+# the k8s MCP service backs the rpc port that exposes the two tools.
+SNOWFLAKE_SERVICE = (
+    "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake"
+)
+MCP_API_SERVICE = (
+    "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s"
+)
+
 spec = (
     data_product(
         name="pharma-pv-federation",
-        domain="pharmacovigilance/analytics",
         description=(
-            "Federated pharmacovigilance analytics orchestrator. "
-            "Joins two governed domains — Drug Safety (adverse-event counts, the numerator) "
-            "and Commercial Analytics (prescription volume, the denominator) — to compute "
-            "the adverse-event reporting rate per 1,000 prescriptions: the key PV signal "
-            "metric that neither domain can produce alone. "
-            "Exposes two MCP tools: get_metadata (live schema + join keys) and "
-            "execute_federated_query (runs the cross-domain JOIN in Snowflake). "
-            "All underlying data is SYNTHETIC; products are FICTIONAL."
+            "Pharmacovigilance federation orchestrator. Exposes two MCP tools "
+            "(get_metadata, execute_federated_query) that let an AI agent run "
+            "arbitrary read-only, cross-domain SQL joining adverse-event data "
+            "(drug-safety-signals) with prescription volumes (commercial-"
+            "prescriptions) in Snowflake to compute adverse-event reporting "
+            "rates per 1,000 prescriptions. The agent fetches the live schema "
+            "first and then authors its own SQL, so it is never limited to a "
+            "fixed list of questions."
         ),
+        domain="LIFE-SCIENCES/PHARMACOVIGILANCE",
         version="1.0.0-dev",
         infra_profile="ecommerce-demo",
     )
     .environment("demo")
+    # Snowflake-compute transform that writes the single constant anchor row.
     .transform(
-        sql("transform/build_pv_registry.sql")
-        .compute("https://nextopia.dev/infra-profile/ecommerce-demo#/services/nxd-snowflake")
-        .when(
-            any_of(
-                updated("drug-safety-signals"),
-                updated("commercial-prescriptions"),
-                scheduled("0 0 * * *"),
-            ),
-            startup=True,
-        )
+        sql("transform/build_pv_registry.sql").compute(SNOWFLAKE_SERVICE)
     )
-    .input(
-        "drug-safety-signals",
-        data_product_input().source(
-            "https://nextopia.dev/data-product/drug-safety-signals#/output/port/snowflake"
-        ),
-    )
-    .input(
-        "commercial-prescriptions",
-        data_product_input().source(
-            "https://nextopia.dev/data-product/commercial-prescriptions#/output/port/snowflake"
-        ),
-    )
+    # Output 1: the Snowflake table that anchors this product's live credentials.
     .output(
         data_product_output()
-        .model(pv_registry)
+        .promise(pv_registry)
         .port(
             "snowflake",
-            storage("https://nextopia.dev/infra-profile/ecommerce-demo#/services/nxd-snowflake")
-            .config(
-                snowflake_config(schema="pharma_pv_federation")
-                .target_table("pv_registry", pv_registry)
-            )
-            .model(pv_registry)
-            .promise(pv_registry),
+            storage(SNOWFLAKE_SERVICE).config(
+                snowflake_config("PHARMA_PV_FEDERATION").target_table(
+                    "PV_REGISTRY", pv_registry
+                )
+            ),
         )
     )
+    # Output 2: the MCP endpoint exposing the two federation tools.
     .output(
         data_product_rpc_output()
         .function(
@@ -65,12 +55,10 @@ spec = (
                 get_metadata_request,
                 get_metadata_response,
             ).description(
-                "Live schema metadata for the two federated PV tables: "
-                "adverse_event_summary (Drug Safety — AE numerator) and "
-                "prescription_volume (Commercial — Rx denominator). "
-                "Returns real column names from INFORMATION_SCHEMA, join keys "
-                "(product_id, region, report_period), and the key federated metric formula "
-                "(reporting rate per 1,000 Rx). Call FIRST before execute_federated_query."
+                "Return the live schema (column names, types, and comments) of "
+                "the two federated pharmacovigilance tables, plus the join keys "
+                "(product_id, region, report_period) and the adverse-event-per-"
+                "1,000-Rx rate metric. ALWAYS call this first."
             )
         )
         .function(
@@ -79,21 +67,16 @@ spec = (
                 execute_federated_query_request,
                 execute_federated_query_response,
             ).description(
-                "Execute a SQL SELECT (cross-domain pharmacovigilance JOIN) in Snowflake. "
-                "Joins adverse_event_summary (Drug Safety) with prescription_volume "
-                "(Commercial) on product_id, region, report_period to compute the "
-                "adverse-event reporting rate per 1,000 prescriptions. "
-                "Use fully-qualified names: PARTNER_AZ_DB.drug_safety_signals.adverse_event_summary. "
-                "Call get_metadata first. Only SELECT or WITH allowed."
+                "Execute a single read-only SELECT or WITH statement in "
+                "Snowflake -- typically the cross-domain JOIN of "
+                "adverse_event_summary with prescription_volume that computes "
+                "the adverse-event reporting rate per 1,000 prescriptions. Call "
+                "get_metadata first; use fully-qualified table names."
             )
         )
         .port(
             "mcp-api",
-            rpc_server(
-                "https://app.demo.trynxd.com/infra-profile/ecommerce-demo-api#/services/mcp-api-service-k8s"
-            )
-            .enable_endpoints()
-            .mcp_path("/mcp"),
+            rpc_server(MCP_API_SERVICE).enable_endpoints().mcp_path("/mcp"),
         )
     )
     .control("data-product-access", data_product_access().user("hello@nextdata.com"))
