@@ -42,6 +42,9 @@ from nxd.spec.data_types import string
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MCP request / response models (consumed at BUILD time by nxd_spec.py).
+# These are the request response models that will enable the proxy to understand
+# what sort of inputs & outputs can be expected from the tools, and to validate
+# at run time.
 # ─────────────────────────────────────────────────────────────────────────────
 get_schema_request = semantic_model(
     name="get_schema_request",
@@ -456,6 +459,8 @@ def _read_model_description(model):
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Tool 1 -- get_schema  (metadata read from the model in models.py)
+# This is the description that is consumed by the end MCP client or Conversational LLM.
+# This helps Claude determine which tool to call based on questions asked by the user.
 # ─────────────────────────────────────────────────────────────────────────────
 @function(name="get_schema")
 @mcp.tool(
@@ -487,9 +492,17 @@ def get_schema(snowflake: Snowflake, request: Request) -> Response:
     # later backed by Databricks (or anything else) instead of Snowflake.
     from models import account_coverage
 
+    # Reads the model's description (if any) and its columns with types and descriptions.
     model_desc = _read_model_description(account_coverage)
+    # Reads the column descriptions from the model object in models.py, 
+    # which may be structured in various ways (a list of attributes, a dict of fields, 
+    # a schema object, etc. -- the reader is exhaustive). 
+    # Each column is returned as a (name, type, description) tuple. 
+    # The type is rendered to a readable string whether it arrives as a plain label, 
+    # a dict (e.g. for decimals), or a live nxd type object.
     cols = _read_model_columns(account_coverage)
 
+    # If the model carries no columns, then this route is taken.
     if not cols:
         # Never fail opaquely: report the model object's real shape so the reader
         # can be pointed at the right field in a single step.
@@ -518,6 +531,9 @@ def get_schema(snowflake: Snowflake, request: Request) -> Response:
     # metadata (the columns/types/descriptions above all come from the model).
     _, _, _, table_fqn = _table_fqn(snowflake)
 
+    # Building the output string with the table name, model description, 
+    # columns with types and descriptions, and the guide for choosing between
+    #  execute_query and search_accounts.
     lines = []
     lines.append(f"TABLE: {table_fqn}")
     if model_desc:

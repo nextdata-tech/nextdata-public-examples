@@ -1,0 +1,4 @@
+nxd-core
+nxd-drivers[rpc]
+nxd-data-product[spec]
+requests==2.31.0
