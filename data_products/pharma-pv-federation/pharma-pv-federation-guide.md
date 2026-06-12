@@ -42,10 +42,10 @@ Three things make this a *mesh* design rather than a pipeline:
 
 ### The two source tables (live schema)
 
-| Table | Role | Columns that matter |
-|---|---|---|
-| `DRUG_SAFETY_SIGNALS.ADVERSE_EVENT_SUMMARY` | numerator | `PRODUCT_ID`, `REGION`, `REPORT_PERIOD`, **`ADVERSE_EVENT_COUNT`**, `SERIOUS_EVENT_COUNT`, `DEATH_COUNT`, … |
-| `COMMERCIAL_PRESCRIPTIONS.PRESCRIPTION_VOLUME` | denominator | `PRODUCT_ID`, `REGION`, `REPORT_PERIOD`, **`TOTAL_PRESCRIPTIONS`**, `PATIENT_COUNT`, … |
+| Table                                          | Role        | Columns that matter                                                                                         |
+| ---------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------- |
+| `DRUG_SAFETY_SIGNALS.ADVERSE_EVENT_SUMMARY`    | numerator   | `PRODUCT_ID`, `REGION`, `REPORT_PERIOD`, **`ADVERSE_EVENT_COUNT`**, `SERIOUS_EVENT_COUNT`, `DEATH_COUNT`, … |
+| `COMMERCIAL_PRESCRIPTIONS.PRESCRIPTION_VOLUME` | denominator | `PRODUCT_ID`, `REGION`, `REPORT_PERIOD`, **`TOTAL_PRESCRIPTIONS`**, `PATIENT_COUNT`, …                      |
 
 - **Join keys:** `PRODUCT_ID`, `REGION`, `REPORT_PERIOD` (all three).
 - **Metric:** `1000.0 * SUM(adverse_event_count) / NULLIF(SUM(total_prescriptions), 0)`.
@@ -155,10 +155,10 @@ return "\n".join(["\t".join(cols)] + ["\t".join(map(str, row)) for row in rs["da
 
 ## The two MCP tools
 
-| Tool | Call it… | What it returns |
-|---|---|---|
-| **`get_metadata`** | **first** | Live `INFORMATION_SCHEMA` columns + comments for both tables, the join keys, and the rate-metric formula. Takes a `database` argument (required but nullable — pass `null` or a name; defaults to `PARTNER_AZ_DB`). |
-| **`execute_federated_query`** | after metadata | Runs one read-only `SELECT`/`WITH` in Snowflake and returns the result as a table plus a `row_count`. Reject anything that isn't a single read-only statement. |
+| Tool                          | Call it…       | What it returns                                                                                                                                                                                                     |
+| ----------------------------- | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`get_metadata`**            | **first**      | Live `INFORMATION_SCHEMA` columns + comments for both tables, the join keys, and the rate-metric formula. Takes a `database` argument (required but nullable — pass `null` or a name; defaults to `PARTNER_AZ_DB`). |
+| **`execute_federated_query`** | after metadata | Runs one read-only `SELECT`/`WITH` in Snowflake and returns the result as a table plus a `row_count`. Reject anything that isn't a single read-only statement.                                                      |
 
 Because `get_metadata` returns the *real* schema, the agent writes its own SQL — it is never limited to a fixed list of questions.
 
