@@ -314,3 +314,29 @@ These are the constraints that make the product deploy and run reliably on nxd +
 - **New metrics** are just new SQL — no redeploy needed; the agent authors them against the live schema.
 - **More source tables** can be added by widening the borrowed role's read scope and extending the `get_metadata` guide text.
 - **Lineage:** the federation works through `SQL_EXEC_MCP_SRVR`'s cross-schema visibility; declared `data_product_input(...)` lineage to the two source DPs can be added later for catalog/graph completeness without changing the runtime path.
+
+
+
+## SQL MCP SETUP
+
+CREATE OR REPLACE MCP SERVER PARTNER_AZ_DB.ACCOUNT_COVERAGE.SQL_EXEC_MCP_SRVR
+FROM SPECIFICATION $$
+tools:
+  - title: "SQL Execution Tool"
+    name: "sql_exec_tool"
+    type: "SYSTEM_EXECUTE_SQL"
+    description: "Execute SQL queries against Snowflake"
+    config:
+      read_only: false
+      query_timeout: 600
+      warehouse: "PARTNER_AZ_WH"
+
+  - title: "Account Coverage Search"
+    name: "search_accounts_tool"
+    type: "CORTEX_SEARCH_SERVICE_QUERY"
+    identifier: "PARTNER_AZ_DB.ACCOUNT_COVERAGE.ACCOUNT_COVERAGE_SEARCH"
+    description: "Search accounts by natural language using semantic similarity"
+$$
+
+--permissions to the role
+GRANT USAGE ON MCP SERVER PARTNER_AZ_DB.ACCOUNT_COVERAGE.SQL_EXEC_MCP_SRVR TO ROLE PARTNER_AZ_ROLE;

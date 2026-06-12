@@ -29,16 +29,6 @@ warehouse / DATABASE / SCHEMA / credentials all come from the injected
 model_tables (falling back to the model's own declared output name), and the
 Cortex Search service name is derived from that same database/schema/table.
 
-Why every literal lives INSIDE a function
------------------------------------------
-nxd extracts each tool into its own generated module on the RPC pod, carrying
-module-level imports and `def`/`class` statements but NOT module-level constant
-assignments. A module-level `FOO = "bar"` referenced inside a tool becomes a
-runtime NameError. So every fixed string is a LOCAL inside a function, the shared
-Snowflake logic is a module-level `def` (which survives), the model is imported
-INSIDE get_schema, and `Response` is re-imported inside each tool body. The
-request/response models below stay at module scope on purpose -- they are
-consumed at BUILD time by nxd_spec.py, not by the deployed bodies.
 """
 
 from nxd.core.context import Snowflake

@@ -348,3 +348,83 @@ Concrete end-to-end traces. This is the fastest way to internalise the routing.
 - **`execute_query`** (default) and **`search_accounts`** (fallback) both go to Snowflake through **`_snowflake_session`**; search just builds a `SEARCH_PREVIEW` SQL first.
 - Helpers are **nested** and there are **no module constants**, because nxd lifts each tool onto a pod shallowly.
 - The agent picks **exactly one** tool per question; the tool descriptions enforce it.
+
+## 11. SQL MCP SETUP
+
+CREATE OR REPLACE MCP SERVER PARTNER_AZ_DB.ACCOUNT_COVERAGE.SQL_EXEC_MCP_SRVR
+FROM SPECIFICATION $$
+tools:
+  - title: "SQL Execution Tool"
+    name: "sql_exec_tool"
+    type: "SYSTEM_EXECUTE_SQL"
+    description: "Execute SQL queries against Snowflake"
+    config:
+      read_only: false
+      query_timeout: 600
+      warehouse: "PARTNER_AZ_WH"
+
+  - title: "Account Coverage Search"
+    name: "search_accounts_tool"
+    type: "CORTEX_SEARCH_SERVICE_QUERY"
+    identifier: "PARTNER_AZ_DB.ACCOUNT_COVERAGE.ACCOUNT_COVERAGE_SEARCH"
+    description: "Search accounts by natural language using semantic similarity"
+$$
+
+--permissions to the role
+GRANT USAGE ON MCP SERVER PARTNER_AZ_DB.ACCOUNT_COVERAGE.SQL_EXEC_MCP_SRVR TO ROLE PARTNER_AZ_ROLE;
+
+
+## 12. CORTEX SEARCH SERVICE SETUP
+
+
+USE ROLE MCP_ADMIN;
+
+--CORTEX SEARCH SERVICE
+CREATE OR REPLACE CORTEX SEARCH SERVICE PARTNER_AZ_DB.ACCOUNT_COVERAGE.ACCOUNT_COVERAGE_SEARCH
+
+    -- The column Cortex Search indexes for semantic similarity.
+    -- This is the account_profile_text column added by the updated transform.sql.
+    ON account_profile_text
+
+    -- Structured columns that can be returned alongside search results.
+    -- These allow filtering and display without returning the full text blob.
+    ATTRIBUTES
+        account_id,
+        account_value_tier,
+        segment,
+        specialty,
+        territory_id,
+        coverage_flag,
+        value_gap_usd,
+        realization_ratio,
+        touch_count,
+        avg_engagement_score,
+        positive_rate
+
+    WAREHOUSE = PARTNER_AZ_WH
+
+    -- How often to sync with the source table.
+    -- Set to '1 hour' so new ETL runs reflect in search within 1 hour.
+    -- Use '1 day' for lower cost if real-time freshness is not required.
+    TARGET_LAG = '1 hour'
+
+    AS (
+        SELECT
+            account_id,
+            account_value_tier,
+            segment,
+            specialty,
+            territory_id,
+            coverage_flag,
+            value_gap_usd,
+            realization_ratio,
+            touch_count,
+            total_cost_usd,
+            avg_engagement_score,
+            positive_rate,
+            account_profile_text
+        FROM PARTNER_AZ_DB.ACCOUNT_COVERAGE.ACCOUNT_COVERAGE
+    );
+
+-- setting the permissions
+GRANT USAGE ON CORTEX SEARCH SERVICE PARTNER_AZ_DB.ACCOUNT_COVERAGE.ACCOUNT_COVERAGE_SEARCH TO ROLE PARTNER_AZ_ROLE
