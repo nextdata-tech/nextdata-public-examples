@@ -1,0 +1,347 @@
+# Cortex Analyst semantic model for engagement-cortex.
+#
+# This YAML is the SINGLE SOURCE OF TRUTH Cortex Analyst reads to translate
+# natural-language questions into SQL against the engagement-analytics tables.
+# Upload it to @PARTNER_AZ_DB.ENGAGEMENT_CORTEX.SEMANTIC_MODELS/ with the
+# script in deployment/02_upload_semantic_model.sh, then reference it in the
+# CREATE AGENT statement (deployment/03_create_agent.sql).
+#
+# Two logical tables map to two physical Snowflake tables in the upstream
+# engagement-analytics data product:
+#   * channel_effectiveness  -> PARTNER_AZ_DB.ENGAGEMENT_ANALYTICS.CHANNEL_EFFECTIVENESS
+#   * monthly_trends         -> PARTNER_AZ_DB.ENGAGEMENT_ANALYTICS.MONTHLY_TRENDS
+#
+# Style notes for editing:
+#   * Synonyms drive recall: list every phrase a user might say for a column.
+#   * Sample values teach categorical filters; supply real values from data.
+#   * Verified queries are gold-standard examples Cortex Analyst learns from.
+#   * Filters are named WHERE expressions the agent can compose into queries.
+
+name: engagement_cortex_semantic_model
+description: |
+  Semantic model for pharmaceutical commercial engagement analytics. Covers
+  per-channel engagement effectiveness and cost-efficiency, plus monthly
+  trends in activity volume, response quality, and the F2F-to-digital channel
+  shift. Built on top of the upstream engagement-analytics data product's
+  Snowflake outputs; reads are governed by Snowflake privileges.
+
+tables:
+  # ───────────────────────────────────────────────────────────────────────────
+  # Table 1: channel_effectiveness  (one row per engagement channel)
+  # ───────────────────────────────────────────────────────────────────────────
+  - name: channel_effectiveness
+    description: |
+      Per-channel effectiveness and cost-efficiency: engagement quality,
+      positive-response rate, on-preferred-channel rate, and cost per positive
+      response. One row per channel.
+    base_table:
+      database: PARTNER_AZ_DB
+      schema: ENGAGEMENT_ANALYTICS
+      table: CHANNEL_EFFECTIVENESS
+
+    primary_key:
+      columns:
+        - channel
+
+    dimensions:
+      - name: channel
+        synonyms:
+          - engagement channel
+          - touch channel
+          - communication channel
+          - mode of engagement
+          - outreach channel
+        description: |
+          Engagement channel through which the field activity was conducted.
+        expr: CHANNEL
+        data_type: TEXT
+        unique: true
+        sample_values:
+          - F2F
+          - Remote
+          - Email
+          - Phone
+          - Conference
+          - Virtual Event
+
+    measures:
+      - name: activity_count
+        synonyms:
+          - touches
+          - number of activities
+          - number of touches
+          - touch count
+          - volume
+        description: Number of activities conducted on this channel.
+        expr: ACTIVITY_COUNT
+        data_type: NUMBER
+        default_aggregation: sum
+
+      - name: avg_engagement_score
+        synonyms:
+          - engagement quality
+          - mean engagement
+          - average engagement
+          - quality of engagement
+        description: |
+          Mean engagement quality score for the channel. Range 0-100, higher
+          is better. Aggregate with AVG, not SUM.
+        expr: AVG_ENGAGEMENT_SCORE
+        data_type: NUMBER
+        default_aggregation: avg
+
+      - name: positive_rate
+        synonyms:
+          - positive response rate
+          - positive share
+          - positive response share
+          - share of positives
+          - positivity rate
+        description: |
+          Share of activities with a Positive response. Range 0-1. Multiply
+          by 100 for percentage display.
+        expr: POSITIVE_RATE
+        data_type: NUMBER
+        default_aggregation: avg
+
+      - name: on_preferred_channel_rate
+        synonyms:
+          - preferred channel rate
+          - preferred-channel usage
+          - alignment with preferred channel
+        description: |
+          Share of activities that used the account's preferred channel.
+          Range 0-1. Higher means better channel alignment with account
+          preference.
+        expr: ON_PREFERRED_CHANNEL_RATE
+        data_type: NUMBER
+        default_aggregation: avg
+
+      - name: total_cost_usd
+        synonyms:
+          - total cost
+          - cost
+          - channel cost
+          - spend
+        description: Total estimated fully-loaded cost across the channel, USD.
+        expr: TOTAL_COST_USD
+        data_type: NUMBER
+        default_aggregation: sum
+
+      - name: cost_per_positive_usd
+        synonyms:
+          - cost per positive
+          - cost per positive response
+          - cost efficiency
+          - efficiency
+          - cost per win
+        description: |
+          total_cost_usd divided by number of positive responses. Lower is
+          better (more cost-efficient channel). Returns 0 when there are no
+          positives in the channel.
+        expr: COST_PER_POSITIVE_USD
+        data_type: NUMBER
+        default_aggregation: avg
+
+  # ───────────────────────────────────────────────────────────────────────────
+  # Table 2: monthly_trends  (one row per calendar month)
+  # ───────────────────────────────────────────────────────────────────────────
+  - name: monthly_trends
+    description: |
+      Monthly activity and engagement trend, including the F2F-to-digital
+      channel shift over time. One row per calendar month (YYYY-MM).
+    base_table:
+      database: PARTNER_AZ_DB
+      schema: ENGAGEMENT_ANALYTICS
+      table: MONTHLY_TRENDS
+
+    primary_key:
+      columns:
+        - activity_month
+
+    time_dimensions:
+      - name: activity_month
+        synonyms:
+          - month
+          - calendar month
+          - activity period
+          - reporting month
+          - period
+        description: |
+          Calendar month of the activity, stored as a YYYY-MM text string
+          (e.g. '2025-09'). Treat as a sortable ordinal string when ORDER BY
+          activity_month; do NOT cast to DATE without to_date(... , 'YYYY-MM').
+        expr: ACTIVITY_MONTH
+        data_type: TEXT
+        unique: true
+        sample_values:
+          - "2025-01"
+          - "2025-06"
+          - "2025-12"
+
+    measures:
+      - name: activity_count
+        synonyms:
+          - monthly volume
+          - touches
+          - number of activities
+          - activity volume
+        description: Number of activities in the month.
+        expr: ACTIVITY_COUNT
+        data_type: NUMBER
+        default_aggregation: sum
+
+      - name: avg_engagement_score
+        synonyms:
+          - monthly engagement quality
+          - mean engagement
+          - average engagement
+        description: |
+          Mean engagement score across the month's activities. Range 0-100.
+          Aggregate with AVG, not SUM.
+        expr: AVG_ENGAGEMENT_SCORE
+        data_type: NUMBER
+        default_aggregation: avg
+
+      - name: positive_rate
+        synonyms:
+          - monthly positive rate
+          - positive response share
+          - positivity
+        description: |
+          Share of activities with a Positive response in the month.
+          Range 0-1.
+        expr: POSITIVE_RATE
+        data_type: NUMBER
+        default_aggregation: avg
+
+      - name: f2f_share
+        synonyms:
+          - face-to-face share
+          - F2F share
+          - in-person share
+          - share of F2F
+        description: |
+          Share of activities on the F2F (face-to-face) channel in the month.
+          Range 0-1. Falling f2f_share over time = digital shift.
+        expr: F2F_SHARE
+        data_type: NUMBER
+        default_aggregation: avg
+
+      - name: digital_share
+        synonyms:
+          - digital share
+          - online share
+          - share of digital
+          - share of email and remote
+        description: |
+          Share of activities on the Email / Remote / Virtual Event channels
+          (the digital cohort) in the month. Range 0-1. Rising digital_share
+          over time = digital shift.
+        expr: DIGITAL_SHARE
+        data_type: NUMBER
+        default_aggregation: avg
+
+      - name: total_cost_usd
+        synonyms:
+          - monthly cost
+          - monthly spend
+          - cost
+        description: Total estimated cost for the month, USD.
+        expr: TOTAL_COST_USD
+        data_type: NUMBER
+        default_aggregation: sum
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Verified queries: gold-standard question + SQL pairs Cortex Analyst learns
+# from. Each one teaches a recurring pattern: aggregation choice, percentage
+# rendering, ordering, F2F/digital semantics, etc.
+#
+# IMPORTANT: SQL here uses LOGICAL table names from this semantic model
+# (prefixed with __, e.g. __channel_effectiveness) NOT physical
+# fully-qualified names. When Cortex Analyst executes a verified query it
+# wraps the logical names in a CTE that selects from the base_table.
+# Using physical names here causes (a) "physical_table_check" validation
+# failures when the agent matches a question to a verified query and tries
+# to execute it directly, and (b) "Verified query ... referred to physical
+# tables" warnings on every call.
+# ─────────────────────────────────────────────────────────────────────────────
+verified_queries:
+  - name: most_cost_efficient_channel
+    question: Which channel is the most cost-efficient (lowest cost per positive response)?
+    sql: |
+      SELECT channel, cost_per_positive_usd, total_cost_usd, activity_count
+      FROM __channel_effectiveness
+      WHERE cost_per_positive_usd > 0
+      ORDER BY cost_per_positive_usd ASC
+    verified_at: 1717000000
+    verified_by: engagement-cortex
+
+  - name: highest_positive_rate_channel
+    question: Which channel has the highest positive response rate?
+    sql: |
+      SELECT channel,
+             ROUND(positive_rate * 100, 1) AS positive_rate_pct,
+             activity_count
+      FROM __channel_effectiveness
+      ORDER BY positive_rate DESC
+    verified_at: 1717000000
+    verified_by: engagement-cortex
+
+  - name: channel_engagement_ranking
+    question: Rank channels by average engagement score.
+    sql: |
+      SELECT channel,
+             ROUND(avg_engagement_score, 1) AS avg_engagement_score,
+             activity_count
+      FROM __channel_effectiveness
+      ORDER BY avg_engagement_score DESC
+    verified_at: 1717000000
+    verified_by: engagement-cortex
+
+  - name: f2f_to_digital_shift
+    question: What is the F2F-to-digital shift over time?
+    sql: |
+      SELECT activity_month,
+             ROUND(f2f_share * 100, 1)     AS f2f_share_pct,
+             ROUND(digital_share * 100, 1) AS digital_share_pct
+      FROM __monthly_trends
+      ORDER BY activity_month ASC
+    verified_at: 1717000000
+    verified_by: engagement-cortex
+
+  - name: monthly_positive_rate_trend
+    question: How has the positive response rate trended month over month?
+    sql: |
+      SELECT activity_month,
+             ROUND(positive_rate * 100, 1) AS positive_rate_pct,
+             activity_count
+      FROM __monthly_trends
+      ORDER BY activity_month ASC
+    verified_at: 1717000000
+    verified_by: engagement-cortex
+
+  - name: most_expensive_channel_overall
+    question: Which channel had the highest total spend?
+    sql: |
+      SELECT channel, total_cost_usd, activity_count
+      FROM __channel_effectiveness
+      ORDER BY total_cost_usd DESC
+    verified_at: 1717000000
+    verified_by: engagement-cortex
+
+  - name: latest_month_summary
+    question: "Summarise the latest month: volume, engagement, positive rate, and channel mix."
+    sql: |
+      SELECT activity_month,
+             activity_count,
+             ROUND(avg_engagement_score, 1) AS avg_engagement_score,
+             ROUND(positive_rate * 100, 1)  AS positive_rate_pct,
+             ROUND(f2f_share * 100, 1)      AS f2f_share_pct,
+             ROUND(digital_share * 100, 1)  AS digital_share_pct,
+             total_cost_usd
+      FROM __monthly_trends
+      ORDER BY activity_month DESC
+      LIMIT 1
+    verified_at: 1717000000
+    verified_by: engagement-cortex
