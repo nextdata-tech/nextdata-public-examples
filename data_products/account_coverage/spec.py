@@ -1,7 +1,7 @@
 # ruff: noqa: F403, F405
 from nxd_spec import *
 
-# Single shared infra profile (matches pharma-pv-federation and the MCP examples).
+# Single shared infra profile (matches and the MCP examples).
 # The Snowflake service backs both the transform and the output storage port; the
 # k8s MCP service backs the rpc port that exposes the three tools.
 SNOWFLAKE_SERVICE = (
