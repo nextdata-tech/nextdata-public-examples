@@ -1,0 +1,13 @@
+# NXD packages — required for data product execution
+nxd.core
+nxd.data_product[spec]
+# MCP protocol support for the RPC output port (mcp, starlette, uvicorn)
+nxd.drivers[rpc]
+
+# External dependencies
+langchain-huggingface>=1.2.2
+langchain-postgres>=0.0.17
+langchain-text-splitters>=1.1.2
+psycopg[binary]>=3.3.4
+requests>=2.34.2
+sentence-transformers>=5.5.1
