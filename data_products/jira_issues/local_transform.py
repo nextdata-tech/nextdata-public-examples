@@ -19,8 +19,8 @@ except ModuleNotFoundError:
     pass
 
 from nxd.core.context import SecretString
-from nxd.data_product.context import API, PgVector
-
+from nxd.data_product.context import API
+from nxd.data_product.context import PgVector
 from transform import transform
 
 logging.basicConfig(
@@ -52,9 +52,7 @@ if __name__ == "__main__":
         secret_password=SecretString(_require("PG_PASSWORD")),
         database=_require("PG_DATABASE"),
         schema=os.environ.get("PG_SCHEMA", "public"),
-        model_tables={"jira_issue_embeddings": os.environ.get(
-            "PG_TABLE", "jira_issue_embeddings"
-        )},
+        model_tables={"jira_issue_embeddings": os.environ.get("PG_TABLE", "jira_issue_embeddings")},
         models={},
     )
 

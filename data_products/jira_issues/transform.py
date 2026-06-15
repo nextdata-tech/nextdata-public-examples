@@ -16,13 +16,15 @@ import logging
 import uuid
 from typing import Any
 
-from langchain_core.documents import Document
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_postgres import PGEngine, PGVectorStore
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from nxd.data_product.context import API, PgVector
 import psycopg
 import requests
+from langchain_core.documents import Document
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_postgres import PGEngine
+from langchain_postgres import PGVectorStore
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+from nxd.data_product.context import API
+from nxd.data_product.context import PgVector
 
 _logger = logging.getLogger("transform.jira_embeddings")
 _logger.setLevel(logging.INFO)
@@ -34,7 +36,7 @@ _PROJECT = "NXD"
 # non-empty; switch _PROJECT to "NEX" to track the active board.
 _JQL = f"project = {_PROJECT} AND updated >= -180d"
 _EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-_EMBEDDING_DIMS = 384            # all-MiniLM-L6-v2 output dim
+_EMBEDDING_DIMS = 384  # all-MiniLM-L6-v2 output dim
 _CHUNK_SIZE = 512
 _DEFAULT_TABLE = "jira_issue_embeddings"
 _OUTPUT_MODEL_NAME = "jira_issue_embeddings"
@@ -61,9 +63,7 @@ def _fetch_all_issues(jira: API) -> list[dict[str, Any]]:
         }
         if next_token:
             body["nextPageToken"] = next_token
-        resp = requests.post(
-            f"{base}/rest/api/3/search/jql", json=body, auth=auth, timeout=30
-        )
+        resp = requests.post(f"{base}/rest/api/3/search/jql", json=body, auth=auth, timeout=30)
         resp.raise_for_status()
         data = resp.json()
         batch = data.get("issues", [])
@@ -164,8 +164,7 @@ def _ensure_unique_id_index(pgvector: PgVector, schema: str, table: str) -> None
         autocommit=True,
     ) as conn:
         conn.execute(
-            f'CREATE UNIQUE INDEX IF NOT EXISTS "{table}_langchain_id_key" '
-            f'ON "{schema}"."{table}" (langchain_id);'
+            f'CREATE UNIQUE INDEX IF NOT EXISTS "{table}_langchain_id_key" ON "{schema}"."{table}" (langchain_id);'
         )
 
 
@@ -183,8 +182,7 @@ def transform(jira: API, pgvector: PgVector) -> None:
     _logger.info("Target table: %s.%s", schema, table)
 
     conn_str = (
-        f"postgresql+psycopg://{pgvector.user}:{pgvector.password}"
-        f"@{pgvector.host}:{pgvector.port}/{pgvector.database}"
+        f"postgresql+psycopg://{pgvector.user}:{pgvector.password}@{pgvector.host}:{pgvector.port}/{pgvector.database}"
     )
     pg_engine = PGEngine.from_connection_string(url=conn_str)
 
@@ -200,7 +198,7 @@ def transform(jira: API, pgvector: PgVector) -> None:
             schema_name=schema,
         )
         _logger.info("Initialised vectorstore table %s.%s", schema, table)
-    except Exception as exc:                                  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001
         _logger.info("init_vectorstore_table skipped (likely exists): %s", exc)
 
     # PGVectorStore.add_documents upserts with ON CONFLICT (langchain_id),

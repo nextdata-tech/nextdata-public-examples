@@ -80,9 +80,7 @@ spec = (
                 # the configured schema only — provisioning a vector column
                 # under any other schema fails with `type "vector" does not
                 # exist` (42704).
-                pg_vector_config("public").target_table(
-                    "jira_issue_embeddings", jira_issue_embeddings
-                )
+                pg_vector_config("public").target_table("jira_issue_embeddings", jira_issue_embeddings)
             )
             # Port-level promise: registers the model on the port AND
             # verifies the physical table matches the model schema after
@@ -101,9 +99,7 @@ spec = (
         .port(
             "mcp-api",
             _rpc_with_resources(
-                rpc_server(
-                    "https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s"
-                )
+                rpc_server("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s")
                 .enable_endpoints()
                 .mcp_path("/mcp"),
                 {

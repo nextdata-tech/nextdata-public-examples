@@ -13,7 +13,10 @@ body must be fully self-contained.
 from __future__ import annotations
 
 from nxd.data_product.context import PgVector
-from nxd.drivers.rpc import Request, Response, function, mcp
+from nxd.drivers.rpc import Request
+from nxd.drivers.rpc import Response
+from nxd.drivers.rpc import function
+from nxd.drivers.rpc import mcp
 
 
 @function(name="search_jira_issues")
@@ -29,6 +32,7 @@ def search_jira_issues(request: Request, pgvector: PgVector) -> Response:
     import json
 
     import psycopg
+
     # Heavy import kept inside the function: the RPC server boots fast and
     # torch is only loaded on first use. The loaded model is cached on the
     # sentence_transformers module so subsequent calls skip the ~5s load.
@@ -41,9 +45,7 @@ def search_jira_issues(request: Request, pgvector: PgVector) -> Response:
 
     model = getattr(sentence_transformers, "_nxd_query_model", None)
     if model is None:
-        model = sentence_transformers.SentenceTransformer(
-            "sentence-transformers/all-MiniLM-L6-v2"
-        )
+        model = sentence_transformers.SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
         sentence_transformers._nxd_query_model = model
     vector = json.dumps(model.encode(query).tolist())
 
@@ -56,7 +58,7 @@ def search_jira_issues(request: Request, pgvector: PgVector) -> Response:
         dbname=str(pgvector.database),
     ) as conn:
         rows = conn.execute(
-            f'SELECT content, langchain_metadata, '
+            f"SELECT content, langchain_metadata, "
             f"1 - (embedding <=> %s::vector) AS score "
             f'FROM "{schema}"."jira_issue_embeddings" '
             f"ORDER BY embedding <=> %s::vector LIMIT %s",
