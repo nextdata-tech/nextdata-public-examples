@@ -36,7 +36,7 @@ spec = (
                     "Zero-Null check: category and fraud must have no null values. Amount must be non-negative."
                 )
                 .model(banksim_transactions_model)
-                .verify(code(check_banksim_transactions_quality)),
+                .verify(code(check_banksim_transactions_quality).config(k8s_executor_config)),
             )
             .promise(
                 custom("fraud-density-quality")
@@ -45,7 +45,7 @@ spec = (
                     "transaction_count > 0, and zero-null market_type."
                 )
                 .model(fraud_density_model)
-                .verify(code(check_fraud_density_quality)),
+                .verify(code(check_fraud_density_quality).config(k8s_executor_config)),
             ),
         )
     )
