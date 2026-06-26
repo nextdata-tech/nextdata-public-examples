@@ -27,3 +27,6 @@ __pycache__/**
 *.pyo
 .pytest_cache/**
 glossary/**
+pyproject.toml
+.python-version
+*.ipynb
