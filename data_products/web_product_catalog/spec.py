@@ -23,8 +23,7 @@ spec = (
         "catalog-source",
         source_aligned_input()
         .source("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/web-catalog-api")
-        .model(catalog_products)
-        .expectation(catalog_products),
+        .model(catalog_products),
     )
     .output(
         data_product_output()

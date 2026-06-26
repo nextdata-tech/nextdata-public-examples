@@ -1,5 +1,4 @@
 # ruff: noqa: F403, F405
-import types
 
 from nxd_spec import *
 
@@ -127,7 +126,7 @@ spec = (
                 },
             }
         )
-        .when(scheduled("*/10 * * * *"), startup=True)
+        .when(scheduled("0 * * * *"), startup=True)
     )
     # TODO: replace placeholder users with real owner / steward / access.
     .control("owner", owner().user("hello@nextdata.com"))
