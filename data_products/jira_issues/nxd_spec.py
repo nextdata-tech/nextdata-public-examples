@@ -5,6 +5,8 @@ available at spec-evaluation time, then re-exports every spec-builder
 name through ``__all__``.
 """
 
+import types
+
 import api_source_freshness
 from __mcp__ import search_jira_issues
 from models import jira_issue
@@ -47,4 +49,5 @@ __all__ = [
     "source_aligned_input",
     "storage",
     "transform",
+    "types",
 ]
