@@ -38,7 +38,9 @@ spec = (
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
-                snowflake_config("RETAIL_CATALOG").target_table("CATALOG_PRODUCTS", catalog_products)
+                snowflake_config("RETAIL_CATALOG")
+                .target_table("CATALOG_PRODUCTS", catalog_products)
+                .enable_public_access()
             ),
         )
     )
