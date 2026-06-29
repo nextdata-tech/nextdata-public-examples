@@ -41,6 +41,7 @@ spec = (
                 snowflake_config("RETAIL_CATALOG")
                 .target_table("CATALOG_PRODUCTS", catalog_products)
                 .enable_public_access()
+                .disable_promotion()  # TODO: remove this after fixing the promotion issue: wrong table name in the promise context
             ),
         )
     )

@@ -4,4 +4,20 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "bs4>=0.0.2",
+    "pandas>=3.0.4",
+    "requests>=2.34.2",
+    "nxd-data-product>=0.1.2",
+    "snowflake-connector-python>=4.6.0",
+]
+
+[[tool.uv.index]]
+name = "nxd"
+url = "https://registry.trynxd.com/index/"
+
+
+[tool.uv.sources]
+nxd-core = { index = "nxd" }
+nxd-data-product = { index = "nxd" }
+nxd-sqla = { index = "nxd" }

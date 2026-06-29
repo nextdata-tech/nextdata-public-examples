@@ -15,7 +15,7 @@ import sys
 
 sys.path.append("../")
 
-from transform import scrape_catalog
+from ingestion import scrape_catalog
 
 logging.basicConfig(
     level=logging.INFO,

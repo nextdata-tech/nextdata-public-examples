@@ -16,10 +16,11 @@ def _connect(snowflake: Snowflake) -> SnowflakeConnection:
         warehouse=snowflake.warehouse,
         database=snowflake.database,
         schema=snowflake.schema,
+        role=snowflake.role,
     )
 
 
-def load_to_snowflake(df: pd.DataFrame, snowflake: Snowflake, table: str = "CATALOG_PRODUCTS") -> None:
+def load_to_snowflake(df: pd.DataFrame, snowflake: Snowflake, table: str) -> None:
     _logger.info("Loading %d records into Snowflake table %s", len(df), table)
 
     conn = _connect(snowflake)

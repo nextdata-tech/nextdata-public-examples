@@ -85,6 +85,10 @@ def _scrape_product_detail(session: requests.Session, product_url: str) -> dict:
 def fetch_catalog(source: API) -> pd.DataFrame:
     """Fetch enriched product catalog from web source and return as DataFrame."""
     base_url = source.url.rstrip("/")
+    return scrape_catalog(base_url)
+
+
+def scrape_catalog(base_url: str) -> pd.DataFrame:
     _logger.info("Starting web catalog ingestion from %s", base_url)
 
     session = requests.Session()
