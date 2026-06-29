@@ -19,6 +19,7 @@ def _connect(snowflake: Snowflake) -> SnowflakeConnection:
         warehouse=snowflake.warehouse,
         database=snowflake.database,
         schema=snowflake.schema,
+        role=snowflake.role,
     )
 
 
@@ -26,13 +27,14 @@ def _connect(snowflake: Snowflake) -> SnowflakeConnection:
 def verify(snowflake: Snowflake) -> VerifyResult:
     conn = _connect(snowflake)
     cursor = conn.cursor()
-    cursor.execute("SELECT MAX(scraped_at) FROM CATALOG_PRODUCTS")
+    table = snowflake.model_tables["catalog_products"]
+    cursor.execute(f"SELECT MAX(scraped_at) FROM {table}")
     row = cursor.fetchone()
     cursor.close()
     conn.close()
 
     if not row or row[0] is None:
-        return VerifyResult(VerifyResultEnum.FAILED, {"result": "No rows in CATALOG_PRODUCTS"})
+        return VerifyResult(VerifyResultEnum.FAILED, {"result": f"No rows in {table}"})
 
     max_scraped_at = row[0]
     if max_scraped_at.tzinfo is None:
