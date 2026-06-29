@@ -40,7 +40,7 @@ spec = (
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
                 snowflake_config("RETAIL_CATALOG")
                 .target_table("CATALOG_PRODUCTS", catalog_products)
-                .enable_public_access()
+                .enable_temporal_credentials()
                 .disable_promotion()  # TODO: remove this after fixing the promotion issue: wrong table name in the promise context
             ),
         )
