@@ -45,6 +45,7 @@ spec = (
                 snowflake_config("PRODUCT_COMPETITIVENESS")
                 .target_table("TERM_DEPOSITS", term_deposits)
                 .target_table("HOME_LOAN_RATES", home_loan_rates)
+                .enable_temporal_credentials()
             ),
         )
     )
