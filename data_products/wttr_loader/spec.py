@@ -16,7 +16,7 @@ spec = (
         code(transform)
         .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
         .config(k8s_executor_config)
-        .when(scheduled("0 * * * *"), startup=True)
+        .when(scheduled("0 */8 * * *"), startup=True)
     )
     .input(
         "wttr-in-api",
