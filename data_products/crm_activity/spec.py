@@ -33,6 +33,11 @@ spec = (
         .promise(custom("invalid_npi").verify(code(invalid_npi)))
         .promise(custom("inconsistent_casing").verify(code(inconsistent_casing)))
         .promise(custom("inactive_account_with_activity").verify(code(inactive_account_with_activity)))
+        # Register the semantic views (consume-time only — never promised /
+        # produced) so their metric annotations reach the kernel's manifest and
+        # the .semantic_tools() payload.
+        .model(account_metrics)
+        .model(activity_metrics)
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
@@ -40,6 +45,10 @@ spec = (
             ),
         )
     )
+    # Auto-wire the four governed semantic MCP tools (list_models,
+    # describe_model, semantic_model, run_semantic_query) from the field-level
+    # annotations on the models above, served over the demo mesh MCP api service.
+    .semantic_tools(service="mcp-api-service-k8s")
     .control("data-product-access", data_product_access().user("hello@nextdata.com"))
     .control("steward", data_product_access().user("hello@nextdata.com"))
     .control("owner", owner().user("hello@nextdata.com"))

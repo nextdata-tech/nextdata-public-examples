@@ -1,5 +1,7 @@
 from models import account
+from models import account_metrics
 from models import activity
+from models import activity_metrics
 from nxd.spec import code
 from nxd.spec import custom
 from nxd.spec import data_product
@@ -18,7 +20,9 @@ from validations import orphan_activity
 
 __all__ = [
     "account",
+    "account_metrics",
     "activity",
+    "activity_metrics",
     "code",
     "custom",
     "data_product",
