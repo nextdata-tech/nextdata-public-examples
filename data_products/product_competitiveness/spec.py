@@ -42,7 +42,7 @@ spec = (
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
-                snowflake_config("PRODUCT_COMPETITIVENESS")
+                snowflake_config(schema="PRODUCT_COMPETITIVENESS")
                 .target_table("TERM_DEPOSITS", term_deposits)
                 .target_table("HOME_LOAN_RATES", home_loan_rates)
                 .enable_temporal_credentials()

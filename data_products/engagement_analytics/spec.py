@@ -32,7 +32,7 @@ spec = (
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
-                snowflake_config("ENGAGEMENT_ANALYTICS")
+                snowflake_config(schema="ENGAGEMENT_ANALYTICS")
                 .target_table("CHANNEL_EFFECTIVENESS", channel_effectiveness)
                 .target_table("MONTHLY_TRENDS", monthly_trends)
             ),
