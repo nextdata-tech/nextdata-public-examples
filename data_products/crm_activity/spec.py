@@ -41,7 +41,9 @@ spec = (
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
-                snowflake_config("CRM_ACTIVITY").target_table("ACCOUNT", account).target_table("ACTIVITY", activity)
+                snowflake_config(schema="CRM_ACTIVITY")
+                .target_table("ACCOUNT", account)
+                .target_table("ACTIVITY", activity)
             ),
         )
     )

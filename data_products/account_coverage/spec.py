@@ -74,7 +74,7 @@ spec = (
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
-                snowflake_config("ACCOUNT_COVERAGE")
+                snowflake_config(schema="ACCOUNT_COVERAGE")
                 .target_table("ACCOUNT_COVERAGE", account_coverage)
                 .with_udf(_coverage_flag_udf)
                 .with_udf(_realization_ratio_udf)

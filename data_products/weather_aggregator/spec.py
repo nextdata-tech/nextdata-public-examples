@@ -42,7 +42,7 @@ spec = (
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
-                snowflake_config("WEATHER").target_table("UNIFIED", unified_weather_model)
+                snowflake_config(schema="WEATHER").target_table("UNIFIED", unified_weather_model)
             ),
         )
     )

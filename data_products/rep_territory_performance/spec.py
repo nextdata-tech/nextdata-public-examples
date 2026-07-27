@@ -32,7 +32,7 @@ spec = (
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
-                snowflake_config("REP_TERRITORY_PERFORMANCE").target_table(
+                snowflake_config(schema="REP_TERRITORY_PERFORMANCE").target_table(
                     "REP_TERRITORY_SCORECARD", rep_territory_scorecard
                 )
             ),
