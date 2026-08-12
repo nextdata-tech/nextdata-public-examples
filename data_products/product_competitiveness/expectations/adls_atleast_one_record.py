@@ -34,7 +34,13 @@ def verify(market_rates: AzureDataLakeStorage) -> VerifyResult:
         ),
     )
     record_counts = {}
-    errors = {}
+    # Fetch/parse errors (network, auth, malformed content we can't even
+    # read) are a real problem with the check itself — FAILED.
+    hard_errors = {}
+    # A model that read fine but has zero records is a soft, expected-to-
+    # -recover data-quality issue (e.g. an upstream scraper temporarily
+    # blocked) — WARNING, not FAILED, so it doesn't gate the DP.
+    empty_models = {}
     for model_name, model in market_rates.model_paths.items():
         print(f"Verify model has atleast one record. ({model_name=}, {model.path=})")
         try:
@@ -42,16 +48,25 @@ def verify(market_rates: AzureDataLakeStorage) -> VerifyResult:
             file_contents = file_client.download_file().readall().decode()
             num_records = _count_records(file_contents)
         except Exception as e:  # noqa: BLE001 - one bad upstream model must not crash the whole check
-            errors[model_name] = f"{type(e).__name__}: {e}"
+            hard_errors[model_name] = f"{type(e).__name__}: {e}"
             continue
         record_counts[model_name] = num_records
         if num_records == 0:
-            errors[model_name] = "0 records"
+            empty_models[model_name] = "0 records"
 
-    if errors:
+    if hard_errors:
         return VerifyResult(
             VerifyResultEnum.FAILED,
-            {"errors": json.dumps(errors), "record_counts": json.dumps(record_counts)},
+            {
+                "errors": json.dumps(hard_errors),
+                "empty_models": json.dumps(empty_models),
+                "record_counts": json.dumps(record_counts),
+            },
+        )
+    elif empty_models:
+        return VerifyResult(
+            VerifyResultEnum.WARNING,
+            {"empty_models": json.dumps(empty_models), "record_counts": json.dumps(record_counts)},
         )
     else:
         return VerifyResult(
