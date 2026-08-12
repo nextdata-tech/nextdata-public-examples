@@ -56,7 +56,7 @@ def _get_raw_term_deposits() -> list:
 
 def sync_term_deposit_data(file_client: DataLakeFileClient):
     term_deposits = _get_raw_term_deposits()
-    serialised_term_deposits = json.dumps(term_deposits)
+    serialised_term_deposits = "\n".join(json.dumps(t) for t in term_deposits)
     file_client.upload_data(serialised_term_deposits, overwrite=True)
 
 
