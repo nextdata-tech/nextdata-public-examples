@@ -29,7 +29,7 @@ spec = (
         .port(
             "snowflake",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-snowflake").config(
-                snowflake_config(schema="WEATHER").target_table("WTTR", wttr_model)
+                snowflake_config(schema="WTTR").target_table("WTTR", wttr_model)
             ),
         )
     )
