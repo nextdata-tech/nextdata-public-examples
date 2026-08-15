@@ -64,7 +64,13 @@ def verify(adls: AzureDataLakeStorage) -> VerifyResult:
     now = datetime.now(timezone.utc)
     cutoff = now - timedelta(hours=MAX_FILE_AGE_HOURS)
     results = {}
-    failed = False
+    # Couldn't even check the model (auth, missing path, etc.) — real
+    # problem with the check itself.
+    hard_errors = False
+    # Model checked fine but is stale — a soft, expected-to-recover signal
+    # (e.g. an upstream scraper temporarily blocked) that shouldn't gate
+    # the whole DP the same way a hard error does.
+    stale = False
 
     for model_name, model_path_info in adls.model_paths.items():
         path = model_path_info.path
@@ -83,14 +89,16 @@ def verify(adls: AzureDataLakeStorage) -> VerifyResult:
 
             if not is_fresh:
                 _logger.warning(f"Model '{model_name}' at {path} is stale: last modified {age_hours} hours ago.")
-                failed = True
+                stale = True
             else:
                 _logger.info(f"Model '{model_name}' at {path} is fresh: last modified {age_hours} hours ago.")
         except Exception as e:
             _logger.error(f"Failed to inspect model '{model_name}' at {path}: {e}")
             results[model_name] = {"path": path, "error": str(e), "fresh": False}
-            failed = True
+            hard_errors = True
 
-    if failed:
+    if hard_errors:
         return VerifyResult(VerifyResultEnum.FAILED, {"results": results})
+    if stale:
+        return VerifyResult(VerifyResultEnum.WARNING, {"results": results})
     return VerifyResult(VerifyResultEnum.PASS, {"results": results})
