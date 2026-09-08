@@ -207,10 +207,16 @@ activity = (
                 ),
                 description="Identifier of the sales representative who performed the activity (e.g. 'R-001').",
             ),
+            # Named activity_territory_id, not territory_id: account already owns a
+            # territory_id dimension and dimension names must be unique across the
+            # registry. The two are genuinely different concepts -- the territory the
+            # account belongs to, versus the territory the activity was performed in,
+            # which differ whenever a rep covers outside their own patch. Reaching
+            # account's territory from here is what the N:1 join on account_id is for.
             "territory_id": field(
                 string(),
                 dimension(
-                    name="territory_id",
+                    name="activity_territory_id",
                     description="Identifier of the sales territory in which the activity occurred (e.g. 'T-01').",
                 ),
                 description="Identifier of the sales territory in which the activity occurred (e.g. 'T-01').",
