@@ -99,7 +99,9 @@ spec = (
         .port(
             "nxd-databricks-storage",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-storage")
-            .config(databricks_config())
+            .config(
+                databricks_config().disable_promotion()
+            )  # cost: skip snapshot cloning on commit; consumers read production tables directly
             .promise(growth)
             .promise(dividend_sustainability),
         )

@@ -20,7 +20,7 @@ spec = (
     .transform(
         script("transform/transform.py")
         .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks")
-        .when(any_of(scheduled("*/10 * * * *"), on_started()))
+        .when(any_of(scheduled("0 */8 * * *"), on_started()))
     )
     .output(
         data_product_output()
@@ -48,7 +48,9 @@ spec = (
         .port(
             "databricks",
             storage("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks-storage").config(
-                databricks_config().disable_provisioning()  # disable built-in provisioning since we're doing custom provisioning and runs after built-in provisioning. This will change.
+                databricks_config()
+                .disable_provisioning()  # disable built-in provisioning since we're doing custom provisioning and runs after built-in provisioning. This will change.
+                .disable_promotion()  # cost: skip snapshot cloning on commit; consumers read production tables directly
             ),
         )
     )

@@ -51,6 +51,7 @@ spec = (
                 databricks_config()
                 .target_table("LOAN_TERM_DEPOSITS", term_deposits)
                 .target_table("LOAN_HOME_LOAN_RATES", home_loan_rates)
+                .disable_promotion()  # cost: skip snapshot cloning on commit; consumers read production tables directly
             ),
         )
     )
