@@ -11,7 +11,7 @@ spec = (
         source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/company_dividends",
     )
     .environment("demo")
-    .with_global_trigger(ScheduleTrigger("10,30,50 * * * *"))
+    .with_global_trigger(ScheduleTrigger("0 */8 * * *"))
     .transform(
         code(transform)
         .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
