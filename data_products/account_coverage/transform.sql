@@ -1,3 +1,7 @@
+-- The UDFs live in the output schema, but a run session is not placed in it,
+-- so switch to it before calling them by bare name.
+USE SCHEMA IDENTIFIER($DP_SCHEMA_NAME);
+
 -- Reset the target so a partial run can't leave stale rows alongside fresh ones.
 TRUNCATE TABLE IF EXISTS {{ outputs["snowflake"].account_coverage }};
 
