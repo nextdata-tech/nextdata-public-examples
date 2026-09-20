@@ -31,7 +31,6 @@ account = (
                 string(),
                 dimension(
                     name="account_type",
-                    description="Whether the account is an individual 'Person' or an 'Organization'.",
                 ),
                 description="Whether the account is an individual 'Person' or an 'Organization'.",
             ),
@@ -53,7 +52,6 @@ account = (
                 int64(),
                 dimension(
                     name="npi",
-                    description="National Provider Identifier, the unique 10-digit healthcare provider number.",
                     pii=True,
                 ),
                 description="National Provider Identifier, the unique 10-digit healthcare provider number.",
@@ -62,20 +60,20 @@ account = (
                 string(),
                 dimension(
                     name="specialty",
-                    description="Primary medical specialty of the account (e.g. Cardiology, Oncology, Primary Care).",
                 ),
                 description="Primary medical specialty of the account (e.g. Cardiology, Oncology, Primary Care).",
             ),
             "city": field(
                 string(),
-                dimension(name="city", description="City where the account is located."),
+                dimension(
+                    name="city",
+                ),
                 description="City where the account is located.",
             ),
             "state": field(
                 string(),
                 dimension(
                     name="state",
-                    description="Two-letter US state code where the account is located.",
                 ),
                 description="Two-letter US state code where the account is located.",
             ),
@@ -83,7 +81,6 @@ account = (
                 int64(),
                 dimension(
                     name="prescribing_decile",
-                    description="Prescribing volume decile from 1 (lowest) to 10 (highest) relative to peers.",
                 ),
                 description="Prescribing volume decile from 1 (lowest) to 10 (highest) relative to peers.",
             ),
@@ -91,7 +88,6 @@ account = (
                 string(),
                 dimension(
                     name="segment",
-                    description="Strategic value segment of the account (A, B, or C).",
                 ),
                 description="Strategic value segment of the account (A, B, or C).",
             ),
@@ -99,7 +95,6 @@ account = (
                 string(),
                 dimension(
                     name="account_value_tier",
-                    description="Categorical value tier of the account (High, Medium, or Low).",
                 ),
                 description="Categorical value tier of the account (High, Medium, or Low).",
             ),
@@ -115,7 +110,6 @@ account = (
                 string(),
                 dimension(
                     name="preferred_channel",
-                    description="Account's preferred engagement channel (e.g. F2F, Remote, Email, Phone, Conference).",
                 ),
                 description="Account's preferred engagement channel (e.g. F2F, Remote, Email, Phone, Conference).",
             ),
@@ -127,7 +121,6 @@ account = (
                 string(),
                 dimension(
                     name="target_flag",
-                    description="Whether the account is on the active call plan / target list ('Y' or 'N').",
                 ),
                 description="Whether the account is on the active call plan / target list ('Y' or 'N').",
             ),
@@ -135,7 +128,6 @@ account = (
                 string(),
                 dimension(
                     name="territory_id",
-                    description="Identifier of the sales territory the account belongs to (e.g. 'T-01').",
                 ),
                 description="Identifier of the sales territory the account belongs to (e.g. 'T-01').",
             ),
@@ -143,9 +135,6 @@ account = (
                 string(),
                 dimension(
                     name="primary_rep_id",
-                    description=(
-                        "Identifier of the sales representative primarily responsible for the account (e.g. 'R-001')."
-                    ),
                 ),
                 description=(
                     "Identifier of the sales representative primarily responsible for the account (e.g. 'R-001')."
@@ -155,7 +144,6 @@ account = (
                 string(),
                 dimension(
                     name="status",
-                    description="Lifecycle status of the account (e.g. Active, Inactive).",
                 ),
                 description="Lifecycle status of the account (e.g. Active, Inactive).",
             ),
@@ -203,7 +191,6 @@ activity = (
                 string(),
                 dimension(
                     name="rep_id",
-                    description="Identifier of the sales representative who performed the activity (e.g. 'R-001').",
                 ),
                 description="Identifier of the sales representative who performed the activity (e.g. 'R-001').",
             ),
@@ -217,7 +204,6 @@ activity = (
                 string(),
                 dimension(
                     name="activity_territory_id",
-                    description="Identifier of the sales territory in which the activity occurred (e.g. 'T-01').",
                 ),
                 description="Identifier of the sales territory in which the activity occurred (e.g. 'T-01').",
             ),
@@ -229,7 +215,6 @@ activity = (
                 string(),
                 dimension(
                     name="activity_month",
-                    description="Calendar month of the activity in 'YYYY-MM' format, derived from activity_datetime.",
                 ),
                 description="Calendar month of the activity in 'YYYY-MM' format, derived from activity_datetime.",
             ),
@@ -237,7 +222,6 @@ activity = (
                 string(),
                 dimension(
                     name="channel",
-                    description="Channel through which the activity was conducted (e.g. F2F, Remote, Email, Phone).",
                 ),
                 description="Channel through which the activity was conducted (e.g. F2F, Remote, Email, Phone).",
             ),
@@ -245,7 +229,6 @@ activity = (
                 string(),
                 dimension(
                     name="activity_type",
-                    description="Type of engagement (e.g. Detail, Sample Drop, Follow-up, Medical Inquiry).",
                 ),
                 description="Type of engagement (e.g. Detail, Sample Drop, Follow-up, Medical Inquiry).",
             ),
@@ -253,7 +236,6 @@ activity = (
                 string(),
                 dimension(
                     name="product_discussed",
-                    description="Product or SKU discussed during the activity (e.g. 'Cardivex 10mg', 'Neurolyn').",
                 ),
                 description="Product or SKU discussed during the activity (e.g. 'Cardivex 10mg', 'Neurolyn').",
             ),
@@ -275,7 +257,6 @@ activity = (
                 string(),
                 dimension(
                     name="response",
-                    description="Account's response or sentiment to the activity (Positive, Neutral, or Negative).",
                 ),
                 description="Account's response or sentiment to the activity (Positive, Neutral, or Negative).",
             ),
@@ -299,7 +280,6 @@ activity = (
                 string(),
                 dimension(
                     name="next_best_action",
-                    description="Recommended follow-up action for the account (e.g. 'Schedule follow-up detail').",
                 ),
                 description="Recommended follow-up action for the account (e.g. 'Schedule follow-up detail').",
             ),
@@ -328,16 +308,16 @@ account_metrics = (
                 metric(
                     Agg.SUM,
                     of=account.field("actual_value_usd"),
-                    description="Total realized revenue attributed to accounts, in USD.",
                 ),
+                description="Total realized revenue attributed to accounts, in USD.",
             ),
             "TOTAL_POTENTIAL_VALUE": metric_field(
                 int64(),
                 metric(
                     Agg.SUM,
                     of=account.field("potential_value_usd"),
-                    description="Total addressable revenue opportunity across accounts, in USD.",
                 ),
+                description="Total addressable revenue opportunity across accounts, in USD.",
             ),
             # Bare COUNT(*) row-count: point at the base model's "*" pseudo-column
             # so it renders COUNT(*). The metric name is the field key.
@@ -346,8 +326,8 @@ account_metrics = (
                 metric(
                     Agg.COUNT,
                     of=account.field("*"),
-                    description="Total number of accounts.",
                 ),
+                description="Total number of accounts.",
             ),
         }
     )
@@ -369,24 +349,24 @@ activity_metrics = (
                 metric(
                     Agg.COUNT,
                     of=activity.field("*"),
-                    description="Total number of field-sales activities.",
                 ),
+                description="Total number of field-sales activities.",
             ),
             "TOTAL_COST": metric_field(
                 int64(),
                 metric(
                     Agg.SUM,
                     of=activity.field("estimated_cost_usd"),
-                    description="Total estimated cost of conducting activities, in USD.",
                 ),
+                description="Total estimated cost of conducting activities, in USD.",
             ),
             "AVG_ENGAGEMENT_SCORE": metric_field(
                 int64(),
                 metric(
                     Agg.AVG,
                     of=activity.field("engagement_score"),
-                    description="Mean engagement quality score across activities (0-100).",
                 ),
+                description="Mean engagement quality score across activities (0-100).",
             ),
         }
     )
