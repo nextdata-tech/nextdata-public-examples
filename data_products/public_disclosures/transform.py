@@ -5,6 +5,8 @@ from uuid import UUID
 from uuid import uuid5
 
 import pyarrow as pa
+from docling.datamodel.accelerator_options import AcceleratorDevice
+from docling.datamodel.accelerator_options import AcceleratorOptions
 from docling.datamodel.base_models import InputFormat
 from docling.datamodel.pipeline_options import PdfPipelineOptions
 from docling.document_converter import DocumentConverter
@@ -71,7 +73,17 @@ def transform(
     _logger.info(f"Downloading Docling Models to: {docling_artifacts_path}")
     download_models(output_dir=docling_artifacts_path)
 
-    pipeline_options = PdfPipelineOptions(artifacts_path=docling_artifacts_path, do_ocr=False)
+    pipeline_options = PdfPipelineOptions(
+        artifacts_path=docling_artifacts_path,
+        do_ocr=False,
+        # Stream pages through the pipeline instead of buffering up to 100 rendered
+        # pages per stage, so memory stays flat however long the report is.
+        queue_max_size=4,
+        layout_batch_size=1,
+        table_batch_size=1,
+        # Match the pod's 2-CPU limit: each torch thread holds its own buffers.
+        accelerator_options=AcceleratorOptions(num_threads=2, device=AcceleratorDevice.CPU),
+    )
     converter = DocumentConverter(
         allowed_formats=[InputFormat.PDF],
         format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)},
@@ -129,6 +141,8 @@ def transform(
             "processed_at": processed_at,
         }
         disclosures.append(document)
+        # Free the parsed document before the next conversion starts.
+        del conversion, document
 
         _logger.info(f"File: {url} processed by Docling")
 
