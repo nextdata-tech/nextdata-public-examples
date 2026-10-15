@@ -15,8 +15,8 @@ from transform import transform
 k8s_executor_config = {
     "pod_cleanup_delay_secs": 86400,
     "resources": {
-        "requests": {"memory": "8Gi", "cpu": "2000m"},
-        "limits": {"memory": "8Gi", "cpu": "2000m"},
+        "requests": {"memory": "3Gi", "cpu": "2000m"},
+        "limits": {"memory": "4Gi", "cpu": "2000m"},
     },
 }
 
