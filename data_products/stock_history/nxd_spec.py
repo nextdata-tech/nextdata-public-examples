@@ -12,16 +12,6 @@ from nxd.spec import owner
 from nxd.spec import storage
 from transform import transform
 
-cluster_config = {
-    "autoscale": {
-        "min_workers": 1,
-        "max_workers": 1,
-    },
-    "node_type_id": "Standard_D8s_v3",
-    "spark_version": "17.3.x-scala2.13",
-    "store_path": "/Workspace/nxd",
-}
-
 __all__ = [
     "adls_freshness",
     "history",
@@ -36,5 +26,4 @@ __all__ = [
     "owner",
     "storage",
     "transform",
-    "cluster_config",
 ]
