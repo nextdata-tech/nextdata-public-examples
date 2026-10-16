@@ -3,3 +3,4 @@ nxd_drivers
 nxd_data_product
 pyarrow==21.0.0
 snowflake-connector-python
+databricks-sql-connector
