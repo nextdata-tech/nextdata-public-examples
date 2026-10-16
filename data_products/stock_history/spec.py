@@ -13,9 +13,7 @@ spec = (
     .environment("demo")
     .with_global_trigger(ScheduleTrigger("0 */8 * * *"))
     .transform(
-        code(transform)
-        .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks")
-        .config(cluster_config)
+        code(transform).compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks")
     )
     .output(
         data_product_output()
