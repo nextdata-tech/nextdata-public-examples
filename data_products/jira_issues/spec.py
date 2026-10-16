@@ -2,26 +2,6 @@
 
 from nxd_spec import *
 
-
-def _rpc_with_resources(port_spec, resources):
-    """Set pod resources on an RPC output port.
-
-    Workaround: `RpcOutputPortSpec` doesn't expose pod resources yet, but the
-    kubernetes/rpc driver reads a flattened `resources` key from the port
-    config. The search tool lazy-loads sentence-transformers/torch, which
-    OOMs the 512Mi default limit.
-    """
-    original = port_spec._build_config
-
-    def patched(self, scripts):
-        cfg = original(scripts)
-        cfg["resources"] = resources
-        return cfg
-
-    port_spec._build_config = types.MethodType(patched, port_spec)
-    return port_spec
-
-
 spec = (
     data_product(
         name="jira",
@@ -53,7 +33,7 @@ spec = (
             custom("Jira API Freshness")
             .verify(code(api_source_freshness.verify))
             .description(
-                "Jira API must be reachable and returning recent social signal data within the expected freshness window"
+                "Jira API must accept the jira-api credentials and have issues updated within the transform's 180-day window"
             )
         ),
     )
@@ -97,15 +77,12 @@ spec = (
         )
         .port(
             "mcp-api",
-            _rpc_with_resources(
-                rpc_server("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s")
-                .enable_endpoints()
-                .mcp_path("/mcp"),
-                {
-                    "requests": {"cpu": "0.5", "memory": "512Mi"},
-                    "limits": {"memory": "3Gi"},
-                },
-            ),
+            rpc_server("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/mcp-api-service-k8s")
+            .enable_endpoints()
+            .mcp_path("/mcp")
+            # The search tool lazy-loads sentence-transformers/torch, which
+            # OOMs the 512Mi default limit.
+            .resources(requests_cpu="0.5", requests_memory="512Mi", limits_memory="3Gi"),
         )
     )
     .transform(

@@ -34,6 +34,7 @@ _PROJECT = "NXD"
 # NOTE: the NXD project has been quiet since 2026-04 (active work moved to
 # NEX) — a 30-day window matches nothing. 180 days keeps the product
 # non-empty; switch _PROJECT to "NEX" to track the active board.
+# api_source_freshness.py checks this same window; change both together.
 _JQL = f"project = {_PROJECT} AND updated >= -180d"
 _EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 _EMBEDDING_DIMS = 384  # all-MiniLM-L6-v2 output dim
@@ -41,6 +42,27 @@ _CHUNK_SIZE = 512
 _DEFAULT_TABLE = "jira_issue_embeddings"
 _OUTPUT_MODEL_NAME = "jira_issue_embeddings"
 _FIELDS = "summary,description,comment,status,project,created,updated"
+
+
+def _assert_authenticated(jira: API) -> None:
+    """Fail the run when Jira rejects the `jira-api` credentials.
+
+    Jira Cloud answers a search made with a bad token as an anonymous
+    caller — HTTP 200 with zero issues — so `raise_for_status()` on the
+    search alone cannot tell a dead token from a quiet project.
+    `/myself` returns 401 for a bad token."""
+    base = str(jira.url).rstrip("/")
+    resp = requests.get(
+        f"{base}/rest/api/3/myself",
+        auth=(str(jira.username), str(jira.token)),
+        timeout=30,
+    )
+    if resp.status_code != 200:
+        raise RuntimeError(
+            f"Jira rejected the credentials of infra-profile service `jira-api` "
+            f"(GET /rest/api/3/myself returned HTTP {resp.status_code}); "
+            "rotate its API token and re-apply the infra profile."
+        )
 
 
 def _fetch_all_issues(jira: API) -> list[dict[str, Any]]:
@@ -65,6 +87,12 @@ def _fetch_all_issues(jira: API) -> list[dict[str, Any]]:
             body["nextPageToken"] = next_token
         resp = requests.post(f"{base}/rest/api/3/search/jql", json=body, auth=auth, timeout=30)
         resp.raise_for_status()
+        # A token revoked mid-run still gets HTTP 200 here, served as anonymous.
+        if "AUTHENTICATED_FAILED" in resp.headers.get("x-seraph-loginreason", ""):
+            raise RuntimeError(
+                "Jira served the search anonymously (x-seraph-loginreason: AUTHENTICATED_FAILED); "
+                "the `jira-api` credentials are no longer valid."
+            )
         data = resp.json()
         batch = data.get("issues", [])
         issues.extend(batch)
@@ -171,6 +199,7 @@ def _ensure_unique_id_index(pgvector: PgVector, schema: str, table: str) -> None
 def transform(jira: API, pgvector: PgVector) -> None:
     """Entrypoint bound by spec.py — input port `jira` (API) ->
     output port `pgvector` (PgVector)."""
+    _assert_authenticated(jira)
     issues = _fetch_all_issues(jira)
     docs, doc_ids = _chunked_documents(issues)
     if not docs:
