@@ -17,8 +17,8 @@ cluster_config = {
         "min_workers": 1,
         "max_workers": 1,
     },
-    "node_type_id": "Standard_D8_v3",
-    "spark_version": "15.4.x-scala2.12",
+    "node_type_id": "Standard_D8s_v3",
+    "spark_version": "17.3.x-scala2.13",
     "store_path": "/Workspace/nxd",
 }
 
