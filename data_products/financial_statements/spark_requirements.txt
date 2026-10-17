@@ -1,6 +1,6 @@
-nxd.core
-nxd.drivers
-nxd.data_product[spec]
+nxd_core
+nxd_drivers
+nxd_data_product
 yfinance==1.1.0
 pyarrow==21.0.0
 azure-storage-file-datalake==12.21.0
