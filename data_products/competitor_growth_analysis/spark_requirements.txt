@@ -10,6 +10,9 @@ azure-identity==1.24.0
 # torch @ https://download.pytorch.org/whl/cpu/torch-2.9.0-cp310-none-macosx_11_0_arm64.whl # local dev
 # torchvision @ https://download.pytorch.org/whl/cpu/torchvision-0.24.0-cp310-cp310-macosx_11_0_arm64.whl # local dev
 docling==2.69.0
+# docling imports cv2 at import time (through rapidocr); the unpinned 5.x wheel
+# aborts the Python process on load on the Databricks runtime, so stay on 4.x
+opencv-python-headless==4.12.0.88
 langchain==0.3.27
 langchain-docling==1.0.0
 langchain-pinecone==0.2.11
