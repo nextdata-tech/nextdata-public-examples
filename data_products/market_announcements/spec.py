@@ -11,7 +11,7 @@ spec = (
         source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/market_announcements",
     )
     .environment("demo")
-    .with_global_trigger(ScheduleTrigger("0 12 * * *"))
+    .with_global_trigger(ScheduleTrigger("5 14 * * *"))
     .transform(
         script("transform.py").compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/k8s-compute")
     )
