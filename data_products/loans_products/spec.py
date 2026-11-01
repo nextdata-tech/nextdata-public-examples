@@ -11,7 +11,7 @@ spec = (
         source_repo_url="https://github.com/nextdata-tech/nextdata-public-examples/tree/main/data_products/loans_products",
     )
     .environment("demo")
-    .with_global_trigger(ScheduleTrigger("0 */8 * * *"))
+    .with_global_trigger(ScheduleTrigger("30 1,13 * * *"))
     .transform(
         code(transform)
         .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks")

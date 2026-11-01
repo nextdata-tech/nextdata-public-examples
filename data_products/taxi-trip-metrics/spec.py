@@ -20,7 +20,7 @@ spec = (
     .transform(
         script("transform/transform.py")
         .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks")
-        .when(any_of(scheduled("0 */8 * * *"), on_started()))
+        .when(scheduled("0 3,15 * * *"))
     )
     .output(
         data_product_output()

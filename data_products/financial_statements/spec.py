@@ -14,7 +14,7 @@ spec = (
     .transform(
         script("transform.py")
         .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks")
-        .when(any_of(scheduled("0 */8 * * *"), on_started()))
+        .when(scheduled("0 2,14 * * *"))
     )
     .input(
         "competitor-data-api",
