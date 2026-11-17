@@ -15,8 +15,10 @@ spec = (
         code(transform)
         .compute("https://app.demo.trynxd.com/infra-profile/ecommerce-demo#/services/nxd-databricks")
         .config(cluster_config)
+        # Run once per day, after all five upstreams have refreshed, rather than
+        # once per upstream that finishes.
         .when(
-            any_of(
+            all_of(
                 updated("market-announcements"),
                 updated("income-statements"),
                 updated("stock-history"),

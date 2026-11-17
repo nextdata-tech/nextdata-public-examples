@@ -30,6 +30,7 @@ from nxd.spec import owner
 from nxd.spec import rpc_function
 from nxd.spec import rpc_server
 from nxd.spec import storage
+from nxd.spec.conditions import all_of
 from nxd.spec.conditions import any_of
 from nxd.spec.conditions import updated
 from transform import transform
@@ -74,6 +75,7 @@ __all__ = [
     "rpc_function",
     "rpc_server",
     "storage",
+    "all_of",
     "any_of",
     "updated",
     "transform",
